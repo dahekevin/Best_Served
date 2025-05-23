@@ -1,0 +1,81 @@
+.navbarContainer {
+    display: flex;
+    align-items: center;
+    height: 125px;
+    font-weight: 600;
+}
+
+.logo {
+    width: 5em;
+}
+
+.navbarItems {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1250px;
+    padding: 0 50px;
+    margin: 0 auto;
+}
+
+.navbarLink {
+    text-decoration: none;
+    color: gray;
+    border-radius: 50px;
+    padding: 5px 15px;
+    font-size: 0.9em;
+    transition: transform 0.3s ease;
+}
+
+.navbarLink:hover {
+    color: black;
+    transform: scale(1.05);
+}
+
+.navbarRegisterLink {
+    text-decoration: none;
+    color: #fff;
+    background-color: orangered;
+    border-radius: 50px;
+    padding: 5px 20px;
+    transition: transform 0.3s ease;
+}
+
+.navbarRegisterLink:hover {
+    transform: scale(1.1);    
+}
+
+.navbarLinksContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1em;
+}
+
+.mobileNavbarItems {
+    display: none;
+}
+
+.drawer {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    align-items: center;
+    padding: 2em;
+    gap: 1em;
+    font-size: xx-large;
+}
+
+@media screen and (max-width: 600px) {
+    .navbarItems {
+        display: none;
+    }
+
+    .mobileNavbarItems {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+    }
+}

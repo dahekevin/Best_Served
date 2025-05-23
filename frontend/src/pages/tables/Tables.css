@@ -1,0 +1,152 @@
+:root {
+    --color-background: #121212;
+    --color-card: #1e1e1e;
+    --color-text: #ffffff;
+    --color-text-secondary: #a0a0a0;
+    --color-booked: #22c55e;
+    --color-available: #ca8a04;
+    --color-green-circle: #22c55e;
+    --color-yellow-circle: #f59e0b;
+    --border-radius: 8px;
+}
+
+.container {
+    margin: 0 auto;
+    padding: 30px;
+    background-color: var(--color-background);
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+    position: relative;
+}
+
+.back-button {
+    background: none;
+    border: none;
+    color: var(--color-text);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #2563eb;
+    margin-right: 16px;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.filter-buttons {
+    position: absolute;
+    right: 0;
+    display: flex;
+    background-color: #333;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.filter-button {
+    background: none;
+    border: none;
+    color: var(--color-text);
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.filter-button.active {
+    background-color: #4b5563;
+}
+
+.tables-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 16px;
+}
+
+.table-card {
+    background-color: var(--color-card);
+    border-radius: var(--border-radius);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    height: 180px;
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.table-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: white;
+}
+
+.table-status {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.table-status.booked {
+    background-color: var(--color-booked);
+    color: #000;
+}
+
+.table-status.available {
+    background-color: var(--color-available);
+    color: #000;
+}
+
+.table-content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.initials-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.initials-circle.green {
+    background-color: var(--color-green-circle);
+    color: #000;
+}
+
+.initials-circle.yellow {
+    background-color: var(--color-yellow-circle);
+    color: #000;
+}
+
+.initials-circle.white {
+    background-color: #fff;
+    color: #000;
+}
+
+.table-footer {
+    margin-top: 16px;
+}
+
+.seats-info {
+    font-size: 14px;
+    color: var(--color-text-secondary);
+}

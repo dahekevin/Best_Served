@@ -1,0 +1,35 @@
+.authPageContainer, form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1em;
+    margin: 50px 0;
+}
+
+h1 {
+    color: orangered    ;
+}
+
+.textField {
+    border-radius: 50px;
+    width: 350px;
+    height: 50px;
+    font-size: large;
+    padding: 0 15px;
+    border-radius: 50px;
+}
+
+.button {
+    width: 380px;
+    height: 50px;
+    font-size: large;
+    color: white;
+    background-color: red;
+    border: none;
+    font-weight: 800;
+}
+
+.button:hover {
+    cursor: pointer;
+}

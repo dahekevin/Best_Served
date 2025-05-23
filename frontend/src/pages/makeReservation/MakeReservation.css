@@ -1,0 +1,184 @@
+/* Form Styles */
+.reservation-form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #edf2f7;
+    width: 100%;
+}
+
+.reservation-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 30px;
+    background-color: #f7fafc;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 2rem auto;
+    max-width: 1200px;
+    border: 1px solid #e2e8f0;
+    max-width: 800px;
+}
+
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.form-group {
+    flex: 1;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #4a5568;
+    font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 0.75rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #d69e2e;
+    box-shadow: 0 0 0 3px rgba(214, 158, 46, 0.2);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Date Picker Styles */
+.date-picker {
+    width: 100%;
+}
+
+.dates-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.date-option {
+    background-color: #f7fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+}
+
+.date-option:hover {
+    background-color: #edf2f7;
+}
+
+.date-option.selected {
+    background-color: #d69e2e;
+    color: white;
+    border-color: #d69e2e;
+}
+
+/* Time Picker Styles */
+.time-picker {
+    width: 100%;
+}
+
+.time-slots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.time-slot {
+    background-color: #f7fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+}
+
+.time-slot:hover {
+    background-color: #edf2f7;
+}
+
+.time-slot.selected {
+    background-color: #d69e2e;
+    color: white;
+    border-color: #d69e2e;
+}
+
+/* Submit Button */
+.submit-button {
+    background-color: #d69e2e;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: 1rem;
+}
+
+.submit-button:hover {
+    background-color: #b7791f;
+}
+
+.submit-button:disabled {
+    background-color: #ecc94b;
+    cursor: not-allowed;
+}
+
+/* Success Message */
+.success-message {
+    text-align: center;
+    padding: 2rem;
+}
+
+.success-message h2 {
+    color: #2d3748;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+}
+
+.success-message p {
+    color: #718096;
+    font-size: 1.1rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .reservation-container {
+        padding: 1.5rem;
+    }
+
+    .form-row {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .form-group {
+        min-width: 100%;
+    }
+}
