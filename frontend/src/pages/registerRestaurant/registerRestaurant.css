@@ -272,154 +272,191 @@
 
 /* Menu section styles */
 .menu-section {
-    margin-top: 40px;
+  margin-top: 40px;
 }
 
-.plates-list {
-    margin-bottom: 30px;
+.menu-description {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 25px;
+  line-height: 1.5;
 }
 
-.plate-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 15px;
-    margin-bottom: 15px;
-    background-color: #f9f9f9;
-    border-radius: 6px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+.menu-upload-section {
+  margin-bottom: 30px;
 }
 
-.plate-info {
-    flex: 1;
+.upload-area {
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  padding: 40px 20px;
+  text-align: center;
+  background-color: #fafafa;
+  transition: all 0.3s ease;
 }
 
-.plate-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 5px;
+.upload-area:hover {
+  border-color: #0070f3;
+  background-color: #f0f8ff;
 }
 
-.plate-name {
-    font-size: 18px;
-    font-weight: 500;
-    margin: 0;
+.upload-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  cursor: pointer;
 }
 
-.plate-price {
-    font-weight: 500;
-    color: #e53935;
+.upload-icon {
+  width: 48px;
+  height: 48px;
+  color: #666;
 }
 
-.plate-category {
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 8px;
+.upload-icon svg {
+  width: 100%;
+  height: 100%;
 }
 
-.plate-description {
-    font-size: 14px;
-    color: #555;
-    margin: 0;
+.upload-text {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
-.plate-actions {
-    display: flex;
-    gap: 10px;
-    align-items: center;
+.upload-title {
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
 }
 
-.edit-button,
-.delete-button,
-.add-button {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 4px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.2s;
+.upload-subtitle {
+  font-size: 14px;
+  color: #666;
 }
 
-.edit-button {
-    background-color: #f0f0f0;
-    color: #333;
+.uploaded-file {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
 }
 
-.edit-button:hover {
-    background-color: #e0e0e0;
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
-.delete-button {
-    background-color: #ffebee;
-    color: #e53935;
+.file-icon {
+  width: 40px;
+  height: 40px;
+  color: #e53935;
 }
 
-.delete-button:hover {
-    background-color: #ffcdd2;
+.file-icon svg {
+  width: 100%;
+  height: 100%;
 }
 
-.add-button {
-    background-color: #e8f5e9;
-    color: #2e7d32;
-    padding: 10px 16px;
+.file-details {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
-.add-button:hover {
-    background-color: #c8e6c9;
+.file-name {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
 }
 
-.add-plate-section {
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 6px;
-    margin-top: 20px;
+.file-size {
+  font-size: 14px;
+  color: #666;
 }
 
-.add-plate-section h3 {
-    margin-top: 0;
-    margin-bottom: 15px;
-    font-size: 18px;
-    font-weight: 500;
+.file-actions {
+  display: flex;
+  gap: 10px;
 }
 
-.plate-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+.replace-button,
+.remove-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
-.plate-form-row {
-    display: flex;
-    gap: 15px;
+.replace-button {
+  background-color: #e8f5e9;
+  color: #2e7d32;
 }
 
-.plate-form-group {
-    flex: 1;
+.replace-button:hover {
+  background-color: #c8e6c9;
 }
 
-.plate-form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-size: 14px;
-    color: #555;
+.remove-button {
+  background-color: #ffebee;
+  color: #e53935;
 }
 
-.plate-edit-form {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+.remove-button:hover {
+  background-color: #ffcdd2;
+}
+
+.menu-requirements {
+  background-color: #f0f8ff;
+  padding: 20px;
+  border-radius: 6px;
+  border-left: 4px solid #0070f3;
+}
+
+.menu-requirements h4 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 16px;
+  color: #333;
+}
+
+.menu-requirements ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.menu-requirements li {
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #555;
 }
 
 .form-actions {
-    margin-top: 30px;
+  margin-top: 30px;
 }
 
 .main-actions {
-    display: flex;
-    justify-content: center;
-    margin-top: 40px;
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.save-button {
+  padding: 12px 24px;
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
 .save-button {

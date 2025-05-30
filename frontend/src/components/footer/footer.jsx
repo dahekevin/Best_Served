@@ -16,6 +16,12 @@ export default function Footer() {
                             <a className='link' href="">Come join us!</a>
                         </div>
                     </div>
+                    <div className='footerRestaurant'>
+                        <div className='footerDescription'>
+                            <h1>Alredy one of us?</h1>
+                            <a className='link' href="">Access your account!</a>
+                        </div>
+                    </div>
                     <div className='footerFollowus'>
                         <h1>Follow Our Socials</h1>
                         <div className='socials'>

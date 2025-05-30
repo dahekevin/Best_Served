@@ -1,6 +1,11 @@
 import "./Restaurant.css"
+import { useState } from "react"
+
 
 export default function RestaurantLayout() {
+  const [rating, setRating] = useState(0)
+  const [hoverRating, setHoverRating] = useState(0)
+
   return (
     <div className="container">
       <header className="header">
@@ -8,7 +13,23 @@ export default function RestaurantLayout() {
           <img src="./back3.png" alt="Restaurant" className="header-image" />
         </div>
         <div className="header-right">
-          <span className="tag">Bar & Restaurant</span>
+          <div>
+            <span className="tag">Bar & Restaurant</span>
+            <div className="star-rating">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span
+                  key={star}
+                  className={`star ${star <= (hoverRating || rating) ? "active" : ""}`}
+                  onClick={() => setRating(star)}
+                  onMouseEnter={() => setHoverRating(star)}
+                  onMouseLeave={() => setHoverRating(0)}
+                >
+                  ★
+                </span>
+              ))}
+              {rating > 0 && <span className="rating-value">({rating}/5)</span>}
+            </div>
+          </div>
           <h1 className="main-title">São & Salvo</h1>
           <p className="subtitle">The best restaurant there is</p>
           <button className="button dark-button">Make Reservation</button>

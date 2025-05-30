@@ -14,33 +14,9 @@ const ProfileUpdate = () => {
     image: "/placeholder.svg?height=200&width=200",
   })
 
-  const [plates, setPlates] = useState([
-    {
-      id: 1,
-      name: "Feijoada Completa",
-      description: "Traditional black bean stew with pork",
-      price: "45.90",
-      category: "Main Course",
-    },
-    {
-      id: 2,
-      name: "Moqueca de Peixe",
-      description: "Fish stew with coconut milk and palm oil",
-      price: "52.00",
-      category: "Main Course",
-    },
-    {
-      id: 3,
-      name: "Pão de Queijo",
-      description: "Cheese bread made with cassava flour",
-      price: "12.50",
-      category: "Appetizer",
-    },
-  ])
-
-  const [newPlate, setNewPlate] = useState({ name: "", description: "", price: "", category: "Main Course" })
-  const [editingPlateId, setEditingPlateId] = useState(null)
   const [previewImage, setPreviewImage] = useState(profile.image)
+  const [menuPdf, setMenuPdf] = useState(null)
+  const [menuPdfName, setMenuPdfName] = useState("")
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -48,19 +24,6 @@ const ProfileUpdate = () => {
       ...profile,
       [name]: value,
     })
-  }
-
-  const handlePlateInputChange = (e) => {
-    const { name, value } = e.target
-    setNewPlate({
-      ...newPlate,
-      [name]: value,
-    })
-  }
-
-  const handleEditPlateInputChange = (e, plateId) => {
-    const { name, value } = e.target
-    setPlates(plates.map((plate) => (plate.id === plateId ? { ...plate, [name]: value } : plate)))
   }
 
   const handleImageChange = (e) => {
@@ -78,32 +41,30 @@ const ProfileUpdate = () => {
     }
   }
 
-  const handleAddPlate = (e) => {
-    e.preventDefault()
-    if (newPlate.name && newPlate.price) {
-      const newId = plates.length > 0 ? Math.max(...plates.map((plate) => plate.id)) + 1 : 1
-      setPlates([...plates, { ...newPlate, id: newId }])
-      setNewPlate({ name: "", description: "", price: "", category: "Main Course" })
+  const handleMenuPdfChange = (e) => {
+    const file = e.target.files[0]
+    if (file && file.type === "application/pdf") {
+      setMenuPdf(file)
+      setMenuPdfName(file.name)
+    } else {
+      alert("Por favor, selecione apenas arquivos PDF.")
     }
   }
 
-  const handleEditPlate = (plateId) => {
-    setEditingPlateId(plateId)
-  }
-
-  const handleSaveEdit = (plateId) => {
-    setEditingPlateId(null)
-  }
-
-  const handleDeletePlate = (plateId) => {
-    setPlates(plates.filter((plate) => plate.id !== plateId))
+  const handleRemoveMenuPdf = () => {
+    setMenuPdf(null)
+    setMenuPdfName("")
+    // Reset the file input
+    const fileInput = document.getElementById("menu-pdf-upload")
+    if (fileInput) {
+      fileInput.value = ""
+    }
   }
 
   const handleSubmit = (e) => {
     e.preventDefault()
     // Here you would typically send the updated profile and plates to your backend
     console.log("Updated profile:", profile)
-    console.log("Updated menu:", plates)
     alert("Restaurant profile and menu updated successfully!")
   }
 
@@ -217,148 +178,128 @@ const ProfileUpdate = () => {
         </div>
 
         <div className="menu-section">
-          <h2 className="section-title">Menu Items</h2>
+          <h2 className="section-title">Menu do Restaurante</h2>
+          <p className="menu-description">
+            Anexe o menu do seu restaurante em formato PDF. Este arquivo será disponibilizado para os clientes
+            visualizarem os pratos e preços oferecidos.
+          </p>
 
-          <div className="plates-list">
-            {plates.map((plate) => (
-              <div key={plate.id} className="plate-item">
-                {editingPlateId === plate.id ? (
-                  <>
-                    <div className="plate-edit-form">
-                      <div className="plate-form-row">
-                        <div className="plate-form-group">
-                          <label>Name</label>
-                          <input
-                            type="text"
-                            name="name"
-                            value={plate.name}
-                            onChange={(e) => handleEditPlateInputChange(e, plate.id)}
-                            className="form-input"
-                          />
-                        </div>
-                        <div className="plate-form-group">
-                          <label>Price (R$)</label>
-                          <input
-                            type="text"
-                            name="price"
-                            value={plate.price}
-                            onChange={(e) => handleEditPlateInputChange(e, plate.id)}
-                            className="form-input"
-                          />
-                        </div>
-                      </div>
-                      <div className="plate-form-group">
-                        <label>Category</label>
-                        <select
-                          name="category"
-                          value={plate.category}
-                          onChange={(e) => handleEditPlateInputChange(e, plate.id)}
-                          className="form-input"
-                        >
-                          <option value="Appetizer">Appetizer</option>
-                          <option value="Main Course">Main Course</option>
-                          <option value="Dessert">Dessert</option>
-                          <option value="Beverage">Beverage</option>
-                        </select>
-                      </div>
-                      <div className="plate-form-group">
-                        <label>Description</label>
-                        <textarea
-                          name="description"
-                          value={plate.description}
-                          onChange={(e) => handleEditPlateInputChange(e, plate.id)}
-                          className="form-textarea"
-                          rows="2"
-                        ></textarea>
-                      </div>
-                      <div className="plate-actions">
-                        <button type="button" className="save-button" onClick={() => handleSaveEdit(plate.id)}>
-                          Save
-                        </button>
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="plate-info">
-                      <div className="plate-header">
-                        <h3 className="plate-name">{plate.name}</h3>
-                        <span className="plate-price">R$ {plate.price}</span>
-                      </div>
-                      <div className="plate-category">{plate.category}</div>
-                      <p className="plate-description">{plate.description}</p>
-                    </div>
-                    <div className="plate-actions">
-                      <button type="button" className="edit-button" onClick={() => handleEditPlate(plate.id)}>
-                        Edit
-                      </button>
-                      <button type="button" className="delete-button" onClick={() => handleDeletePlate(plate.id)}>
-                        Delete
-                      </button>
-                    </div>
-                  </>
-                )}
+          <div className="menu-upload-section">
+            {!menuPdf ? (
+              <div className="upload-area">
+                <label htmlFor="menu-pdf-upload" className="upload-button">
+                  <div className="upload-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M7 10L12 15L17 10"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M12 15V3"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
+                  <div className="upload-text">
+                    <span className="upload-title">Clique para anexar o menu</span>
+                    <span className="upload-subtitle">Apenas arquivos PDF são aceitos</span>
+                  </div>
+                </label>
+                <input
+                  id="menu-pdf-upload"
+                  type="file"
+                  accept=".pdf"
+                  onChange={handleMenuPdfChange}
+                  style={{ display: "none" }}
+                />
               </div>
-            ))}
+            ) : (
+              <div className="uploaded-file">
+                <div className="file-info">
+                  <div className="file-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M14 2V8H20"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M16 13H8"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M16 17H8"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M10 9H9H8"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
+                  <div className="file-details">
+                    <span className="file-name">{menuPdfName}</span>
+                    <span className="file-size">{menuPdf ? `${(menuPdf.size / 1024 / 1024).toFixed(2)} MB` : ""}</span>
+                  </div>
+                </div>
+                <div className="file-actions">
+                  <label htmlFor="menu-pdf-upload" className="replace-button">
+                    Substituir
+                  </label>
+                  <button type="button" className="remove-button" onClick={handleRemoveMenuPdf}>
+                    Remover
+                  </button>
+                </div>
+                <input
+                  id="menu-pdf-upload"
+                  type="file"
+                  accept=".pdf"
+                  onChange={handleMenuPdfChange}
+                  style={{ display: "none" }}
+                />
+              </div>
+            )}
           </div>
 
-          <div className="add-plate-section">
-            <h3>Add New Menu Item</h3>
-            <div className="plate-form">
-              <div className="plate-form-row">
-                <div className="plate-form-group">
-                  <label htmlFor="plateName">Name</label>
-                  <input
-                    type="text"
-                    id="plateName"
-                    name="name"
-                    value={newPlate.name}
-                    onChange={handlePlateInputChange}
-                    className="form-input"
-                  />
-                </div>
-                <div className="plate-form-group">
-                  <label htmlFor="platePrice">Price (R$)</label>
-                  <input
-                    type="text"
-                    id="platePrice"
-                    name="price"
-                    value={newPlate.price}
-                    onChange={handlePlateInputChange}
-                    className="form-input"
-                  />
-                </div>
-              </div>
-              <div className="plate-form-group">
-                <label htmlFor="plateCategory">Category</label>
-                <select
-                  id="plateCategory"
-                  name="category"
-                  value={newPlate.category}
-                  onChange={handlePlateInputChange}
-                  className="form-input"
-                >
-                  <option value="Appetizer">Appetizer</option>
-                  <option value="Main Course">Main Course</option>
-                  <option value="Dessert">Dessert</option>
-                  <option value="Beverage">Beverage</option>
-                </select>
-              </div>
-              <div className="plate-form-group">
-                <label htmlFor="plateDescription">Description</label>
-                <textarea
-                  id="plateDescription"
-                  name="description"
-                  value={newPlate.description}
-                  onChange={handlePlateInputChange}
-                  className="form-textarea"
-                  rows="2"
-                ></textarea>
-              </div>
-              <button type="button" className="add-button" onClick={handleAddPlate}>
-                Add Item
-              </button>
-            </div>
+          <div className="menu-requirements">
+            <h4>Requisitos do arquivo:</h4>
+            <ul>
+              <li>Formato: PDF apenas</li>
+              <li>Tamanho máximo: 10 MB</li>
+              <li>Recomendação: Use imagens de alta qualidade para melhor visualização</li>
+              <li>Certifique-se de que o texto esteja legível</li>
+            </ul>
           </div>
         </div>
 

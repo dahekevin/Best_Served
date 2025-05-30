@@ -122,6 +122,12 @@
   color: #555;
 }
 
+.confirmBtn {
+  background-color: lightgreen;
+  padding: 5px;
+  border-radius: 50px;
+}
+
 /* Responsive styles */
 @media (max-width: 768px) {
   .detail-row {
