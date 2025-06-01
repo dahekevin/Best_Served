@@ -12,10 +12,10 @@ export default function Profile() {
         <div className="hero-section">
             <div className="profile-container">
                 <div className="profile-header">
-                    <h1>Your Profile</h1>
+                    <h1>Seu Perfil</h1>
                     <div className="header-buttons">
-                        <button className="edit-button">Edit Profile</button>
-                        <button className="delete-button">Delete</button>
+                        <button className="edit-button">Editar Perfil</button>
+                        <button className="delete-button">Excluir</button>
                     </div>
                 </div>
 
@@ -30,47 +30,23 @@ export default function Profile() {
                     </div>
                 </div>
 
-                <div className="plates-container">
-                    <section className="popular-plates">
-                        <h2 className="section-title">Your Plates</h2>
-                        <p className="section-subtitle">São & Salvo Cuizine</p>
-
-                        <div className="plates-container">
-                            {[1, 2, 3].map((item) => (
-                                <div key={item} className="plate-card">
-                                    <div className="plate-image-container">
-                                        <img src="./food2.png" alt="Plate" className="plate-image" />
-                                    </div>
-                                    <div className="plate-content">
-                                        <h3 className="plate-title">Title</h3>
-                                        <p className="plate-description">
-                                            Body text for whatever you'd like to say. Add main takeaway points, quotes, anecdotes, or even a very
-                                            very short story. Lorem ipsum dolor sit, amet consectetur adipisicing elit. Libero doloremque quisquam delectus ab odio dolorum, voluptate suscipit ut similique tenetur eum sequi molestiae? Hic, distinctio magni repudiandae ratione repellat odit.
-                                        </p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </section>
-                </div>
-
                 <div className="section">
-                    <h3 className="section-title">Your Reservations</h3>
+                    <h3 className="section-title">Suas Reservas</h3>
 
                     <div className="reservations">
                         <div className="reservation-card">
                             <div className="date-box">
                                 <div className="day">25</div>
-                                <div className="month">MAY</div>
+                                <div className="month">MAI</div>
                             </div>
                             <div className="reservation-details">
                                 <h4>La Bella Italia</h4>
-                                <p>7:30 PM • Table for 2</p>
-                                <p className="confirmation">Restaurant: São & Salvo</p>
+                                <p>19:30 • Mesa para 2</p>
+                                <p className="confirmation">Restaurante: São & Salvo</p>
                             </div>
                             <div className="reservation-actions">
-                                <button className="modify-button">Modify</button>
-                                <button className="cancel-button">Cancel</button>
+                                <button className="modify-button">Modificar</button>
+                                <button className="cancel-button">Cancelar</button>
                             </div>
                         </div>
 
@@ -81,12 +57,12 @@ export default function Profile() {
                             </div>
                             <div className="reservation-details">
                                 <h4>Sakura Sushi</h4>
-                                <p>6:00 PM • Table for 4</p>
-                                <p className="confirmation">Restaurant: São & Salvo</p>
+                                <p>18:00 • Mesa para 4</p>
+                                <p className="confirmation">Restaurante: São & Salvo</p>
                             </div>
                             <div className="reservation-actions">
-                                <button className="modify-button">Modify</button>
-                                <button className="cancel-button">Cancel</button>
+                                <button className="modify-button">Modificar</button>
+                                <button className="cancel-button">Cancelar</button>
                             </div>
                         </div>
                     </div>

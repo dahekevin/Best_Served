@@ -12,18 +12,18 @@ export default function Footer() {
                     <img className='logoFooter' src="./logo2.png" alt="" />
                     <div className='footerRestaurant'>
                         <div className='footerDescription'>
-                            <h1>Do you have a restaurant?</h1>
-                            <a className='link' href="">Come join us!</a>
+                            <h1>Você tem um restaurante?</h1>
+                            <a className='link' href="">Venha fazer parte!</a>
                         </div>
                     </div>
                     <div className='footerRestaurant'>
                         <div className='footerDescription'>
-                            <h1>Alredy one of us?</h1>
-                            <a className='link' href="">Access your account!</a>
+                            <h1>Já é um dos nossos?</h1>
+                            <a className='link' href="">Acesse sua conta!</a>
                         </div>
                     </div>
                     <div className='footerFollowus'>
-                        <h1>Follow Our Socials</h1>
+                        <h1>Siga nossas redes sociais</h1>
                         <div className='socials'>
                             <SlSocialInstagram className='socialIcons' />
                             <SlSocialFacebook className='socialIcons' />
@@ -33,8 +33,8 @@ export default function Footer() {
                 </div>
                 <hr className='division' />
                 <div className='footerCopyRight'>
-                    <p>© Copyright Best Served. All Rights Reserved
-                        Designed by DevSquad</p>
+                    <p>© Copyright Best Served. Todos os direitos reservados.
+                        Desenvolvido por DevSquad</p>
                 </div>
             </footer>
         </>

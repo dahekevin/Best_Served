@@ -15,46 +15,46 @@ function PricingSection() {
 
       <div className="billing-toggle">
         <button className={billingCycle === "monthly" ? "active" : ""} onClick={() => handleBillingToggle("monthly")}>
-          Monthly
+          Mensal
         </button>
         <button className={billingCycle === "yearly" ? "active" : ""} onClick={() => handleBillingToggle("yearly")}>
-          Yearly
+          Anual
         </button>
       </div>
 
       <div className="pricing-cards">
         <div className="pricing-card basic">
-          <h2>Basic</h2>
+          <h2>Básico</h2>
           <div className="price">
-            <span className="dollar">$</span>
+            <span className="dollar">R$</span>
             <span className="amount">50</span>
-            <span className="period">/mo</span>
+            <span className="period">/mês</span>
           </div>
           <ul className="features">
-            <li>List item</li>
-            <li>List item</li>
-            <li>List item</li>
-            <li>List item</li>
-            <li>List item</li>
+            <li>Item da lista</li>
+            <li>Item da lista</li>
+            <li>Item da lista</li>
+            <li>Item da lista</li>
+            <li>Item da lista</li>
           </ul>
-          <button className="cta-button">Button</button>
+          <button className="cta-button">Selecionar</button>
         </div>
 
         <div className="pricing-card advanced">
-          <h2>Advanced</h2>
+          <h2>Avançado</h2>
           <div className="price">
-            <span className="dollar">$</span>
+            <span className="dollar">R$</span>
             <span className="amount">50</span>
-            <span className="period">/mo</span>
+            <span className="period">/mês</span>
           </div>
           <ul className="features">
-            <li>List item</li>
-            <li>List item</li>
-            <li>List item</li>
-            <li>List item</li>
-            <li>List item</li>
+            <li>Item da lista</li>
+            <li>Item da lista</li>
+            <li>Item da lista</li>
+            <li>Item da lista</li>
+            <li>Item da lista</li>
           </ul>
-          <button className="cta-button">Button</button>
+          <button className="cta-button">Selecionar</button>
         </div>
       </div>
 
@@ -62,10 +62,9 @@ function PricingSection() {
         <div className="info-card">
           <div className="info-icon">ⓘ</div>
           <div className="info-content">
-            <h3>Title</h3>
+            <h3>Título</h3>
             <p>
-              Body text for whatever you'd like to say. Add main takeaway points, quotes, anecdotes, or even a very very
-              short story.
+              Texto para o que você quiser dizer. Adicione pontos principais, citações, curiosidades ou até mesmo uma história bem curta.
             </p>
           </div>
         </div>
@@ -73,10 +72,9 @@ function PricingSection() {
         <div className="info-card">
           <div className="info-icon">ⓘ</div>
           <div className="info-content">
-            <h3>Title</h3>
+            <h3>Título</h3>
             <p>
-              Body text for whatever you'd like to say. Add main takeaway points, quotes, anecdotes, or even a very very
-              short story.
+              Texto para o que você quiser dizer. Adicione pontos principais, citações, curiosidades ou até mesmo uma história bem curta.
             </p>
           </div>
         </div>

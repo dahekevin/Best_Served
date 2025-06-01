@@ -19,11 +19,11 @@ export default function Navbar() {
                         <img className='logo' src="./logo.png" alt="logo" />
                     </Link>
                     <div className='navbarLinksContainer'>
-                        {/* <Link to={'/'} className='navbarLink'>About us</Link> */}
-                        <Link to={'/profile'} className='navbarLink'>Profile</Link>
-                        <Link to={'/restaurants'} className='navbarLink'>Restaurants</Link>
-                        <Link to={'/'} className='navbarLink'>Login</Link>
-                        <Link to={'/'} className='navbarRegisterLink'>Register</Link>
+                        {/* <Link to={'/'} className='navbarLink'>Sobre nós</Link> */}
+                        <Link to={'/profile'} className='navbarLink'>Perfil</Link>
+                        <Link to={'/restaurants'} className='navbarLink'>Restaurantes</Link>
+                        <Link to={'/'} className='navbarLink'>Entrar</Link>
+                        <Link to={'/'} className='navbarRegisterLink'>Cadastrar</Link>
                     </div>
                 </div>
 
@@ -40,11 +40,11 @@ export default function Navbar() {
                     onClose={handleOpenMenu}
                 >
                     <div className='drawer'>
-                        <a className='navbarLink' href="">About</a>
-                        <a className='navbarLink' href="">Profile</a>
-                        <a className='navbarLink' href="">Restaurants</a>
-                        <a className='navbarLink' href="">Sign Up</a>
-                        <a className='navbarSignInLink' href="">Sign In</a>
+                        <a className='navbarLink' href="">Sobre</a>
+                        <a className='navbarLink' href="">Perfil</a>
+                        <a className='navbarLink' href="">Restaurantes</a>
+                        <a className='navbarLink' href="">Cadastrar</a>
+                        <a className='navbarSignInLink' href="">Entrar</a>
                     </div>
                 </Drawer>
             </nav>

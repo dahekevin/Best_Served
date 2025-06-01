@@ -117,7 +117,7 @@ export default function ReservationList() {
                   <span className="icon">&#9993;</span>
                   <span>{reservation.email}</span>
                   <div>
-                    <button className="confirmBtn">Confirm Reservation</button>
+                    <button className="confirmBtn">Confirmar Reserva</button>
                   </div>
                 </div>
               </div>

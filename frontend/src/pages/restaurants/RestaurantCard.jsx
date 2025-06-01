@@ -9,7 +9,7 @@ export default function RestaurantCard({ title, description, image }) {
       <div className="restaurant-content">
         <h2>{title}</h2>
         <p>{description}</p>
-        <button className="restaurant-button">Make Reservation</button>
+        <button className="restaurant-button">Fazer Reserva</button>
       </div>
     </div>
   )

@@ -24,11 +24,11 @@ const pages = createBrowserRouter([
 		path: '/',
 		element: <App />,
 		children: [
-			{ path: '/restaurant', element: <Restaurant /> },
 			{ path: '/', element: <Home /> },
 			{ path: '/profile', element: <Profile /> },
 			{ path: '/auth', element: <Auth /> },
 			{ path: '/reservation', element: <ReservationList /> },
+			{ path: '/restaurant', element: <Restaurant /> },
 			{ path: '/dashboard', element: <RestaurantDashboard /> },
 			{ path: '/tables', element: <Tables /> },
 			{ path: '/plans', element: <Plans /> },

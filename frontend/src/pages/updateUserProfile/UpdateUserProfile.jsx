@@ -38,20 +38,20 @@ const ProfileUpdate = () => {
     e.preventDefault()
     // Here you would typically send the updated profile to your backend
     console.log("Updated profile:", profile)
-    alert("Profile updated successfully!")
+    alert("Perfil atualizado com sucesso!")
   }
 
   return (
     <div className="profile-container">
       <form onSubmit={handleSubmit}>
-        <h1 className="profile-title">Update Profile</h1>
+        <h1 className="profile-title">Atualizar Perfil</h1>
         <div className="profile-layout">
           <div className="profile-image-section">
             <div className="profile-image-container">
               <img src={previewImage || "/placeholder.svg"} alt="Profile" className="profile-image" />
             </div>
             <label htmlFor="image-upload" className="change-image-button">
-              Change image
+              Alterar imagem
             </label>
             <input
               id="image-upload"
@@ -64,7 +64,7 @@ const ProfileUpdate = () => {
 
           <div className="profile-details">
             <div className="form-group">
-              <label htmlFor="firstName">First and last name</label>
+              <label htmlFor="firstName">Nome completo</label>
               <input
                 type="text"
                 id="firstName"
@@ -76,19 +76,7 @@ const ProfileUpdate = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="email">Email</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={profile.email}
-                onChange={handleInputChange}
-                className="form-input"
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="phone">Phone</label>
+              <label htmlFor="phone">Telefone</label>
               <input
                 type="tel"
                 id="phone"
@@ -101,7 +89,7 @@ const ProfileUpdate = () => {
 
             <div className="form-actions">
               <button type="submit" className="save-button">
-                Save Changes
+                Salvar Alterações
               </button>
             </div>
           </div>

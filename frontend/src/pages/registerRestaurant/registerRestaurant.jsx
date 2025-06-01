@@ -10,7 +10,7 @@ const ProfileUpdate = () => {
     cnpj: "12.345.678/0001-90",
     address: "Av. Paulista, 1234, São Paulo, SP",
     description:
-      "Authentic Brazilian cuisine with a modern twist. We offer a variety of traditional dishes made with fresh, local ingredients.",
+      "Culinária brasileira autêntica com um toque moderno. Oferecemos uma variedade de pratos tradicionais feitos com ingredientes frescos e locais.",
     googleMapsLink: "https://maps.google.com/?q=Av.+Paulista,+1234,+São+Paulo",
     image: "/placeholder.svg?height=200&width=200",
   })
@@ -93,20 +93,21 @@ const ProfileUpdate = () => {
     if (paymentMethod === "credit") {
       console.log("Credit card info:", creditCardInfo)
     }
-    alert("Restaurant registered successfully!")
+    alert("Restaurante cadastrado com sucesso!")
   }
 
+  // Tradução dos campos de pagamento:
   const renderPaymentMethodFields = () => {
     switch (paymentMethod) {
       case "pix":
         return (
           <div className="payment-info">
             <p className="payment-instruction">
-              After registration, we'll generate a Pix QR code for you to complete the payment.
+              Após o cadastro, geraremos um QR Code Pix para você concluir o pagamento.
             </p>
             <div className="pix-placeholder">
               <div className="pix-qr-placeholder">
-                <span>QR Code will be generated after registration</span>
+                <span>O QR Code será gerado após o cadastro</span>
               </div>
             </div>
           </div>
@@ -115,10 +116,10 @@ const ProfileUpdate = () => {
         return (
           <div className="payment-info">
             <p className="payment-instruction">
-              After registration, we'll generate a Boleto for you to complete the payment.
+              Após o cadastro, geraremos um Boleto para você concluir o pagamento.
             </p>
             <div className="boleto-placeholder">
-              <span>Boleto will be generated and sent to your email</span>
+              <span>O boleto será gerado e enviado para seu e-mail</span>
             </div>
           </div>
         )
@@ -127,7 +128,7 @@ const ProfileUpdate = () => {
           <div className="payment-info">
             <div className="credit-card-form">
               <div className="form-group">
-                <label htmlFor="cardNumber">Card Number</label>
+                <label htmlFor="cardNumber">Número do Cartão</label>
                 <input
                   type="text"
                   id="cardNumber"
@@ -139,7 +140,7 @@ const ProfileUpdate = () => {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="cardName">Name on Card</label>
+                <label htmlFor="cardName">Nome no Cartão</label>
                 <input
                   type="text"
                   id="cardName"
@@ -147,12 +148,12 @@ const ProfileUpdate = () => {
                   value={creditCardInfo.cardName}
                   onChange={handleCreditCardChange}
                   className="form-input"
-                  placeholder="John Doe"
+                  placeholder="João da Silva"
                 />
               </div>
               <div className="card-row">
                 <div className="form-group">
-                  <label htmlFor="expiryDate">Expiry Date</label>
+                  <label htmlFor="expiryDate">Validade</label>
                   <input
                     type="text"
                     id="expiryDate"
@@ -160,7 +161,7 @@ const ProfileUpdate = () => {
                     value={creditCardInfo.expiryDate}
                     onChange={handleCreditCardChange}
                     className="form-input"
-                    placeholder="MM/YY"
+                    placeholder="MM/AA"
                   />
                 </div>
                 <div className="form-group">
@@ -187,15 +188,15 @@ const ProfileUpdate = () => {
   return (
     <div className="profile-container">
       <form onSubmit={handleSubmit}>
-        <h1 className="profile-title">Register Account</h1>
+        <h1 className="profile-title">Cadastrar Restaurante</h1>
 
         <div className="profile-layout">
           <div className="profile-image-section">
             <div className="profile-image-container">
-              <img src={previewImage || "/placeholder.svg"} alt="Restaurant Logo" className="profile-image" />
+              <img src={previewImage || "/placeholder.svg"} alt="Logo do Restaurante" className="profile-image" />
             </div>
             <label htmlFor="image-upload" className="change-image-button">
-              Change image
+              Alterar imagem
             </label>
             <input
               id="image-upload"
@@ -206,7 +207,7 @@ const ProfileUpdate = () => {
             />
 
             <div className="payment-methods-section">
-              <h3 className="payment-title">Payment Method</h3>
+              <h3 className="payment-title">Forma de Pagamento</h3>
               <div className="payment-options">
                 <div
                   className={`payment-option ${paymentMethod === "credit" ? "selected" : ""}`}
@@ -328,7 +329,7 @@ const ProfileUpdate = () => {
 
           <div className="profile-details">
             <div className="form-group">
-              <label htmlFor="restaurantName">Restaurant Name</label>
+              <label htmlFor="restaurantName">Nome do Restaurante</label>
               <input
                 type="text"
                 id="restaurantName"
@@ -340,7 +341,7 @@ const ProfileUpdate = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="description">Description</label>
+              <label htmlFor="description">Descrição</label>
               <textarea
                 id="description"
                 name="description"
@@ -352,7 +353,7 @@ const ProfileUpdate = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="email">Email</label>
+              <label htmlFor="email">E-mail</label>
               <input
                 type="email"
                 id="email"
@@ -376,7 +377,7 @@ const ProfileUpdate = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="address">Full Address</label>
+              <label htmlFor="address">Endereço Completo</label>
               <input
                 type="text"
                 id="address"
@@ -388,7 +389,7 @@ const ProfileUpdate = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="googleMapsLink">Google Maps Link</label>
+              <label htmlFor="googleMapsLink">Link do Google Maps</label>
               <input
                 type="url"
                 id="googleMapsLink"
@@ -400,7 +401,7 @@ const ProfileUpdate = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="phone">Phone</label>
+              <label htmlFor="phone">Telefone</label>
               <input
                 type="tel"
                 id="phone"
@@ -541,7 +542,7 @@ const ProfileUpdate = () => {
 
         <div className="form-actions main-actions">
           <button type="submit" className="save-button">
-            Register Restaurant
+            Cadastrar Restaurante
           </button>
         </div>
       </form>

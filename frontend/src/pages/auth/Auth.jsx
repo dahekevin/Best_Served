@@ -41,13 +41,13 @@ export default function Auth() {
     if (formType === 'login') {
         return (
             <div className="authPageContainer">
-                <h1>Access your account</h1>
-                <button onClick={handleChangeFormType}>Don't you have an account? Sign up</button>
+                <h1>Acesse sua conta</h1>
+                <button className='redirectBtn' onClick={handleChangeFormType}>Não tem uma conta? Cadastre-se</button>
                 <form onSubmit={handleSubmitForm}>
                     <TextField className='textField' required name="Email" label="E-mail" type="email" onChange={handleFormDataChange} />
                     {/* <TextField className='textField' required name="CNPJ" label="CNPJ" type="text" onChange={handleFormDataChange} /> */}
-                    <TextField className='textField' required name="Password" label="Password" type="password" onChange={handleFormDataChange} />
-                    <Button className='button' type="submit">Login</Button>
+                    <TextField className='textField' required name="Password" label="Senha" type="password" onChange={handleFormDataChange} />
+                    <Button className='button' type="submit">Entrar</Button>
                 </form>
             </div>
         )
@@ -56,14 +56,14 @@ export default function Auth() {
     if (formType === 'signup') {
         return (
             <div className="authPageContainer">
-                <h1>Create your account</h1>
-                <button onClick={handleChangeFormType}>Already have an account? Login</button>
+                <h1>Crie sua conta</h1>
+                <button className='redirectBtn' onClick={handleChangeFormType}>Já tem uma conta? Entrar</button>
                 <form onSubmit={handleSubmitForm}>
-                    <TextField onChange={handleFormDataChange} className='textField' required name="Name" label="Name" type="text" />
+                    <TextField onChange={handleFormDataChange} className='textField' required name="Name" label="Nome" type="text" />
                     <TextField onChange={handleFormDataChange} className='textField' required name="Phone" label="Telefone" type="tel" />
                     <TextField onChange={handleFormDataChange} className='textField' required name="Email" label="E-mail" type="email" />
-                    <TextField onChange={handleFormDataChange} className='textField' required name="Password" label="Password" type="password" />
-                    <Button classN ame='button' type="submit">Register</Button>
+                    <TextField onChange={handleFormDataChange} className='textField' required name="Password" label="Senha" type="password" />
+                    <Button className='button' type="submit">Cadastrar</Button>
                 </form>
             </div>
         )

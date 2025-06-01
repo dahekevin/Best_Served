@@ -42,16 +42,16 @@ export default function Tables() {
             <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
         </button>
-        <h1 className="title">Tables</h1>
+        <h1 className="title">Mesas</h1>
         <div className="filter-buttons">
           <button className={`filter-button ${filter === "All" ? "active" : ""}`} onClick={() => setFilter("All")}>
-            All
+            Todas
           </button>
           <button
             className={`filter-button ${filter === "Booked" ? "active" : ""}`}
             onClick={() => setFilter("Booked")}
           >
-            Booked
+            Reservadas
           </button>
         </div>
       </header>
@@ -60,14 +60,16 @@ export default function Tables() {
         {filteredTables.map((table) => (
           <div key={table.id} className="table-card">
             <div className="table-header">
-              <h2 className="table-name">{table.name}</h2>
-              <span className={`table-status ${table.status.toLowerCase()}`}>{table.status}</span>
+              <h2 className="table-name">{table.name.replace("Table", "Mesa")}</h2>
+              <span className={`table-status ${table.status.toLowerCase()}`}>
+                {table.status === "Booked" ? "Reservada" : "Disponível"}
+              </span>
             </div>
             <div className="table-content">
               <div className={`initials-circle ${table.color}`}>{table.initials}</div>
             </div>
             <div className="table-footer">
-              <span className="seats-info">Seats: {table.seats}</span>
+              <span className="seats-info">Lugares: {table.seats}</span>
             </div>
           </div>
         ))}

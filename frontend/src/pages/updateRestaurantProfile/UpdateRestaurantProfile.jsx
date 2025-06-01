@@ -9,7 +9,7 @@ const ProfileUpdate = () => {
     cnpj: "12.345.678/0001-90",
     address: "Av. Paulista, 1234, São Paulo, SP",
     description:
-      "Authentic Brazilian cuisine with a modern twist. We offer a variety of traditional dishes made with fresh, local ingredients.",
+      "Culinária brasileira autêntica com um toque moderno. Oferecemos uma variedade de pratos tradicionais feitos com ingredientes frescos e locais.",
     googleMapsLink: "https://maps.google.com/?q=Av.+Paulista,+1234,+São+Paulo",
     image: "/placeholder.svg?height=200&width=200",
   })
@@ -65,21 +65,21 @@ const ProfileUpdate = () => {
     e.preventDefault()
     // Here you would typically send the updated profile and plates to your backend
     console.log("Updated profile:", profile)
-    alert("Restaurant profile and menu updated successfully!")
+    alert("Perfil do restaurante e menu atualizados com sucesso!")
   }
 
   return (
     <div className="profile-container">
       <form onSubmit={handleSubmit}>
-        <h1 className="profile-title">Update Profile</h1>
+        <h1 className="profile-title">Atualizar Perfil</h1>
 
         <div className="profile-layout">
           <div className="profile-image-section">
             <div className="profile-image-container">
-              <img src={previewImage || "/placeholder.svg"} alt="Restaurant Logo" className="profile-image" />
+              <img src={previewImage || "/placeholder.svg"} alt="Logo do Restaurante" className="profile-image" />
             </div>
             <label htmlFor="image-upload" className="change-image-button">
-              Change image
+              Alterar imagem
             </label>
             <input
               id="image-upload"
@@ -92,7 +92,7 @@ const ProfileUpdate = () => {
 
           <div className="profile-details">
             <div className="form-group">
-              <label htmlFor="restaurantName">Restaurant Name</label>
+              <label htmlFor="restaurantName">Nome do Restaurante</label>
               <input
                 type="text"
                 id="restaurantName"
@@ -104,7 +104,7 @@ const ProfileUpdate = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="description">Description</label>
+              <label htmlFor="description">Descrição</label>
               <textarea
                 id="description"
                 name="description"
@@ -116,7 +116,7 @@ const ProfileUpdate = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="email">Email</label>
+              <label htmlFor="email">E-mail</label>
               <input
                 type="email"
                 id="email"
@@ -140,7 +140,7 @@ const ProfileUpdate = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="address">Full Address</label>
+              <label htmlFor="address">Endereço Completo</label>
               <input
                 type="text"
                 id="address"
@@ -152,7 +152,7 @@ const ProfileUpdate = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="googleMapsLink">Google Maps Link</label>
+              <label htmlFor="googleMapsLink">Link do Google Maps</label>
               <input
                 type="url"
                 id="googleMapsLink"
@@ -164,7 +164,7 @@ const ProfileUpdate = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="phone">Phone</label>
+              <label htmlFor="phone">Telefone</label>
               <input
                 type="tel"
                 id="phone"
@@ -305,7 +305,7 @@ const ProfileUpdate = () => {
 
         <div className="form-actions main-actions">
           <button type="submit" className="save-button">
-            Save All Changes
+            Salvar Todas as Alterações
           </button>
         </div>
       </form>

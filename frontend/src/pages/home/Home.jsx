@@ -7,22 +7,22 @@ export default function Home() {
             <div className='hero'>
                 <div className='img'>
                     <h1>
-                        Find the best place for you
+                        Encontre o melhor lugar para você
                     </h1>
-                    <p className='subtitle'>Here on the Best Served</p>
+                    <p className='subtitle'>Aqui no Best Served</p>
                 </div>
             </div>
             <div className='description'>
                 <div className='line1'>
-                    <p className='p1'>With a variety of restaurants, we serve all meals including breakfast.</p>
+                    <p className='p1'>Com uma variedade de restaurantes, servimos todas as refeições, incluindo café da manhã.</p>
                     <img className='img1' src="./back1.png" alt="" />
                 </div>
                 <div className='line1'>
                     <img className='img1' src="./background.jpg" alt="" />
-                    <p className='p1'>Customer service comes first. <br /><br /> Top-notch chefs from Sobral's most influential restaurants.</p>
+                    <p className='p1'>O atendimento ao cliente vem em primeiro lugar. <br /><br /> Chefs renomados dos restaurantes mais influentes de Sobral.</p>
                 </div>
                 <div>
-                    <p className='p1'>Discover our restaurants now and enjoy the best we have to offer.</p>
+                    <p className='p1'>Descubra nossos restaurantes agora e aproveite o melhor que temos a oferecer.</p>
                     <div className='img2'></div>
                 </div>
             </div>
