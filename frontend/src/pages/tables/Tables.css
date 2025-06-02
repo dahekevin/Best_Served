@@ -1,152 +1,246 @@
-:root {
-    --color-background: #121212;
-    --color-card: #1e1e1e;
-    --color-text: #ffffff;
-    --color-text-secondary: #a0a0a0;
-    --color-booked: #22c55e;
-    --color-available: #ca8a04;
-    --color-green-circle: #22c55e;
-    --color-yellow-circle: #f59e0b;
-    --border-radius: 8px;
+.restaurant-tables {
+  background-color: #1a1a1a;
 }
 
-.container {
-    margin: 0 auto;
-    padding: 30px;
-    background-color: var(--color-background);
+.restaurant-container {
+  color: white;
+  padding: 20px;
+  border-radius: 30px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 24px;
-    position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30px;
 }
 
 .back-button {
-    background: none;
-    border: none;
-    color: var(--color-text);
-    cursor: pointer;
-    padding: 8px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #2563eb;
-    margin-right: 16px;
+  background: #4a90e2;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.back-button:hover {
+  background: #357abd;
 }
 
 .title {
-    font-size: 24px;
-    font-weight: 600;
+  color: #ff6b35;
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+  flex: 1;
+  margin-left: 20px;
 }
 
 .filter-buttons {
-    position: absolute;
-    right: 0;
-    display: flex;
-    background-color: #333;
-    border-radius: 8px;
-    overflow: hidden;
+  display: flex;
+  gap: 10px;
 }
 
-.filter-button {
-    background: none;
-    border: none;
-    color: var(--color-text);
-    padding: 8px 16px;
-    cursor: pointer;
-    font-size: 14px;
+.filter-btn {
+  background: #333;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
 }
 
-.filter-button.active {
-    background-color: #4b5563;
+.filter-btn:hover {
+  background: #444;
+}
+
+.filter-btn.active {
+  background: #4a90e2;
 }
 
 .tables-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
 }
 
 .table-card {
-    background-color: var(--color-card);
-    border-radius: var(--border-radius);
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    height: 180px;
+  background: #2a2a2a;
+  border-radius: 12px;
+  padding: 20px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid #333;
+}
+
+.table-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .table-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
 }
 
 .table-name {
-    font-size: 18px;
-    font-weight: 600;
-    color: white;
+  font-weight: bold;
+  font-size: 16px;
 }
 
-.table-status {
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 500;
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
 }
 
-.table-status.booked {
-    background-color: var(--color-booked);
-    color: #000;
+.status-badge.reservada {
+  background: #28a745;
+  color: white;
 }
 
-.table-status.available {
-    background-color: var(--color-available);
-    color: #000;
+.status-badge.disponivel {
+  background: #ffc107;
+  color: #333;
 }
 
-.table-content {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 18px;
+  margin: 15px auto;
 }
 
-.initials-circle {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: 600;
-    font-size: 18px;
+.avatar.reservada {
+  background: #28a745;
+  color: white;
 }
 
-.initials-circle.green {
-    background-color: var(--color-green-circle);
-    color: #000;
-}
-
-.initials-circle.yellow {
-    background-color: var(--color-yellow-circle);
-    color: #000;
-}
-
-.initials-circle.white {
-    background-color: #fff;
-    color: #000;
-}
-
-.table-footer {
-    margin-top: 16px;
+.avatar.disponivel {
+  background: #ffc107;
+  color: #333;
 }
 
 .seats-info {
-    font-size: 14px;
-    color: var(--color-text-secondary);
+  text-align: center;
+  color: #ccc;
+  font-size: 14px;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #2a2a2a;
+  border-radius: 12px;
+  padding: 30px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  border: 1px solid #333;
+}
+
+.modal h2 {
+  margin: 0 0 15px 0;
+  color: white;
+  font-size: 20px;
+}
+
+.modal p {
+  margin: 10px 0;
+  color: #ccc;
+  line-height: 1.5;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 15px;
+  margin-top: 25px;
+  justify-content: center;
+}
+
+.btn-cancel,
+.btn-confirm {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.btn-cancel {
+  background: #6c757d;
+  color: white;
+}
+
+.btn-cancel:hover {
+  background: #5a6268;
+}
+
+.btn-confirm {
+  background: #28a745;
+  color: white;
+}
+
+.btn-confirm:hover {
+  background: #218838;
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+
+  .filter-buttons {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .tables-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+  }
+
+  .table-card {
+    padding: 15px;
+  }
+
+  .modal {
+    margin: 20px;
+    padding: 20px;
+  }
+
+  .modal-buttons {
+    flex-direction: column;
+  }
 }

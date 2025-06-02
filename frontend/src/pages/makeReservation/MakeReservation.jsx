@@ -154,7 +154,7 @@ export default function ReservationForm() {
                     </div>
 
                     <button type="submit" className="submit-button" disabled={isSubmitting}>
-                        {isSubmitting ? "Processando..." : "Confirmar Reserva"}
+                        {isSubmitting ? "Processando..." : "Ver Mesas Disponíveis"}
                     </button>
                 </form>
             )}

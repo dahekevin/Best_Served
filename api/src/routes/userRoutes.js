@@ -5,18 +5,18 @@ import { verifyToken } from '../middelwares/auth.js'
 const router = express.Router()
 
 // Rota de criação de usuário
-router.post('/user/register', registerUser)
+router.post('/sd-user/register', registerUser)
 
 // Rota que devolve todos os usuários
-router.get('/user/get', getUsers)
+router.get('/sd-user/get', getUsers)
 
 // Rota que edita um usuário
-router.put('/user/edit/:id', updateUser)
+router.put('/sd-user/edit/:id', updateUser)
 
 // Rota que deleta usuários
-router.delete('/user/delete/:id', verifyToken, deleteUser)
+router.delete('/sd-user/delete/:id', verifyToken, deleteUser)
 
 // Rota de login
-router.post('/login', userLogin)
+router.post('/sd-user/login', userLogin)
 
 export default router
