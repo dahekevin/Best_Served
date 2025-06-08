@@ -43,7 +43,7 @@ export default function RestaurantList() {
 		},
 		{
 			id: 6,
-			title: "Savory Bites",
+			title: "SavoryBites",
 			description:
 				"Texto descritivo para o restaurante. Adicione pontos principais, depoimentos, curiosidades ou até mesmo uma história curta.",
 			image: "./back6.png",
