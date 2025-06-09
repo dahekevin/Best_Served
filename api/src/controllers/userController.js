@@ -1,5 +1,5 @@
 import { PrismaClient } from '../../generated/prisma/client.js'
-import bcrypt, { hash } from 'bcrypt'
+import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
 const prisma = new PrismaClient()
@@ -10,10 +10,17 @@ export const registerUser = async (req, res) => {
         const salt = await bcrypt.genSalt(10)
         const hashPassword = await bcrypt.hash(req.body.password, salt)
 
+        console.log("Dados do usuário:", {
+            name: req.body.name,
+            phone: req.body.phone,
+            email: req.body.email
+        });
+
         const user = await prisma.user.create({
             data: {
-                email: req.body.email,
                 name: req.body.name,
+                phone: req.body.phone,
+                email: req.body.email,
                 password: hashPassword
             }
         })
@@ -53,11 +60,35 @@ export const getUsers = async (req, res) => {
 
 }
 
-export const getUser = async (req, res) => {
-    
-}
+export const getUserById = async (req, res) => {
+
+    console.log("Buscando usuário com ID:", req.userId);
+
+	try {
+		const user = await prisma.user.findUnique({
+			where: {
+				id: req.userId
+			},
+			select: {
+				id: true,
+				name: true,
+				email: true,
+				phone: true
+			}
+		});
+
+		if (!user) return res.status(404).json({ message: "Usuário não encontrado" });
+
+		res.json(user);
+	} catch (err) {
+		console.error("Erro no servidor:", err);
+		res.status(500).json({ message: "Erro no servidor, tente novamente" });
+	}
+};
+
 
 export const updateUser = async (req, res) => {
+    console.log("Dados recebidos para atualização:", req.body);
 
     try {
         const salt = await bcrypt.genSalt(10)
@@ -65,10 +96,11 @@ export const updateUser = async (req, res) => {
 
         const user = await prisma.user.update({
             where: {
-                id: req.params.id
+                id: req.userId // Assuming you have middleware that sets req.userId
             },
             data: {
                 email: req.body.email,
+                phone: req.body.phone || null, // Allow phone to be optional
                 name: req.body.name,
                 password: hashPassword
             }
@@ -99,17 +131,19 @@ export const deleteUser = async (req, res) => {
 }
 
 export const userLogin = async (req, res) => {
-
+    
     try {
         const user_db = await prisma.user.findUnique({ where: { email: req.body.email } })
-
+        
         const isMatch = await bcrypt.compare(req.body.password, user_db.password)
-
+        
         if (!isMatch) {
             return res.status(400).json({ message: 'Senha Inválida' })
         }
+        
+        console.log("Usuário encontrado:", user_db.id);
 
-        const token = jwt.sign({ id: req.params.id }, process.env.JWT_SECRET, { expiresIn: '1m' })
+        const token = jwt.sign({ id: user_db.id }, process.env.JWT_SECRET, { expiresIn: '1w' })        
 
         res.status(200).json({ message: 'Login realizado com sucesso!', token })
 

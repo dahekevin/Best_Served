@@ -1,12 +1,44 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
+// import axios from "axios"
+import api from "../../service/api"
 import "./Profile.css"
+import { Link } from "react-router-dom"
+
+// ATENÇÃO! MUDAR OS USURARIOS PARA RESERVAS
 
 export default function Profile() {
-    const [activeTab, setActiveTab] = useState("upcoming")
+    // const [activeTab, setActiveTab] = useState("upcoming")
 
-    const handleTabChange = (tab) => {
-        setActiveTab(tab)
+    // const handleTabChange = (tab) => {
+    //     setActiveTab(tab)
+    // }
+
+    const [reservations, setReservations] = useState([])
+
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         try {
+    //             const res = await axios.get("http://localhost:3000/sd-user/get-many")
+    //             setReservations(res.data)
+    //             console.log("Data fetched successfully:", res.data);
+    //         } catch (error) {
+    //             console.log("Error fetching data:", error);
+    //         }
+    //     };
+    //     fetchData()
+    // }, [])
+
+    let res = []
+
+    async function fetchReservations() {
+        res = await api.get("/sd-user/get-many")
+        setReservations(res.data)
+        console.log(res.data);
     }
+
+    useEffect(() => {
+        fetchReservations()
+    })
 
     return (
         <div className="hero-section">
@@ -14,7 +46,7 @@ export default function Profile() {
                 <div className="profile-header">
                     <h1>Seu Perfil</h1>
                     <div className="header-buttons">
-                        <button className="edit-button">Editar Perfil</button>
+                        <Link to={`/update-sd-user`} className="edit-button">Editar Perfil</Link>
                         <button className="delete-button">Excluir</button>
                     </div>
                 </div>
@@ -34,37 +66,24 @@ export default function Profile() {
                     <h3 className="section-title">Suas Reservas</h3>
 
                     <div className="reservations">
-                        <div className="reservation-card">
-                            <div className="date-box">
-                                <div className="day">25</div>
-                                <div className="month">MAI</div>
+                        {reservations.map((reservation, index) => (
+                            <div className="reservation-card" key={index}>
+                                <div className="date-box">
+                                    <div className="day">25</div>
+                                    <div className="month">MAI</div>
+                                </div>
+                                <div className="reservation-details">
+                                    <h4 className="clientName">{reservation.name}</h4>
+                                    <p>19:30 • Mesa para 2</p>
+                                    <p className="confirmation">Restaurante: São & Salvo</p>
+                                </div>
+                                <div className="reservation-actions">
+                                    <button className="modify-button">Modificar</button>
+                                    <button className="cancel-button">Cancelar</button>
+                                </div>
                             </div>
-                            <div className="reservation-details">
-                                <h4>La Bella Italia</h4>
-                                <p>19:30 • Mesa para 2</p>
-                                <p className="confirmation">Restaurante: São & Salvo</p>
-                            </div>
-                            <div className="reservation-actions">
-                                <button className="modify-button">Modificar</button>
-                                <button className="cancel-button">Cancelar</button>
-                            </div>
-                        </div>
+                        ))}
 
-                        <div className="reservation-card">
-                            <div className="date-box">
-                                <div className="day">10</div>
-                                <div className="month">JUN</div>
-                            </div>
-                            <div className="reservation-details">
-                                <h4>Sakura Sushi</h4>
-                                <p>18:00 • Mesa para 4</p>
-                                <p className="confirmation">Restaurante: São & Salvo</p>
-                            </div>
-                            <div className="reservation-actions">
-                                <button className="modify-button">Modificar</button>
-                                <button className="cancel-button">Cancelar</button>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>

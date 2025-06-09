@@ -18,6 +18,9 @@ import UpdateUserProfile from './pages/updateUserProfile/UpdateUserProfile.jsx'
 import UpdateRestaurantProfile from './pages/updateRestaurantProfile/UpdateRestaurantProfile.jsx'
 import MakeReservation from './pages/makeReservation/MakeReservation.jsx'
 import RegisterRestaurantPage from './pages/registerRestaurant/registerRestaurant.jsx'
+import SdUserLogin from './pages/sd-user-login/SdUserLogin.jsx'
+import SdUserRegister from './pages/sd-user-register/SdUserRegister.jsx'
+import ProfileTeste from './pages/profileTeste/ProfileTeste.jsx'
 
 const pages = createBrowserRouter([
 	{
@@ -38,6 +41,22 @@ const pages = createBrowserRouter([
 			{ path: '/make-reservation', element: <MakeReservation /> },
 			{ path: '/register-restaurant', element: <RegisterRestaurantPage /> }
 		]
+	},
+	{
+		path: '/update-sd-user/:id',
+		element: <UpdateUserProfile />
+	},
+	{
+		path: '/sd-user-login',
+		element: <SdUserLogin />
+	},
+	{
+		path: '/sd-user-register',
+		element: <SdUserRegister />
+	},
+	{
+		path: '/sd-user-profile/me',
+		element: <ProfileTeste />
 	}
 ])
 
