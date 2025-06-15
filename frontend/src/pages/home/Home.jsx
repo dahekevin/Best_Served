@@ -14,7 +14,7 @@ export default function Home() {
             </div>
             <div className='description'>
                 <div className='line1'>
-                    <p className='p1'>C uma variedade de restaurantes, servimos todas as refeições, incluindo café da manhã.</p>
+                    <p className='p1'>Com uma variedade de restaurantes, servimos todas as refeições, incluindo café da manhã.</p>
                     <img className='img1' src="./back1.png" alt="" />
                 </div>
                 <div className='line1'>
