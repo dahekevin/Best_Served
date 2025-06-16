@@ -20,7 +20,8 @@ export const registerRestaurant = async (req, res) => {
                 fullAddress: req.body.fullAddress,
                 phone: req.body.phone,
                 mapsUrl: req.body.mapsUrl,
-                description: req.body.description
+                description: req.body.description,
+                tables: req.body.tables
             }
         })
 
@@ -88,7 +89,8 @@ export const updateRestaurant = async (req, res) => {
                 fullAddress: req.body.fullAddress,
                 phone: req.body.phone,
                 mapsUrl: req.body.mapsUrl,
-                description: req.body.description
+                description: req.body.description,
+                tables: req.body.tables
             }
         })
 

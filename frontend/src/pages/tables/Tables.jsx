@@ -101,7 +101,7 @@ const RestaurantTables = () => {
                 </span>
               </div>
               <div className={`avatar ${table.status}`}>{table.initials}</div>
-              <div className="seats-info">Lugares: {table.seats}</div>
+              {/* <div className="seats-info">Lugares: {table.seats}</div> */}
             </div>
           ))}
         </div>
@@ -111,7 +111,7 @@ const RestaurantTables = () => {
             <div className="modal">
               <h2>Confirmar Reserva</h2>
               <p>Deseja confirmar a reserva da {selectedTable?.name}?</p>
-              <p>Lugares disponíveis: {selectedTable?.seats}</p>
+              {/* <p>Lugares disponíveis: {selectedTable?.seats}</p> */}
               <div className="modal-buttons">
                 <button className="btn-cancel" onClick={handleCancelReservation}>
                   Cancelar

@@ -36,7 +36,7 @@ function ProfileTeste() {
 		const token = localStorage.getItem("token");
 
 		try {
-			await api.put("/sd-user/edit/me", form, {
+			await api.put("/sd-user/edit", form, {
 				headers: { Authorization: `Bearer ${token}` }
 			});
 			alert("Dados atualizados com sucesso");

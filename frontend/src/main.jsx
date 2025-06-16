@@ -5,8 +5,8 @@ import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
 import App from './App.jsx'
-import Home from './pages/home/home.jsx'
-import Profile from './pages/profile/profile.jsx'
+import Home from './pages/home/Home.jsx'
+import Profile from './pages/profile/Profile.jsx'
 import Auth from './pages/auth/auth.jsx'
 import ReservationList from './pages/reservation/Reservation.jsx'
 import RestaurantDashboard from './pages/dashboard/Dashboard.jsx'
@@ -18,9 +18,10 @@ import UpdateUserProfile from './pages/updateUserProfile/UpdateUserProfile.jsx'
 import UpdateRestaurantProfile from './pages/updateRestaurantProfile/UpdateRestaurantProfile.jsx'
 import MakeReservation from './pages/makeReservation/MakeReservation.jsx'
 import RegisterRestaurantPage from './pages/registerRestaurant/registerRestaurant.jsx'
-import SdUserLogin from './pages/sd-user-login/SdUserLogin.jsx'
-import SdUserRegister from './pages/sd-user-register/SdUserRegister.jsx'
+import SdUserLogin from './pages/sdUserAuth/SdUserLogin.jsx'
+import SdUserRegister from './pages/sdUserAuth/SdUserRegister.jsx'
 import ProfileTeste from './pages/profileTeste/ProfileTeste.jsx'
+import ResProfile from './pages/resProfile/ResProfile.jsx'
 
 const pages = createBrowserRouter([
 	{
@@ -29,6 +30,7 @@ const pages = createBrowserRouter([
 		children: [
 			{ path: '/', element: <Home /> },
 			{ path: '/profile', element: <Profile /> },
+			{ path: '/restaurant-profile', element: <ResProfile /> },
 			{ path: '/auth', element: <Auth /> },
 			{ path: '/reservation', element: <ReservationList /> },
 			{ path: '/restaurant', element: <Restaurant /> },
@@ -39,24 +41,11 @@ const pages = createBrowserRouter([
 			{ path: '/user-update-profile', element: <UpdateUserProfile /> },
 			{ path: '/restaurant-update-profile', element: <UpdateRestaurantProfile /> },
 			{ path: '/make-reservation', element: <MakeReservation /> },
-			{ path: '/register-restaurant', element: <RegisterRestaurantPage /> }
+			{ path: '/register-restaurant', element: <RegisterRestaurantPage /> },
+			{ path: '/sd-user-login', element: <SdUserLogin /> },
+			{ path: '/sd-user-register', element: <SdUserRegister /> },
+			{ path: '/sd-user-profile/me', element: <ProfileTeste /> }
 		]
-	},
-	{
-		path: '/update-sd-user/:id',
-		element: <UpdateUserProfile />
-	},
-	{
-		path: '/sd-user-login',
-		element: <SdUserLogin />
-	},
-	{
-		path: '/sd-user-register',
-		element: <SdUserRegister />
-	},
-	{
-		path: '/sd-user-profile/me',
-		element: <ProfileTeste />
 	}
 ])
 

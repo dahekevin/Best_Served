@@ -9,10 +9,13 @@ const ProfileUpdate = () => {
     phone: "12345678",
     cnpj: "12.345.678/0001-90",
     address: "Av. Paulista, 1234, São Paulo, SP",
+    time: "07:00",
+    time2: "12:00",
     description:
       "Culinária brasileira autêntica com um toque moderno. Oferecemos uma variedade de pratos tradicionais feitos com ingredientes frescos e locais.",
     googleMapsLink: "https://maps.google.com/?q=Av.+Paulista,+1234,+São+Paulo",
     image: "/placeholder.svg?height=200&width=200",
+    tables: 0,
   })
 
   const [paymentMethod, setPaymentMethod] = useState("credit")
@@ -388,6 +391,32 @@ const ProfileUpdate = () => {
               />
             </div>
 
+            {/* <div className="form-group">
+              <label htmlFor="time">Horário de Funcionamento</label>
+              <div className="form-section-time">
+                <span>De:</span>
+                <input
+                  type="time"
+                  id="time"
+                  name="time"
+                  value={profile.time}
+                  onChange={handleInputChange}
+                  className="form-input-time"
+                />
+              </div>
+              <div className="form-section-time">
+                <span>Até:</span>
+                <input
+                  type="time"
+                  id="time2"
+                  name="time2"
+                  value={profile.time2}
+                  onChange={handleInputChange}
+                  className="form-input-time"
+                />
+              </div>
+            </div> */}
+
             <div className="form-group">
               <label htmlFor="googleMapsLink">Link do Google Maps</label>
               <input
@@ -407,6 +436,18 @@ const ProfileUpdate = () => {
                 id="phone"
                 name="phone"
                 value={profile.phone}
+                onChange={handleInputChange}
+                className="form-input"
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="tables">Quantidade de Mesas</label>
+              <input
+                type="number"
+                id="tables"
+                name="tables"
+                value={profile.tables}
                 onChange={handleInputChange}
                 className="form-input"
               />

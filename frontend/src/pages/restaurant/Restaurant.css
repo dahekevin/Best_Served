@@ -69,6 +69,7 @@ body {
 
 .info-card-res-page {
   display: flex;
+  width: 350px;
   gap: 15px;
   align-items: flex-start;
   padding: 15px;

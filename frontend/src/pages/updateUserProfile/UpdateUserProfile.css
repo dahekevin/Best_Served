@@ -31,6 +31,8 @@
     overflow: hidden;
     border-radius: 4px;
     margin-bottom: 10px;
+    background-image: url('./user-icon.jpg');
+    background-size: cover;
 }
 
 .profile-image {

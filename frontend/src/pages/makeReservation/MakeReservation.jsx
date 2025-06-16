@@ -115,17 +115,6 @@ export default function ReservationForm() {
                                 placeholder="(99) 99999-9999"
                             />
                         </div>
-                        <div className="form-group">
-                            <label htmlFor="guests">Número de Pessoas</label>
-                            <select id="guests" name="guests" value={formData.guests} onChange={handleChange} required>
-                                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
-                                    <option key={num} value={num}>
-                                        {num} {num === 1 ? "Pessoa" : "Pessoas"}
-                                    </option>
-                                ))}
-                                <option value="11">Mais de 10</option>
-                            </select>
-                        </div>
                     </div>
 
                     <div className="form-row">

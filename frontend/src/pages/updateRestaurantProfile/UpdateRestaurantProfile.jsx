@@ -11,7 +11,8 @@ const ProfileUpdate = () => {
     description:
       "Culinária brasileira autêntica com um toque moderno. Oferecemos uma variedade de pratos tradicionais feitos com ingredientes frescos e locais.",
     googleMapsLink: "https://maps.google.com/?q=Av.+Paulista,+1234,+São+Paulo",
-    image: "/placeholder.svg?height=200&width=200",
+    image: "/logo2.png",
+    tables: 0,
   })
 
   const [previewImage, setPreviewImage] = useState(profile.image)
@@ -76,7 +77,7 @@ const ProfileUpdate = () => {
         <div className="profile-layout">
           <div className="profile-image-section">
             <div className="profile-image-container">
-              <img src={previewImage || "/placeholder.svg"} alt="Logo do Restaurante" className="profile-image" />
+              <img src={previewImage || "/logo.png"} alt="Logo do Restaurante" className="profile-image" />
             </div>
             <label htmlFor="image-upload" className="change-image-button">
               Alterar imagem
@@ -170,6 +171,18 @@ const ProfileUpdate = () => {
                 id="phone"
                 name="phone"
                 value={profile.phone}
+                onChange={handleInputChange}
+                className="form-input"
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="tables">Quantidade de Mesas</label>
+              <input
+                type="number"
+                id="tables"
+                name="tables"
+                value={profile.tables}
                 onChange={handleInputChange}
                 className="form-input"
               />

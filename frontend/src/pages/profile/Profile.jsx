@@ -7,79 +7,103 @@ import { Link } from "react-router-dom"
 // ATENÇÃO! MUDAR OS USURARIOS PARA RESERVAS
 
 export default function Profile() {
-    // const [activeTab, setActiveTab] = useState("upcoming")
-
-    // const handleTabChange = (tab) => {
-    //     setActiveTab(tab)
-    // }
-
     const [reservations, setReservations] = useState([])
+    const [user, setUser] = useState({ name: "", email: "", phone: "", avatar: "" })
 
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         try {
-    //             const res = await axios.get("http://localhost:3000/sd-user/get-many")
-    //             setReservations(res.data)
-    //             console.log("Data fetched successfully:", res.data);
-    //         } catch (error) {
-    //             console.log("Error fetching data:", error);
-    //         }
-    //     };
-    //     fetchData()
-    // }, [])
+    async function getUserInfo() {
+        const token = localStorage.getItem('token')
 
-    let res = []
+        try {
+            const response = await api.get('/sd-user/get-one', {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+
+            setUser({
+                ...user,
+                name: response.data.name,
+                email: response.data.email,
+                phone: response.data.phone,
+                avatar: `http://localhost:3000/uploads/${response.data.avatar}`
+            })
+
+            console.log('Usuário encontrado com sucesso!', response.data.avatar);
+        } catch (error) {
+            console.error("Erro ao buscar informações do usuário: ", error.response?.data || error.message || error);
+        }
+    }
 
     async function fetchReservations() {
-        res = await api.get("/sd-user/get-many")
-        setReservations(res.data)
-        console.log(res.data);
+        try {
+            const response = await api.get("/sd-user/get-many")
+            setReservations(response.data)
+            console.log(response.data);
+        } catch (error) {
+            console.error("Erro ao buscar reservas: ", error.response?.data || error.message || error);
+        }
     }
 
     useEffect(() => {
+        getUserInfo()
         fetchReservations()
-    })
+    }, [])
+
+    async function deleteAccount (e) {
+        e.preventDefault()
+        const token = localStorage.getItem("token")
+        
+        try {
+            const response = await api.delete("/sd-user/delete", {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+
+            console.log("Tentando apagar usuário:", response.data);
+
+            localStorage.clear()
+            window.location.href = '/';
+        } catch (error) {
+            console.error("Erro ao apagar perfil: ", error.response?.data || error.message || error);
+        }
+    }
 
     return (
-        <div className="hero-section">
-            <div className="profile-container">
-                <div className="profile-header">
+        <div className="sd-user-hero-section">
+            <div className="sd-user-profile-container">
+                <div className="sd-user-profile-header">
                     <h1>Seu Perfil</h1>
-                    <div className="header-buttons">
-                        <Link to={`/update-sd-user`} className="edit-button">Editar Perfil</Link>
-                        <button className="delete-button">Excluir</button>
+                    <div className="sd-user-header-buttons">
+                        <Link to={`/update-sd-user`} className="sd-user-edit-button">Editar Perfil</Link>
+                        <button onClick={(e) => { deleteAccount(e) }} className="sd-user-delete-button">Excluir</button>
                     </div>
                 </div>
 
-                <div className="profile-info">
-                    <div className="avatar-container">
-                        <div className="avatar"></div>
+                <div className="sd-user-profile-info">
+                    <div className="sd-user-avatar-container">
+                        <img className="sd-user-avatar" src={user.avatar} alt="" />
                     </div>
-                    <div className="user-details">
-                        <h2>São & Salvo</h2>
-                        <p className="email">sao.salvo@example.com</p>
-                        <p className="phone">+1 (555) 123-4567</p>
+                    <div className="sd-user-user-details">
+                        <h2>Olá, {user.name}</h2>
+                        <p className="sd-user-email">Email: {user.email}</p>
+                        <p className="sd-user-phone">Telefone: {user.phone}</p>
                     </div>
                 </div>
 
-                <div className="section">
-                    <h3 className="section-title">Suas Reservas</h3>
+                <div className="sd-user-section">
+                    <h3 className="sd-user-section-title">Suas Reservas</h3>
 
-                    <div className="reservations">
+                    <div className="sd-user-reservations">
                         {reservations.map((reservation, index) => (
-                            <div className="reservation-card" key={index}>
-                                <div className="date-box">
-                                    <div className="day">25</div>
-                                    <div className="month">MAI</div>
+                            <div className="sd-user-reservation-card" key={index}>
+                                <div className="sd-user-date-box">
+                                    <div className="sd-user-day">25</div>
+                                    <div className="sd-user-month">MAI</div>
                                 </div>
-                                <div className="reservation-details">
-                                    <h4 className="clientName">{reservation.name}</h4>
-                                    <p>19:30 • Mesa para 2</p>
-                                    <p className="confirmation">Restaurante: São & Salvo</p>
+                                <div className="sd-user-reservation-details">
+                                    <p>19:30 • Sábado</p>
+                                    <p className="sd-user-confirmation">Restaurante: São & Salvo</p>
                                 </div>
-                                <div className="reservation-actions">
-                                    <button className="modify-button">Modificar</button>
-                                    <button className="cancel-button">Cancelar</button>
+                                <div className="sd-user-reservation-actions">
+                                    <button className="sd-user-modify-button">Modificar</button>
+                                    <button className="sd-user-cancel-button">Cancelar</button>
                                 </div>
                             </div>
                         ))}

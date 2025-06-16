@@ -49,6 +49,7 @@ model Menu {
 
 model Restaurant {
   id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  type        String  @default("restaurant") // user or restaurant
   email       String  @unique
   name        String
   password    String
@@ -57,6 +58,8 @@ model Restaurant {
   phone       String
   mapsUrl     String?
   description String?
+  avatar      String?
+  tables      Int
 
   // Relations
   reservations  Reservations[]
@@ -66,10 +69,12 @@ model Restaurant {
 
 model User {
   id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  type     String  @default("client") // user or restaurant
   email    String  @unique
   name     String
   password String
   phone    String?
+  avatar   String?
 
   // Relations
   reservations Reservations[]

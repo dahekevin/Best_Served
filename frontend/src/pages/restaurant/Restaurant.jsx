@@ -112,7 +112,7 @@ export default function RestaurantPage() {
                     </div>
                   </div>
 
-                  <div className="info-card-res-page">
+                  {/* <div className="info-card-res-page">
                     <div className="info-icon-res-page">🕒</div>
                     <div className="info-content-res-page">
                       <h4>Horário de Funcionamento</h4>
@@ -123,7 +123,7 @@ export default function RestaurantPage() {
                         <strong>Sábado e Domingo:</strong> {restaurantInfo.hours.weekends}
                       </p>
                     </div>
-                  </div>
+                  </div> */}
 
                   <div className="info-card-res-page">
                     <div className="info-icon-res-page">📞</div>
@@ -289,7 +289,7 @@ export default function RestaurantPage() {
               {activeMenu === "bebidas" && (
                 <div className="menu-item-res-page">
                   <div className="menu-header-res-page">
-                    <h3>Carta de Bebidas</h3>
+                    <h3>Cardápio de Bebidas</h3>
                     <div className="menu-actions-res-page">
                       <button className="download-btn-res-page" onClick={() => handleMenuDownload("bebidas")}>
                         📥 Baixar PDF

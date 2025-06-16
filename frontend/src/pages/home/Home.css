@@ -1,4 +1,4 @@
-.hero {
+.home-hero {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -12,11 +12,11 @@
     font-size: xx-large;
 }
 
-.subtitle {
+.home-subtitle {
     color: orange;
 }
 
-.img {
+.home-img {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -29,22 +29,22 @@
     transition: transform 0.3s ease;
 }
 
-.img:hover {
+/* .home-img:hover {
     transform: scale(1.05);
-}
+} */
 
-.description {
+.home-description {
     display: flex;
     flex-direction: column;
     background-color: #1F1F24;
 }
 
-.line1 {
+.home-line1 {
     display: flex;
     padding: 50px;
 }
 
-.p1 {
+.home-p1 {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -56,12 +56,12 @@
     background-color: #EEEEEE;
 }
 
-.img1 {
+.home-img1 {
     max-width: 1000px;
     border-radius: 50px;
 }
 
-.img2 {
+.home-img2 {
     background-image: url('./back2.png');
     background-repeat: no-repeat;
     height: 950px;
