@@ -1,81 +1,118 @@
+
+
+
+/********************************************************************************************
+ * LEMBRETE!!!
+ * PADRONIZAR CAMPOS: DEFINIR CAMPOS DE ACORDO COM A NECESSIDADE DE SER OBRIGATÓRIO OU NÃO
+ ********************************************************************************************/
+
 generator client {
-  provider = "prisma-client-js"
-  output   = "../generated/prisma"
+    provider = "prisma-client-js"
+    output   = "../generated/prisma"
 }
 
 datasource db {
-  provider = "mongodb"
-  url      = env("DATABASE_URL")
+    provider = "mongodb"
+    url      = env("DATABASE_URL")
+}
+
+model Review {
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    stars     Int
+    comment   String?
+    createdAt DateTime @default(now())
+
+    // Relations
+    clientId String @db.ObjectId
+    client   Client @relation(fields: [clientId], references: [id])
+
+    restaurantId String     @db.ObjectId
+    restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
 }
 
 model Subscription {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+    id            String    @id @default(auto()) @map("_id") @db.ObjectId
+    status        String    @default("pending") // pending, active, cancelled
+    createdAt     DateTime  @default(now())
+    updatedAt     DateTime  @updatedAt
+    endsAt        DateTime?
+    planType      String
+    paymentMethod String
 
-  // Relations
-  restaurantId String     @db.ObjectId
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+    // Relations
+    restaurantId String     @db.ObjectId
+    restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+}
+
+model Tables {
+    id     String @id @default(auto()) @map("_id") @db.ObjectId
+    seats  String?
+    status String? // Available, NotAvailable, Reserved
+
+    // Relations
+    reservation Reservations[]
+
+    restaurantId String     @db.ObjectId
+    restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
 }
 
 model Reservations {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  date      DateTime
-  time      String
-  guests    Int
-  status    String
-  notes     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    date      DateTime? // Day of the reservation
+    time      String?
+    guests    Int?
+    status    String? // Pending, Active, Canceled
+    notes     String?
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
-  // User relations
-  userId String @db.ObjectId
-  user   User   @relation(fields: [userId], references: [id])
+    // Client Relations
+    clientId String @db.ObjectId
+    client   Client @relation(fields: [clientId], references: [id])
 
-  // Restaurant relations
-  restaurantId String     @db.ObjectId
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
-}
+    // Restaurant Relations
+    restaurantId String     @db.ObjectId
+    restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
 
-model Menu {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  url   String
-  title String
-
-  // Relations
-  restaurantId String     @db.ObjectId
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+    // Tables Relations
+    tableId String @db.ObjectId
+    table   Tables @relation(fields: [tableId], references: [id])
 }
 
 model Restaurant {
-  id          String  @id @default(auto()) @map("_id") @db.ObjectId
-  type        String  @default("restaurant") // user or restaurant
-  email       String  @unique
-  name        String
-  password    String
-  cnpj        String
-  fullAddress String
-  phone       String
-  mapsUrl     String?
-  description String?
-  avatar      String?
-  tables      Int
+    id          String  @id @default(auto()) @map("_id") @db.ObjectId
+    type        String  @default("restaurant") // user or restaurant
+    email       String  @unique
+    name        String
+    password    String
+    cnpj        String // CNPJ is a unique identifier for Brazilian companies. Use @unique if needed.
+    fullAddress String?
+    phone       String?
+    opensAt     String?
+    closesAt    String?
+    mapsUrl     String?
+    description String?
+    avatar      String?
+    menu        String?
 
-  // Relations
-  reservations  Reservations[]
-  subscriptions Subscription[]
-  menu          Menu[]
+    // Relations
+    reservations  Reservations[]
+    // Pesquisar como estabelecer uma relação um para um com subscription!!!!!!!!!!!!!!!!!!!!!!!!
+    subscriptions Subscription[]
+    review        Review[]
+    tables        Tables[]
 }
 
-model User {
-  id       String  @id @default(auto()) @map("_id") @db.ObjectId
-  type     String  @default("client") // user or restaurant
-  email    String  @unique
-  name     String
-  password String
-  phone    String?
-  avatar   String?
+model Client {
+    id       String  @id @default(auto()) @map("_id") @db.ObjectId
+    type     String  @default("client") // user or restaurant
+    email    String  @unique
+    name     String
+    password String
+    phone    String?
+    avatar   String?
 
-  // Relations
-  reservations Reservations[]
+    // Relations
+    reservations Reservations[]
+    review       Review[]
 }

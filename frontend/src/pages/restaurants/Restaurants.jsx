@@ -1,75 +1,39 @@
-import { useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import RestaurantCard from "./RestaurantCard.jsx"
 import "./Restaurants.css"
+import api from "../../service/api"
 
 export default function RestaurantList() {
 	const [visibleCount, setVisibleCount] = useState(6)
+	const [restaurants, setRestaurants] = useState([])
+	const [search, setSearch] = useState('')
 
-	const restaurants = [
-		{
-			id: 1,
-			title: "São & Salvo",
-			description:
-				"Texto descritivo para o restaurante. Adicione pontos principais, depoimentos, curiosidades ou até mesmo uma história curta.",
-			image: "./back3.png",
-		},
-		{
-			id: 2,
-			title: "O Prego",
-			description:
-				"Texto descritivo para o restaurante. Adicione pontos principais, depoimentos, curiosidades ou até mesmo uma história curta.",
-			image: "./back2.png",
-		},
-		{
-			id: 3,
-			title: "Yummy",
-			description:
-				"Texto descritivo para o restaurante. Adicione pontos principais, depoimentos, curiosidades ou até mesmo uma história curta.",
-			image: "./back1.png",
-		},
-		{
-			id: 4,
-			title: "Delicious Dish",
-			description:
-				"Texto descritivo para o restaurante. Adicione pontos principais, depoimentos, curiosidades ou até mesmo uma história curta.",
-			image: "./back4.png",
-		},
-		{
-			id: 5,
-			title: "Tasty Treat",
-			description:
-				"Texto descritivo para o restaurante. Adicione pontos principais, depoimentos, curiosidades ou até mesmo uma história curta.",
-			image: "./back5.jpg",
-		},
-		{
-			id: 6,
-			title: "Savory Bites",
-			description:
-				"Texto descritivo para o restaurante. Adicione pontos principais, depoimentos, curiosidades ou até mesmo uma história curta.",
-			image: "./back6.png",
-		},
-		{
-			id: 7,
-			title: "Sweet Delights",
-			description:
-				"Texto descritivo para o restaurante. Adicione pontos principais, depoimentos, curiosidades ou até mesmo uma história curta.",
-			image: "./back7.png",
-		},
-		{
-			id: 8,
-			title: "Heavenly Bites",
-			description:
-				"Texto descritivo para o restaurante. Adicione pontos principais, depoimentos, curiosidades ou até mesmo uma história curta.",
-			image: "/placeholder.svg?height=150&width=150",
-		},
-		{
-			id: 9,
-			title: "Divine Flavors",
-			description:
-				"Texto descritivo para o restaurante. Adicione pontos principais, depoimentos, curiosidades ou até mesmo uma história curta.",
-			image: "/placeholder.svg?height=150&width=150",
-		},
-	]
+	const getRestaurants = useCallback(async () => {
+
+		try {
+			const response = await api.get(
+				search !== ''
+					? `/restaurant/get-many?name=${search}`
+					: `/restaurant/get-many`
+			);
+
+			if (!response) { return console.log('Restaurantes não encontrados.'); }
+
+			setRestaurants(response.data.restaurants)
+
+		} catch (error) {
+			console.log('Erro ao buscar restaurantes.', error);
+			alert('Erro ao buscar restaurantes.')
+		}
+	}, [search])
+
+	useEffect(() => {
+		getRestaurants()
+	}, [getRestaurants])
+
+	const handleSearchChange = (e) => {
+		setSearch(e.target.value)
+	}
 
 	const handleShowMore = () => {
 		setVisibleCount((prevCount) => prevCount + 3)
@@ -79,7 +43,7 @@ export default function RestaurantList() {
 		<div className="restaurant-container">
 			<div className="search-container">
 				<span className="search-icon">&#128269;</span>
-				<input type="text" placeholder="Buscar..." className="search-input" />
+				<input value={search} onChange={handleSearchChange} type="text" placeholder="Buscar..." className="search-input" />
 			</div>
 			<div className="restaurant-header">
 				<h1>Conheça Nossos Restaurantes</h1>
@@ -90,9 +54,10 @@ export default function RestaurantList() {
 				{restaurants.slice(0, visibleCount).map((restaurant) => (
 					<RestaurantCard
 						key={restaurant.id}
-						title={restaurant.title}
+						id={restaurant.id}
+						title={restaurant.name}
 						description={restaurant.description}
-						image={restaurant.image}
+						image={`http://localhost:3000/${restaurant.avatar.replace("src\\", '')}`}
 					/>
 				))}
 			</div>

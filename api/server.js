@@ -1,7 +1,11 @@
 import express from 'express'
 import cors from 'cors'
-import userRoutes from './src/routes/userRoutes.js'
+import clientRoutes from './src/routes/clientRoutes.js'
+import restaurantRoutes from './src/routes/restaurantRoutes.js'
+import reservationRoutes from './src/routes/reservationRoutes.js'
 import path from 'path'
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 import { config } from 'dotenv'
 
 config()
@@ -12,10 +16,15 @@ app.use(cors())
 
 app.use(express.json())
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 // Isso expõe a pasta 'src/uploads' como pública
-app.use('/uploads', express.static(path.join('src', 'uploads')))
+app.use('/uploads', express.static(path.join(__dirname, 'src', 'uploads')));
 
 // Routes
-app.use('/sd-user', userRoutes)
+app.use('/', clientRoutes)
+app.use('/', restaurantRoutes)
+app.use('/', reservationRoutes)
 
 app.listen(process.env.PORT, () => console.log(`Server running on port: ${process.env.PORT}`))

@@ -1,14 +1,42 @@
 import './navbar.css'
 import { LuMenu } from "react-icons/lu"
 import { Drawer } from "@mui/material"
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import { Link } from 'react-router-dom'
 import { useEffect } from 'react'
+import api from '../../service/api'
 
 export default function Navbar() {
     const [userType, setUserType] = useState(null)
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [openMenu, setOpenMenu] = useState(false)
+    const [avatar, setAvatar] = useState("")
+
+    const getClientInfo = useCallback(async (token) => {
+        try {
+            const response = await api.get('/client/get-one', {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+
+            setAvatar(`http://localhost:3000/uploads/client/avatars/${response.data.avatar}`)
+
+        } catch (error) {
+            console.error("Erro ao buscar informações do usuário: ", error.response?.data || error.message || error);
+        }
+    }, [])
+
+    const getRestaurantInfo = useCallback(async (token) => {
+        try {
+            const response = await api.get('/restaurant/get-one', {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+
+            setAvatar(`http://localhost:3000/uploads/restaurant/avatars/${response.data.avatar}`)
+
+        } catch (error) {
+            console.error("Erro ao buscar informações do usuário: ", error.response?.data || error.message || error);
+        }
+    }, [])
 
     useEffect(() => {
         const token = localStorage.getItem('token')
@@ -17,13 +45,19 @@ export default function Navbar() {
         if (token) {
             console.log(`Token: ${token}, Role: ${role}`) // Debugging line;
 
+            if (role === 'client') {
+                getClientInfo(token)
+            } else if (role === 'restaurant') {
+                getRestaurantInfo(token)
+            }
+
             setIsLoggedIn(true)
             setUserType(role)
         } else {
             setIsLoggedIn(false)
             setUserType(null)
         }
-    }, [])
+    }, [getClientInfo, getRestaurantInfo])
 
     const handleOpenMenu = () => {
         setOpenMenu(!openMenu)
@@ -39,13 +73,15 @@ export default function Navbar() {
                     <div className='navbarLinksContainer'>
                         {isLoggedIn ? (
                             <>
-
+                                <Link to='/restaurants' className='navbarLink'>Restaurantes</Link>
+                                
                                 {userType === 'client' && (
                                     <>
-                                        <Link to='/restaurants' className='navbarLink'>Restaurantes</Link>
-                                        <Link to='/profile' className='navbarLink'>
+                                        <Link to='/client-profile' className='navbarLink'>
                                             <div className='navbarProfileContainer'>
-                                                <div className='navbarLinkProfile'></div>
+                                                <div className='navbarLinkProfile'>
+                                                    {avatar && <img className='navbarAvatar' src={avatar} />}
+                                                </div>
                                                 <span>Perfil</span>
                                             </div>
                                         </Link>
@@ -65,9 +101,10 @@ export default function Navbar() {
                             </>
                         ) : (
                             <>
-                                <Link to='/about' className='navbarLink'>Sobre Nós</Link>
-                                <Link to='/sd-user-login' className='navbarLink'>Entrar</Link>
-                                <Link to='/sd-user-register' className='navbarRegisterLink'>Cadastrar</Link>
+                                <Link to='/' className='navbarLink'>Sobre Nós</Link>
+                                <Link to='/restaurants' className='navbarLink'>Restaurantes</Link>
+                                <Link to='/login' className='navbarLink'>Entrar</Link>
+                                <Link to='/client-registration' className='navbarRegisterLink'>Cadastrar</Link>
                             </>
                         )}
                     </div>

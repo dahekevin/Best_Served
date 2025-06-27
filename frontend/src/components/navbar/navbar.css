@@ -78,7 +78,7 @@
 }
 
 .navbarLinkProfile {
-    background-image: url('./user-icon.png');
+    background-image: url('./client-icon.png');
     background-size: cover;
     border-radius: 50%;
     width: 40px;
@@ -94,6 +94,12 @@
     transform: translateX(70px);
 }
 
+.navbarAvatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
 
 .navbarRegisterLink {
     text-decoration: none;

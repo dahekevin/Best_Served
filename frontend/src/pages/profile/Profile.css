@@ -13,136 +13,142 @@
 	--cancel-button-hover: #9b2424;
 }
 
-.sd-user-hero-section {
+.client-hero-section {
+    display: flex;
     background-color: var(--dark-bg);
     padding: 40px 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    min-height: 85vh;
 }
 
-.sd-user-profile-container {
+.client-hero-section .client-profile-container {
+    display: flex;
+    flex-direction: column;
     background-color: var(--dark-bg);
-    max-width: 900px;
-    width: 100%;
-    border-radius: 8px;
+    min-width: 1000px;
+    height: min-content;
     overflow: hidden;
+    border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.sd-user-profile-header {
+.client-profile-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 20px;
+    border-radius: 10px;
     background-color: var(--darker-bg);
 }
 
-.sd-user-profile-header h1 {
+.client-profile-header h1 {
     font-size: 24px;
     font-weight: 500;
 }
 
-.sd-user-header-buttons {
+.client-header-buttons {
     display: flex;
     gap: 16px;
 }
 
-.sd-user-edit-button, .sd-user-delete-button {
+.client-edit-button, .client-delete-button {
     background-color: var(--button-bg);
 	text-decoration: none;
     color: white;
     border: none;
     padding: 8px 16px;
-    border-radius: 4px;
+    border-radius: 5px;
     cursor: pointer;
     font-size: 14px;
     transition: background-color 0.2s;
 }
 
-.sd-user-delete-button {
+.client-delete-button {
     background-color: var(--cancel-button-bg);
 }
 
-.sd-user-edit-button:hover {
+.client-edit-button:hover {
     background-color: var(--button-hover);
 }
 
-.sd-user-profile-info {
+.client-delete-button:hover {
+    background-color: var(--cancel-button-hover);
+}
+
+.client-profile-info {
     display: flex;
     padding: 24px;
     align-items: center;
 }
 
-.sd-user-avatar-container {
+.client-avatar-container {
     margin-right: 24px;
     width: 80px;
     height: 80px;
 }
 
-.sd-user-avatar {
+.client-avatar {
+    object-fit: cover;
     width: 80px;
     height: 80px;
     border-radius: 50%;
     background-color: #f0f0f0;
-    background-image: url('./user-icon.png');
-    background-size: cover;
+    background-image: url('./client-icon.png');
 }
 
-.sd-user-user-details h2 {
+.client-client-details h2 {
     font-size: 25px;
 	color: var(--text-color);
     margin-bottom: 4px;
 }
 
-.sd-user-user-details p {
+.client-client-details p {
     margin-bottom: 4px;
     color: var(--muted-text);
     font-size: 14px;
 }
 
-.sd-user-plates-container {
+.client-plates-container {
     display: flex;
     flex-direction: column;
     gap: 16px;
     padding: 20px;
 }
 
-.sd-user-section {
+.client-section {
     padding: 0 24px 24px;
 	color: var(--text-color);
 }
 
-.sd-user-section-title {
+.client-section-title {
     font-size: 18px;
     margin-bottom: 16px;
     padding-bottom: 8px;
     border-bottom: 1px solid var(--border-color);
 }
 
-.sd-user-preferences-grid {
+.client-preferences-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 24px;
 }
 
-.sd-user-preference-item h4 {
+.client-preference-item h4 {
     color: var(--accent-color);
     font-size: 14px;
     margin-bottom: 4px;
     font-weight: 500;
 }
 
-.sd-user-preference-item p {
+.client-preference-item p {
     font-size: 16px;
 }
 
-.sd-user-tabs {
+.client-tabs {
     display: flex;
     margin-bottom: 16px;
 }
 
-.sd-user-tab {
+.client-tab {
     background: none;
     border: none;
     color: var(--muted-text);
@@ -152,11 +158,11 @@
     position: relative;
 }
 
-.sd-user-tab.active {
+.client-tab.active {
     color: var(--text-color);
 }
 
-.sd-user-tab.active::after {
+.client-tab.active::after {
     content: "";
     position: absolute;
     bottom: -2px;
@@ -166,27 +172,27 @@
     background-color: var(--red-accent);
 }
 
-.sd-user-reservations {
+.client-reservations {
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
 
-.sd-user-reservation-card {
+.client-reservation-card {
     display: flex;
     background-color: var(--darker-bg);
-    border-radius: 6px;
+    border-radius: 10px;
     overflow: hidden;
 }
 
-.sd-user-clientName {
+.client-clientName {
     font-size: 16px;
     font-weight: bold;
     color: var(--dark-bg);
     padding: 16px 0;
 }
 
-.sd-user-date-box {
+.client-date-box {
     background-color: var(--red-bg);
     color: white;
     padding: 12px;
@@ -198,36 +204,36 @@
     text-align: center;
 }
 
-.sd-user-day {
+.client-day {
     font-size: 24px;
     font-weight: bold;
 }
 
-.sd-user-month {
+.client-month {
     font-size: 14px;
 }
 
-.sd-user-reservation-details {
+.client-reservation-details {
     padding: 16px;
     flex-grow: 1;
 }
 
-.sd-user-reservation-details h4 {
+.client-reservation-details h4 {
     font-size: 16px;
     margin-bottom: 4px;
 }
 
-.sd-user-reservation-details p {
+.client-reservation-details p {
     font-size: 14px;
     color: var(--muted-text);
 }
 
-.sd-user-confirmation {
+.client-confirmation {
     font-size: 12px !important;
     margin-top: 4px;
 }
 
-.sd-user-reservation-actions {
+.client-reservation-actions {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -235,52 +241,52 @@
     padding: 16px;
 }
 
-.sd-user-modify-button,
-.sd-user-cancel-button {
+.client-modify-button,
+.client-cancel-button {
     border: none;
     padding: 6px 12px;
-    border-radius: 4px;
+    border-radius: 5px;
     cursor: pointer;
     font-size: 14px;
     transition: background-color 0.2s;
 }
 
-.sd-user-modify-button {
+.client-modify-button {
     background-color: var(--button-bg);
     color: white;
 }
 
-.sd-user-modify-button:hover {
+.client-modify-button:hover {
     background-color: var(--button-hover);
 }
 
-.sd-user-cancel-button {
+.client-cancel-button {
     background-color: var(--cancel-button-bg);
     color: white;
 }
 
-.sd-user-cancel-button:hover {
+.client-cancel-button:hover {
     background-color: var(--cancel-button-hover);
 }
 
 @media (max-width: 600px) {
-    .sd-user-preferences-grid {
+    .client-preferences-grid {
         grid-template-columns: 1fr;
         gap: 16px;
     }
 
-    .sd-user-reservation-card {
+    .client-reservation-card {
         flex-direction: column;
     }
 
-    .sd-user-date-box {
+    .client-date-box {
         flex-direction: row;
         justify-content: flex-start;
         gap: 8px;
         padding: 8px 16px;
     }
 
-    .sd-user-reservation-actions {
+    .client-reservation-actions {
         flex-direction: row;
         padding: 0 16px 16px;
     }

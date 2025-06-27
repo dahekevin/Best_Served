@@ -13,13 +13,14 @@ export default function Footer() {
                     <div className='footerRestaurant'>
                         <div className='footerDescription'>
                             <h2>Você tem um restaurante?</h2>
-                            <Link className='link' to={'/register-restaurant'}>Venha fazer parte!</Link>
+                            <Link className='link' to={'/plans'}>Venha fazer parte!</Link>
                         </div>
                     </div>
                     <div className='footerRestaurant'>
                         <div className='footerDescription'>
                             <h2>Já é um dos nossos?</h2>
-                            <Link className='link' to={'/sd-user-login'}>Acesse sua conta!</Link>
+                            {/* Mudar link somente para "/login" quando possível */}
+                            <Link className='link' to={'/login'}>Acesse sua conta!</Link>
                         </div>
                     </div>
                     <div className='footerFollowus'>
