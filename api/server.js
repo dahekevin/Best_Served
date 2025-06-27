@@ -4,6 +4,7 @@ import clientRoutes from './src/routes/clientRoutes.js'
 import restaurantRoutes from './src/routes/restaurantRoutes.js'
 import reservationRoutes from './src/routes/reservationRoutes.js'
 import path from 'path'
+import './src/utils/cronJobs.js'
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { config } from 'dotenv'

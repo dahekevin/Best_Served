@@ -21,10 +21,9 @@ export const registerReservation = async (req, res) => {
             }
         })
 
-        if (!reservation) { return console.log('AAAAAAAAAALO'); }
+        if (!reservation) { return console.log('Erro ao tentar criar reserva.'); }
 
         console.log(reservation);
-
 
         res.status(201).json({ message: 'Reserva cadastrada com sucesso!', reservation })
     } catch (error) {
@@ -54,6 +53,21 @@ export const getReservations = async (req, res) => {
 
     } catch (error) {
         res.status(500).json({ message: 'Erro no servidor, tente novamente.' })
+    }
+}
+
+export const deleteReservation = async (req, res) => {
+    try {
+        const reservation = await prisma.reservations.delete({
+            where: { id: req.body.id }
+        })
+
+        if (!reservation) { return console.log('Reserva inexistente.'); }
+
+        console.log('Delete Rerservation: ', reservation);
+
+    } catch (error) {
+        console.error('Erro ao tentar deletar reserva.', error);
     }
 }
 
