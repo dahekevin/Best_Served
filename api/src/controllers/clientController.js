@@ -80,17 +80,21 @@ export const getClientById = async (req, res) => {
             where: {
                 id: req.userId
             },
-            select: {
-                id: true,
-                name: true,
-                email: true,
-                phone: true,
-                avatar: true
+            include: {
+                reservations: {
+                    include: {
+                        restaurant: {
+                            select: { name: true }
+                        }
+                    }
+                }
             }
         });
 
         if (!client) return res.status(404).json({ message: "Cliente não encontrado" });
 
+        console.log("Cliente: ", client);
+        
         res.status(200).json(client);
     } catch (err) {
         console.error("Erro no servidor:", err);

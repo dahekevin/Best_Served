@@ -1,10 +1,9 @@
-
-
-
-/********************************************************************************************
+/**
+ * ******************************************************************************************
  * LEMBRETE!!!
  * PADRONIZAR CAMPOS: DEFINIR CAMPOS DE ACORDO COM A NECESSIDADE DE SER OBRIGATÓRIO OU NÃO
- ********************************************************************************************/
+ * ******************************************************************************************
+ */
 
 generator client {
     provider = "prisma-client-js"
@@ -20,7 +19,9 @@ model Review {
     id        String   @id @default(auto()) @map("_id") @db.ObjectId
     stars     Int
     comment   String?
-    createdAt DateTime @default(now())
+    tags      String[]
+    updatedAt DateTime? @updatedAt
+    createdAt DateTime? @default(now())
 
     // Relations
     clientId String @db.ObjectId
@@ -45,9 +46,9 @@ model Subscription {
 }
 
 model Tables {
-    id     String @id @default(auto()) @map("_id") @db.ObjectId
+    id     String  @id @default(auto()) @map("_id") @db.ObjectId
     seats  String?
-    status String? // Available, NotAvailable, Reserved
+    status String? // Available, Reserved
 
     // Relations
     reservation Reservations[]
@@ -57,14 +58,16 @@ model Tables {
 }
 
 model Reservations {
-    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    id        String    @id @default(auto()) @map("_id") @db.ObjectId
     date      DateTime? // Day of the reservation
     time      String?
+    day       String?
+    month     String?
     guests    Int?
     status    String? // Pending, Active, Canceled
     notes     String?
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt DateTime?  @default(now())
+    updatedAt DateTime?  @updatedAt
 
     // Client Relations
     clientId String @db.ObjectId
@@ -80,9 +83,9 @@ model Reservations {
 }
 
 model Restaurant {
-    id          String  @id @default(auto()) @map("_id") @db.ObjectId
-    type        String  @default("restaurant") // user or restaurant
-    email       String  @unique
+    id          String   @id @default(auto()) @map("_id") @db.ObjectId
+    type        String   @default("restaurant") // user or restaurant
+    email       String   @unique
     name        String
     password    String
     cnpj        String // CNPJ is a unique identifier for Brazilian companies. Use @unique if needed.
@@ -94,6 +97,11 @@ model Restaurant {
     description String?
     avatar      String?
     menu        String?
+    tags        String[]
+    rating      Float?   @default(0)
+    ratingCount Int?     @default(0)
+    createdAt   DateTime? @default(now())
+    updatedAt   DateTime? @updatedAt
 
     // Relations
     reservations  Reservations[]
@@ -104,13 +112,15 @@ model Restaurant {
 }
 
 model Client {
-    id       String  @id @default(auto()) @map("_id") @db.ObjectId
-    type     String  @default("client") // user or restaurant
-    email    String  @unique
-    name     String
-    password String
-    phone    String?
-    avatar   String?
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    type      String   @default("client") // user or restaurant
+    email     String   @unique
+    name      String
+    password  String
+    phone     String?
+    avatar    String?
+    createdAt DateTime? @default(now())
+    updatedAt DateTime? @updatedAt
 
     // Relations
     reservations Reservations[]
