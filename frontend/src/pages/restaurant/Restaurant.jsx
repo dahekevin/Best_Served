@@ -1,7 +1,7 @@
 import "./Restaurant.css"
 import api from "../../service/api"
 import Swal from "sweetalert2"
-import { useCallback, useEffect, useState } from "react"
+import { useMemo, useRef, useCallback, useEffect, useState } from "react"
 import { Link, useSearchParams } from "react-router-dom"
 
 export default function RestaurantPage() {
@@ -11,6 +11,11 @@ export default function RestaurantPage() {
 	const [hoverRating, setHoverRating] = useState(0)
 	// const [isRatingMode, setIsRatingMode] = useState(false)
 	const [pdfSize, setPdfSize] = useState('')
+	const [client, setClient] = useState([])
+	const [selectedReview, setSelectedReview] = useState(null)
+	const [update, setUpdate] = useState(false)
+	const [alreadyAClient, setAlreadyAClient] = useState(false)
+	const reviewFormRef = useRef(null)
 
 	// Nota média do restaurante (simulada)
 
@@ -51,13 +56,14 @@ export default function RestaurantPage() {
 		closesAt: "",
 		avatar: "",
 		menu: "",
+		review: [],
 	})
 
 	// Calcular média das avaliações (sempre retorna número)
 	function calculateAverageRating() {
-		if (reviews.length === 0) return 4.2 // valor padrão
-		const sum = reviews.reduce((acc, review) => acc + review.rating, 0)
-		return sum / reviews.length
+		if (restaurantInfo.review.length === 0) return 4.2 // valor padrão
+		const sum = restaurantInfo.review.reduce((acc, review) => acc + review.rating, 0)
+		return sum / restaurantInfo.review.length
 	}
 
 	const averageRating = calculateAverageRating()
@@ -66,7 +72,7 @@ export default function RestaurantPage() {
 	const calculateRatingDistribution = () => {
 		const distribution = [0, 0, 0, 0, 0] // 1 a 5 estrelas
 
-		reviews.forEach((review) => {
+		restaurantInfo.review.forEach((review) => {
 			if (review.rating >= 1 && review.rating <= 5) {
 				distribution[review.rating - 1]++
 			}
@@ -133,42 +139,105 @@ export default function RestaurantPage() {
 		window.open(mapUrl, "_blank")
 	}
 
-	const handleSubmitReview = (e) => {
+	const handleSubmitReview = async (e, update) => {
 		e.preventDefault()
+		const token = localStorage.getItem('token')
+
 		console.log("Submetendo avaliação:", newReview);
-		
-		if (newReview.name.trim() && newReview.comment.trim() && newReview.rating > 0) {
-			
-			const review = {
-				// id: Date.now(), // Gerar um ID único baseado no timestamp
-				name: newReview.name.trim(),
-				comment: newReview.comment.trim(),
-				rating: newReview.rating,
-				date: new Date().toISOString().split("T")[0],
-				tags: newReview.tags,
-				// Adicionar ID do usuario
-				// Adicionar ID do restaurante
-				clientId: localStorage.getItem("clientId") || "default-client-id",
+		console.log('Update: ', update);
+
+		if (newReview.comment.trim() && newReview.rating > 0) {
+
+			if (token) {
+				const review = {
+					// id: Date.now(), // Gerar um ID único baseado no timestamp
+					clientName: client.name || "Anônimo",
+					comment: newReview.comment.trim(),
+					rating: newReview.rating,
+					// date: new Date(),
+					tags: newReview.tags,
+					clientId: client.id,
+					restaurantId: restaurantId
+				}
+
+				if (!review) { return console.log('Erro na criação da review. Tente novamente.'); }
+
+				if (!update) {
+
+					try {
+						const response = await api.post('/review/register', review)
+
+						console.log('Registrar Review: ', response);
+
+						Swal.fire('Review publicada!', "success", 1500)
+
+					} catch (error) {
+						Swal.fire('Falha ao publicar review', 1500)
+						return console.error('Falha ao criar review. Erro ao alimentar banco com informações.', error);
+					}
+				} else {
+					try {
+						const response = await api.put(`/review/update/${selectedReview.id}`, review, {
+							headers: { Authorization: `Bearer ${token}` }
+						})
+
+						console.log('Atualizar Review: ', response);
+
+						Swal.fire('Review atualizada!', "success", 1500)
+
+					} catch (error) {
+						Swal.fire('Falha ao publicar review', 1500)
+						return console.error('Falha ao criar review. Erro ao alimentar banco com informações.', error);
+					}
+				}
+
+
+				console.log(averageRating);
+
+				const updatedReviews = [review, ...reviews]
+				setReviews(updatedReviews)
+
+				setNewReview({ name: "", comment: "", rating: 0, tags: [] })
+				setUserRating(0)
+				setHoverRating(0)
+				setShowReviewForm(false)
+
+				Swal.fire("Avaliação Enviada!", "Obrigado pela sua avaliação!", "success")
+
+				getRestaurantInfo();
+			} else {
+				console.log('Você não está logado, faça login para escrever uma review.');
+				Swal.fire({
+					position: 'top-end',
+					icon: 'warning',
+					title: 'Você não está logado.',
+					text: 'Faça login para escrever uma review.',
+					showConfirmButton: false,
+					timer: 1500,
+					willClose: () => {
+						window.location.href = '/login'
+					}
+				})
 			}
-
-			console.log(averageRating);
-
-			const updatedReviews = [review, ...reviews]
-			setReviews(updatedReviews)
-			// localStorage.setItem("restaurant-reviews", JSON.stringify(updatedReviews))
-
-			setNewReview({ name: "", comment: "", rating: 0, tags: [] })
-			setUserRating(0)
-			setHoverRating(0)
-			setShowReviewForm(false)
-
-			Swal.fire("Avaliação Enviada!", "Obrigado pela sua avaliação!", "success")
 		}
 	}
 
-	const formatDate = (dateString) => {
-		const date = new Date(dateString)
-		return date.toLocaleDateString("pt-BR", { day: "numeric", month: "long", year: "numeric" })
+	function formatDate(isoDateString) {
+		if (!isoDateString) return '';
+
+		const date = new Date(isoDateString);
+
+		const options = {
+			year: 'numeric',
+			month: 'long',
+			day: '2-digit',
+			hour: '2-digit',
+			minute: '2-digit',
+			second: '2-digit',
+			// timeZone: 'America/Sao_Paulo', // Opcional: force um fuso horário específico
+			timeZoneName: 'shortOffset', // Mostra o offset (ex: GMT-3)
+		};
+		return new Intl.DateTimeFormat('pt-BR', options).format(date);
 	}
 
 	const handleTagToggle = (tag) => {
@@ -185,7 +254,33 @@ export default function RestaurantPage() {
 		}
 	}
 
-	const displayedReviews = showAllReviews ? reviews : reviews.slice(0, 3)
+	const reorderedReviews = useMemo(() => {
+		if (!Array.isArray(restaurantInfo.review)) {
+			return [];
+		}
+
+		const sorted = [...restaurantInfo.review].sort((a, b) => {
+			if (client.id && a.clientId === client.id && b.clientId !== client.id) {
+				return -1;
+			}
+			if (client.id && a.clientId !== client.id && b.clientId === client.id) {
+				return 1;
+			}
+
+			return new Date(b.updatedAt || '') - new Date(a.updatedAt || '');
+		});
+
+		return sorted;
+	}, [client.id, restaurantInfo.review]); // Dependências: client.id e o array client.review
+
+	console.log('Reordered Reviews: ', reorderedReviews);
+	
+
+	const displayedReviews = showAllReviews ? reorderedReviews : reorderedReviews.slice(0, 3);
+
+
+
+	// const displayedReviews = showAllReviews ? restaurantInfo.review : restaurantInfo.review.slice(0, 3)
 	const ratingDistribution = calculateRatingDistribution()
 
 	const getPdfSize = useCallback(async (pdfURL) => {
@@ -202,6 +297,34 @@ export default function RestaurantPage() {
 		} catch (error) {
 			console.error('Erro ao obter o tamanho do pdf:', error);
 			return 'Erro ao obter tamanho'
+		}
+	}, [])
+
+	const getClientInfo = useCallback(async () => {
+		const token = localStorage.getItem('token')
+
+		try {
+			const response = await api.get('/client/get-one', {
+				Authorization: `Bearer ${token}`
+			})
+
+			console.log('Cliente Info: ', response.data);
+
+			setClient(response.data)
+
+		} catch (error) {
+			console.error('É preciso estar logado para fazer um reserva.', error);
+			Swal.fire({
+				position: 'top-end',
+				icon: 'warning',
+				title: 'Você não está logado!',
+				text: 'Faça login para fazer uma reserva.',
+				timer: 1500,
+				showConfirmButton: false,
+				willClose: () => {
+					window.location.href = '/login'
+				}
+			})
 		}
 	}, [])
 
@@ -230,7 +353,10 @@ export default function RestaurantPage() {
 				closesAt: data.closesAt,
 				avatar: data.avatar,
 				menu: data.menu,
+				review: data.review,
 			})
+
+			console.log('REvciew: ', data.review);
 
 			return data
 		} catch (error) {
@@ -240,8 +366,16 @@ export default function RestaurantPage() {
 	}, [restaurantId])
 
 	useEffect(() => {
+		getClientInfo();
 		getRestaurantInfo();
-	}, [])
+	}, [getClientInfo, getRestaurantInfo])
+
+	useEffect(() => {
+		if (restaurantInfo.review) {
+			console.log('Restaurante Reviews: ', restaurantInfo.review);
+			setReviews(restaurantInfo.review)
+		}
+	}, [restaurantInfo.review])
 
 	useEffect(() => {
 		if (restaurantInfo.menu) {
@@ -253,59 +387,29 @@ export default function RestaurantPage() {
 	}, [restaurantInfo.menu, getPdfSize]);
 
 	useEffect(() => {
-		// const savedReviews = localStorage.getItem("restaurant-reviews")
-		const savedReviews = false
-		if (savedReviews) {
-			setReviews(JSON.parse(savedReviews))
-		} else {
-			// Reviews iniciais para demonstração
-			const initialReviews = [
-				{
-					id: 1,
-					name: "Maria Silva",
-					comment: "Excelente restaurante! A comida é deliciosa e o atendimento é impecável. Recomendo muito!",
-					rating: 5,
-					date: "2024-01-15",
-					tags: ["Comida", "Atendimento"],
-				},
-				{
-					id: 2,
-					name: "João Santos",
-					comment: "Ambiente muito agradável e pratos bem preparados. O preço é justo pela qualidade oferecida.",
-					rating: 4,
-					date: "2024-01-10",
-					tags: ["Ambiente", "Preço"],
-				},
-				{
-					id: 3,
-					name: "Ana Costa",
-					comment: "Adorei a experiência! Os pratos são saborosos e a apresentação é linda. Voltarei com certeza.",
-					rating: 5,
-					date: "2024-01-08",
-					tags: ["Comida", "Ambiente"],
-				},
-				{
-					id: 4,
-					name: "Carlos Oliveira",
-					comment: "Boa comida, mas o atendimento poderia ser mais rápido. No geral, uma experiência positiva.",
-					rating: 3,
-					date: "2024-01-05",
-					tags: ["Comida", "Atendimento"],
-				},
-				{
-					id: 5,
-					name: "NETTO",
-					comment:
-						"NÃO RECOMENDO ESSE RESTAURANTE. ELE É MUITO RUIM. TEM O PIOR ATENDIMENTO QUE JA VI, NAO VALE A PENA.",
-					rating: 1,
-					date: "2024-06-10",
-					tags: ["Atendimento"],
-				},
-			]
-			setReviews(initialReviews)
-			// localStorage.setItem("restaurant-reviews", JSON.stringify(initialReviews))
+		if (showReviewForm && reviewFormRef) {
+			const timer = setTimeout(() => {
+				reviewFormRef.current.scrollIntoView({ behavior: 'instant', block: 'center' });
+			}, 50);
+
+			return () => clearTimeout(timer);
 		}
-	}, []);
+	}, [showReviewForm])
+
+	useEffect(() => {
+		if (client.restaurantHistory && restaurantInfo.id) {
+			const hasReserved = client.restaurantHistory.some(historyItem => {
+				return historyItem === restaurantInfo.id
+			})
+
+			setAlreadyAClient(hasReserved)
+
+			console.log(`Cliente ${client.name} já fez reserva no restaurante ${restaurantInfo.name}`);
+			
+		} else {
+			setAlreadyAClient(false)
+		}
+	}, [client.restaurantHistory, client.name, restaurantInfo])
 
 	return (
 		<div className="restaurant-page-res-page">
@@ -475,7 +579,7 @@ export default function RestaurantPage() {
 									<div className="rating-score-res-page">
 										<div className="big-score-res-page">{averageRating.toFixed(1).replace(".", ",")}</div>
 										<div className="rating-stars-display-res-page">{renderStars(averageRating, false, "normal")}</div>
-										<div className="total-reviews-res-page">{reviews.length} avaliações</div>
+										<div className="total-reviews-res-page">{restaurantInfo.review.length} avaliações</div>
 									</div>
 
 									<div className="rating-bars-res-page">
@@ -493,14 +597,21 @@ export default function RestaurantPage() {
 									</div>
 								</div>
 
-								<button className="rate-button-res-page" onClick={() => setShowReviewForm(true)}>
-									Avaliar Restaurante
-								</button>
+								{alreadyAClient && client.review && !(client.review.length > 0) &&
+									<button className="rate-button-res-page" onClick={
+										() => {
+											setShowReviewForm(true);
+											setUpdate(false)
+										}
+									}>
+										Avaliar Restaurante
+									</button>
+								}
 							</div>
 
 							{/* Add Review Form */}
 							{showReviewForm && (
-								<div className="add-review-form-res-page">
+								<div ref={reviewFormRef} className="add-review-form-res-page">
 									<div className="add-review-header-res-page">
 										<h3 className="add-review-title-res-page">Deixe sua avaliação</h3>
 										<button className="close-review-form-btn-res-page" onClick={() => setShowReviewForm(false)}>
@@ -556,21 +667,11 @@ export default function RestaurantPage() {
 											></textarea>
 										</div>
 
-										<div className="review-name-input-res-page">
-											<label>Seu nome:</label>
-											<input
-												type="text"
-												placeholder="Digite seu nome"
-												value={newReview.name}
-												onChange={(e) => setNewReview({ ...newReview, name: e.target.value })}
-											/>
-										</div>
-
 										<button
 											className="submit-review-button-res-page"
 											onClick={(e) => {
 												if (userRating > 0) {
-													handleSubmitReview(e)
+													handleSubmitReview(e, update)
 												} else {
 													Swal.fire("Erro!", "Por favor, preencha todos os campos obrigatórios (nota, nome e comentário).", "error")
 												}
@@ -586,12 +687,12 @@ export default function RestaurantPage() {
 							<h3 className="reviews-list-title-res-page">Comentários dos clientes</h3>
 							<div className="reviews-list-res-page">
 
-								{displayedReviews.map((review) => (
-									<div key={review.id} className="review-item-res-page">
+								{displayedReviews.map((review, index) => (
+									<div key={index} className="review-item-res-page">
 										<div className="review-header-res-page">
-											<div className="reviewer-avatar-res-page">{review.name.charAt(0).toUpperCase()}</div>
+											<div className="reviewer-avatar-res-page">{review.clientName ? review.clientName.charAt(0).toUpperCase() : "^_^"}</div>
 											<div className="reviewer-info-res-page">
-												<div className="reviewer-name-res-page">{review.name}</div>
+												<div className="reviewer-name-res-page">{review.clientName}</div>
 												<div className="review-meta-res-page">
 													<div className="review-stars-res-page">
 														{[1, 2, 3, 4, 5].map((star) => (
@@ -603,10 +704,18 @@ export default function RestaurantPage() {
 															</span>
 														))}
 													</div>
-													<div className="review-date-res-page">{formatDate(review.date)}</div>
+													<div className="review-date-res-page">{formatDate(new Date(review.updatedAt).toISOString())}</div>
 												</div>
 											</div>
-											{/* <button className="review-options-res-page">⋮</button> */}
+											{review.clientId === client.id &&
+												<button onClick={
+													() => {
+														setShowReviewForm(true)
+														setSelectedReview(review)
+														setUpdate(true)
+													}
+												} className="review-options-res-page">Editar📝</button>
+											}
 										</div>
 
 										<div className="review-content-res-page">

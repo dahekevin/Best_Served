@@ -1,5 +1,5 @@
 import express from 'express'
-import { registerClient, getClients, getClientById, getClientType, updateClient, deleteClient, clientLogin } from '../controllers/clientController.js'
+import { registerClient, getClients, getClientById, getClientType, updateClient, updateClientHistory , deleteClient} from '../controllers/clientController.js'
 import { loginController } from '../controllers/loginController.js'
 import { verifyToken } from '../middelwares/auth.js'
 import upload from '../multer/uploadConfig.js'
@@ -20,6 +20,9 @@ router.get('/client/get-type', getClientType)
 
 // Rota que edita um cliente
 router.put('/client/update', verifyToken, upload.single('client-avatar'), updateClient)
+
+// Rota que atualiza o hitórico do cliente
+router.patch('/client/update-history', verifyToken, updateClientHistory)
 
 // Rota que deleta clientes
 router.delete('/client/delete', verifyToken, deleteClient)

@@ -3,6 +3,7 @@ import cors from 'cors'
 import clientRoutes from './src/routes/clientRoutes.js'
 import restaurantRoutes from './src/routes/restaurantRoutes.js'
 import reservationRoutes from './src/routes/reservationRoutes.js'
+import reviewRoutes from './src/routes/reviewRoutes.js'
 import path from 'path'
 import './src/utils/cronJobs.js'
 import { fileURLToPath } from 'url';
@@ -27,5 +28,6 @@ app.use('/uploads', express.static(path.join(__dirname, 'src', 'uploads')));
 app.use('/', clientRoutes)
 app.use('/', restaurantRoutes)
 app.use('/', reservationRoutes)
+app.use('/', reviewRoutes)
 
 app.listen(process.env.PORT, () => console.log(`Server running on port: ${process.env.PORT}`))

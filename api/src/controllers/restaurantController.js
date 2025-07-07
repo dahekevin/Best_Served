@@ -79,7 +79,10 @@ export const getRestaurants = async (req, res) => {
                     email: req.query.email,
                     name: req.query.name
                 },
-                include: { tables: true }
+                include: { 
+                    tables: true,
+                    review: true
+                }
             })
             res.status(201).json({ message: 'Lista de restaurantes: ', restaurants })
         } else {
@@ -98,7 +101,10 @@ export const getRestaurantById = async (req, res) => {
             where: {
                 id: req.userId
             },
-            include: { tables: true }
+            include: { 
+                tables: true,
+                review: true
+            }
         })
 
         if (!restaurant) { res.status(404).json({ message: "Restaurante não encontrado" }) };

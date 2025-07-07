@@ -2,6 +2,8 @@ import './footer.css'
 import { SlSocialInstagram } from "react-icons/sl";
 import { SlSocialFacebook } from "react-icons/sl";
 import { TiSocialTwitter } from "react-icons/ti";
+import { FaLinkedin } from "react-icons/fa";
+import { FaGithub } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 
 export default function Footer() {
@@ -26,15 +28,21 @@ export default function Footer() {
                     <div className='footerFollowus'>
                         <h2>Siga nossas redes sociais</h2>
                         <div className='socials'>
-                            <SlSocialInstagram className='socialIcons' />
-                            <SlSocialFacebook className='socialIcons' />
-                            <TiSocialTwitter className='socialIcons' />
+                            <Link to={'https://www.instagram.com/dahe_kevin/'} target='_blank' >
+                                <SlSocialInstagram className='socialIcons' />
+                            </Link>
+                            <Link to={'https://github.com/dahekevin'} target='_blank' >
+                                <FaGithub className='socialIcons' />
+                            </Link>
+                            <Link to={'https://www.linkedin.com/in/dahe-kevin-591a06278/'} target='_blank' >
+                                <FaLinkedin className='socialIcons' />
+                            </Link>
                         </div>
                     </div>
                 </div>
                 <div className='footerCopyRight'>
                     <p>© Copyright Best Served. Todos os direitos reservados.
-                        Desenvolvido por DevSquad</p>
+                        Desenvolvido por Dahe Kevin.</p>
                 </div>
             </footer>
         </>

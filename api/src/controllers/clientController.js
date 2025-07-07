@@ -81,6 +81,7 @@ export const getClientById = async (req, res) => {
                 id: req.userId
             },
             include: {
+                review: true,
                 reservations: {
                     include: {
                         restaurant: {
@@ -171,6 +172,49 @@ export const updateClient = async (req, res) => {
 
     } catch (error) {
         res.status(500).json({ message: 'Erro no servidor, tente novamente' })
+    }
+}
+
+export const updateClientHistory = async (req, res) => {
+    try {
+        console.log('UpdateClientehistory: ', req.body.restaurantId);
+        const clientId = req.userId; 
+        const newRestaurantId = req.body.restaurantId; 
+
+        
+
+        if (!clientId || !newRestaurantId) {
+            return res.status(400).json({ message: 'ID do cliente ou ID do restaurante ausente.' });
+        }
+
+        const client = await prisma.client.findUnique({
+            where: { id: clientId },
+            select: { restaurantHistory: true }
+        });
+
+        if (!client) {
+            return res.status(404).json({ message: 'Cliente não encontrado.' });
+        }
+
+        const currentHistory = Array.isArray(client.restaurantHistory) ? client.restaurantHistory : [];
+
+        if (currentHistory.includes(newRestaurantId)) {
+            console.log(`Restaurante ${newRestaurantId} já está no histórico do cliente ${clientId}.`);
+            return res.status(200).json({ message: 'Restaurante já no histórico.', client });
+        }
+
+        const updatedHistory = [...currentHistory, newRestaurantId];
+
+        const updatedClient = await prisma.client.update({
+            where: { id: clientId },
+            data: { restaurantHistory: updatedHistory }
+        });
+
+        res.status(200).json({ message: 'Histórico de restaurante atualizado!', client: updatedClient });
+
+    } catch (error) {
+        console.error("🚨 Erro ao atualizar histórico do cliente:", error);
+        res.status(500).json({ message: 'Erro no servidor, tente novamente.' });
     }
 }
 

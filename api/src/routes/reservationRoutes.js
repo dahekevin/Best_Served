@@ -1,5 +1,6 @@
 import express from 'express'
 import { registerReservation, getReservations, updateReservation, deleteReservation } from '../controllers/reservationController.js'
+import { verifyToken } from '../middelwares/auth.js';
 
 const router = express.Router();
 
@@ -10,9 +11,9 @@ router.post('/reservation/register', registerReservation)
 router.get('/reservation/get-many', getReservations)
 
 // Rota que atualiza uma reserva
-router.get('/reservation/update', updateReservation)
+router.get('/reservation/update', verifyToken, updateReservation)
 
 // Rota que deleta reserva
-router.delete('/reservation/delete', deleteReservation)
+router.delete('/reservation/delete', verifyToken, deleteReservation)
 
 export default router 

@@ -16,19 +16,20 @@ datasource db {
 }
 
 model Review {
-    id        String   @id @default(auto()) @map("_id") @db.ObjectId
-    stars     Int
-    comment   String?
-    tags      String[]
-    updatedAt DateTime? @updatedAt
-    createdAt DateTime? @default(now())
+    id         String    @id @default(auto()) @map("_id") @db.ObjectId
+    rating     Int
+    comment    String?
+    clientName String?
+    tags       String[]
+    createdAt  DateTime? @default(now())
+    updatedAt  DateTime? @updatedAt
 
     // Relations
-    clientId String @db.ObjectId
-    client   Client @relation(fields: [clientId], references: [id])
+    clientId String? @db.ObjectId
+    client   Client? @relation(fields: [clientId], references: [id])
 
-    restaurantId String     @db.ObjectId
-    restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+    restaurantId String?     @db.ObjectId
+    restaurant   Restaurant? @relation(fields: [restaurantId], references: [id])
 }
 
 model Subscription {
@@ -66,8 +67,8 @@ model Reservations {
     guests    Int?
     status    String? // Pending, Active, Canceled
     notes     String?
-    createdAt DateTime?  @default(now())
-    updatedAt DateTime?  @updatedAt
+    createdAt DateTime? @default(now())
+    updatedAt DateTime? @updatedAt
 
     // Client Relations
     clientId String @db.ObjectId
@@ -83,9 +84,9 @@ model Reservations {
 }
 
 model Restaurant {
-    id          String   @id @default(auto()) @map("_id") @db.ObjectId
-    type        String   @default("restaurant") // user or restaurant
-    email       String   @unique
+    id          String    @id @default(auto()) @map("_id") @db.ObjectId
+    type        String    @default("restaurant") // user or restaurant
+    email       String    @unique
     name        String
     password    String
     cnpj        String // CNPJ is a unique identifier for Brazilian companies. Use @unique if needed.
@@ -98,8 +99,8 @@ model Restaurant {
     avatar      String?
     menu        String?
     tags        String[]
-    rating      Float?   @default(0)
-    ratingCount Int?     @default(0)
+    rating      Float?    @default(0)
+    ratingCount Int?      @default(0)
     createdAt   DateTime? @default(now())
     updatedAt   DateTime? @updatedAt
 
@@ -112,15 +113,16 @@ model Restaurant {
 }
 
 model Client {
-    id        String   @id @default(auto()) @map("_id") @db.ObjectId
-    type      String   @default("client") // user or restaurant
-    email     String   @unique
-    name      String
-    password  String
-    phone     String?
-    avatar    String?
-    createdAt DateTime? @default(now())
-    updatedAt DateTime? @updatedAt
+    id                String    @id @default(auto()) @map("_id") @db.ObjectId
+    type              String    @default("client") // user or restaurant
+    email             String    @unique
+    name              String
+    password          String
+    phone             String?
+    avatar            String?
+    restaurantHistory String[]
+    createdAt         DateTime? @default(now())
+    updatedAt         DateTime? @updatedAt
 
     // Relations
     reservations Reservations[]

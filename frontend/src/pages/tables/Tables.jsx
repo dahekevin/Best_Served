@@ -24,7 +24,6 @@ const RestaurantTables = () => {
 		guests: "",
 	})
 
-
 	const [tables, setTables] = useState([])
 
 	// const restaurants = ["Todos", "Restaurante Central", "Restaurante Norte", "Restaurante Sul"]
@@ -72,7 +71,6 @@ const RestaurantTables = () => {
 			})
 
 			console.log(client);
-			
 
 			if (!client) { return console.log('Falha ao acessar informações do cliente no banco.'); }
 
@@ -87,6 +85,15 @@ const RestaurantTables = () => {
 			})
 
 			if (!response) { console.log('Erro ao acessar reservas em banco.'); }
+
+			const history = await api.patch('/client/update-history', { restaurantId: restaurantId }, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+					'Content-Type': 'application/json'
+				}
+			});
+
+			if (!history) { console.log('Erro ao atualizar o histórico do cliente.'); }
 
 			console.log('Reservas: ', response);
 			Swal.fire("Pedido de reserva feita!")
@@ -264,7 +271,7 @@ const RestaurantTables = () => {
 					return (
 						<>
 							{table.restaurantId === restaurantId &&
-								(searchFilters.guests === '' ? true : (table.seats >= searchFilters.guests && (searchFilters.guests <= parseInt(maxSeats))) ) &&
+								(searchFilters.guests === '' ? true : (table.seats >= searchFilters.guests && (searchFilters.guests <= parseInt(maxSeats)))) &&
 								<>
 									{(index += 1) &&
 										< div

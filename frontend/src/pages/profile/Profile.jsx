@@ -80,7 +80,7 @@ export default function Profile() {
 
             } else if (
                 result.dismiss === Swal.DismissReason.cancel
-            ) { }
+            ) {/**/}
         });
     };
 
