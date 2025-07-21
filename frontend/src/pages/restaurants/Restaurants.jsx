@@ -19,6 +19,9 @@ export default function RestaurantList() {
 
 			if (!response) { return console.log('Restaurantes não encontrados.'); }
 
+			console.log('Lista de restaurantes: ', response.data);
+			
+
 			setRestaurants(response.data.restaurants)
 
 		} catch (error) {
@@ -39,6 +42,19 @@ export default function RestaurantList() {
 		setVisibleCount((prevCount) => prevCount + 3)
 	}
 
+	const approvedRestaurants = () => {
+		if (!Array.isArray(restaurants)) { return [] }
+
+		const restaurantList = restaurants.filter(res => {
+			return res.status === 'Approved'
+		})
+
+		return restaurantList
+	}
+
+	const displayedRestaurants = approvedRestaurants()
+	
+
 	return (
 		<div className="restaurant-container">
 			<div className="search-container">
@@ -51,7 +67,7 @@ export default function RestaurantList() {
 			</div>
 
 			<div className="restaurant-list">
-				{restaurants.slice(0, visibleCount).map((restaurant) => (
+				{displayedRestaurants.slice(0, visibleCount).map((restaurant) => (
 					<RestaurantCard
 						key={restaurant.id}
 						id={restaurant.id}

@@ -3,6 +3,7 @@ import api from "../../service/api"
 
 import { useState } from "react"
 import { TextField, Button } from "@mui/material"
+import Select from 'react-select'
 
 const RestaurantProfileUpdate = () => {
 	const [profile, setProfile] = useState({
@@ -19,7 +20,16 @@ const RestaurantProfileUpdate = () => {
 		mapsUrl: "https://maps.google.com/?q=Av.+Paulista,+1234,+São+Paulo",
 		avatar: null,
 		tables: 0,
+		capacity: 0,
+		tags: [],
 	})
+
+	const tagOptions = [
+		{ value: "Churrascaria", label: "Churrascaria" },
+		{ value: "Sorveteria", label: "Sorveteria" },
+		{ value: "Karaokê", label: "Karaokê" },
+		{ value: "Bar", label: "Bar" }
+	];
 
 	const [previewImage, setPreviewImage] = useState(profile.image)
 	const [menuPdf, setMenuPdf] = useState(null)
@@ -30,6 +40,13 @@ const RestaurantProfileUpdate = () => {
 		setProfile({
 			...profile,
 			[name]: value,
+		})
+	}
+
+	const handleTagChange = (selectedTags) => {
+		setProfile({
+			...profile,
+			tags: selectedTags || [],
 		})
 	}
 
@@ -108,6 +125,10 @@ const RestaurantProfileUpdate = () => {
 		formData.append('description', profile.description)
 		formData.append('opensAt', profile.opensAt);
 		formData.append('closesAt', profile.closesAt);
+		formData.append('capacity', (profile.capacity))
+
+		const tagValues = profile.tags.map(tag => tag.value)
+		formData.append('tags', JSON.stringify(tagValues))
 
 		// formData.append('tables', profile.tables);
 
@@ -122,6 +143,9 @@ const RestaurantProfileUpdate = () => {
 		if (menuPdf) {
 			formData.append('menu', menuPdf);
 		}
+
+		console.log('MENUUU', menuPdf);
+		
 
 		console.log("FormData being sent:", formData);
 
@@ -254,7 +278,7 @@ const RestaurantProfileUpdate = () => {
 								placeholder="Ex: Av. Paulista, 1234, São Paulo, SP"
 							/>
 						</div>
-						
+
 						<div className="form-group">
 							<label htmlFor="opensAt">Horário de Abertura</label>
 							<TextField
@@ -266,7 +290,7 @@ const RestaurantProfileUpdate = () => {
 								className="form-input"
 							/>
 						</div>
-						
+
 						<div className="form-group">
 							<label htmlFor="closesAt">Horário de Fechamento</label>
 							<TextField
@@ -315,6 +339,35 @@ const RestaurantProfileUpdate = () => {
 								onChange={handleInputChange}
 								className="form-input"
 								placeholder="Digite a quantidade de mesas"
+							/>
+						</div>
+
+						<div className="form-group">
+							<label htmlFor="tables">Capacidade das Mesas</label>
+							<TextField
+								type="number"
+								id="capacity"
+								name="capacity"
+								value={profile.capacity}
+								onChange={handleInputChange}
+								className="form-input"
+								fullWidth
+								placeholder="Digite a capacidade das mesas"
+								/>
+						</div>
+
+						<div className="form-group">
+							<label htmlFor="tables">Tags do estabelecimento</label>
+							<Select
+								id="tags"
+								name="tags"
+								isMulti
+								className="form-input"
+								options={tagOptions}
+								value={profile.tags}
+								onChange={handleTagChange}
+								fullWidth
+								placeholder="Tags"
 							/>
 						</div>
 					</div>

@@ -3,6 +3,7 @@ import cors from 'cors'
 import clientRoutes from './src/routes/clientRoutes.js'
 import restaurantRoutes from './src/routes/restaurantRoutes.js'
 import reservationRoutes from './src/routes/reservationRoutes.js'
+import adminRoutes from './src/routes/adminRoutes.js'
 import reviewRoutes from './src/routes/reviewRoutes.js'
 import path from 'path'
 import './src/utils/cronJobs.js'
@@ -27,6 +28,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'src', 'uploads')));
 // Routes
 app.use('/', clientRoutes)
 app.use('/', restaurantRoutes)
+app.use('/', adminRoutes)
 app.use('/', reservationRoutes)
 app.use('/', reviewRoutes)
 

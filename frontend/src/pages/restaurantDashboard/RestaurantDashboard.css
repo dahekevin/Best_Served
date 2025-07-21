@@ -1,0 +1,759 @@
+.dashboard {
+	width: 100%;
+	margin: 0 auto;
+	padding: 50px;
+	background: #1e1e1e;
+}
+
+
+/* Dashboard header */
+.dashboard-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	margin-bottom: 30px;
+}
+
+.greeting h1 {
+	font-size: 28px;
+	font-weight: 600;
+	margin-bottom: 5px;
+}
+
+.greeting p {
+	color: #a0a0a0;
+	font-size: 17px;
+}
+
+.time-display {
+	text-align: right;
+}
+
+.time-display h2 {
+	font-size: 28px;
+	font-weight: 600;
+	margin-bottom: 5px;
+	color: #a0a0a0;
+}
+
+.time-display p {
+	color: #a0a0a0;
+	font-size: 17px;
+}
+
+/* Dashboard stats */
+.dashboard-stats {
+	display: flex;
+	gap: 20px;
+	margin-bottom: 30px;
+}
+
+.rp-card {
+	flex: 1;
+	background-color: #2c2c2c;
+	border-radius: 70px;
+	padding: 20px;
+	display: flex;
+	align-items: center;
+	background-image: linear-gradient(to right,
+			/* O gradiente vai do fundo para o topo */
+			#1E1E1E 10%,
+			/* Cor preta opaca no fundo (cobrirá a imagem) */
+			#2c2c2c 25%,
+			/* Transparente no meio (a imagem aparece) */
+			rgba(0, 0, 0, 0) 75%
+			/* Totalmente transparente no topo */
+		),
+		url('/back5.jpg');
+	/* Sua imagem de fundo */
+
+	background-size: cover;
+	background-position: center;
+}
+
+.rp-avatar {
+	margin-right: 24px;
+}
+
+.earnings .rp-avatar {
+	width: 150px;
+	height: 150px;
+	border-radius: 30%;
+	object-fit: cover;
+	background-color: #f0f0f0;
+}
+
+.stat-content h2 {
+	font-size: 32px;
+	font-weight: 600;
+	margin-bottom: 5px;
+	color: #00A65A;
+}
+
+.stat-content h3 {
+	font-size: 16px;
+	color: #a0a0a0;
+	margin-bottom: 5px;
+}
+
+.profile-actions {
+	margin-top: -15px;
+	margin-bottom: 15px;
+}
+
+.profile-actions span,
+.profile-actions .editBtn {
+	font-size: 17px;
+	font-style: italic;
+	color: #a0a0a03f;
+	transition: color 0.5s ease-out;
+	text-decoration: none;
+}
+
+.profile-actions .editBtn:hover {
+	cursor: pointer;
+	color: orange;
+}
+
+.profile-actions .deleteBtn:hover {
+	cursor: pointer;
+	color: orangered;
+}
+
+.stat-content p {
+	font-size: 14px;
+}
+
+/* Dashboard content */
+.dashboard-content {
+	display: grid;
+	grid-template-columns: 3fr 2fr;
+	gap: 20px;
+}
+
+.recent-orders {
+	flex-grow: 1;
+}
+
+.section-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20px;
+}
+
+.section-header h2 {
+	font-size: 20px;
+	font-weight: 600;
+	color: #a0a0a0;
+}
+
+.view-all {
+	background-color: #1a8754;
+	padding: 10px 15px;
+	border-radius: 30px;
+	font-size: 17px;
+	transition: transform 0.3s ease-in-out;
+	color: white;
+	border: none;
+}
+
+.view-all:hover {
+	cursor: pointer;
+	background-color: #105233;
+	transform: scale(1.1);
+}
+
+/* Search container */
+.search-container {
+	position: relative;
+	margin-bottom: 20px;
+}
+
+.search-container input {
+	width: 100%;
+	padding: 12px 40px 12px 15px;
+	border-radius: 8px;
+	border: none;
+	background-color: #2c2c2c;
+	color: #ffffff;
+	font-size: 14px;
+}
+
+.search-container input::placeholder {
+	color: #a0a0a0;
+}
+
+.search-icon {
+	position: absolute;
+	right: 15px;
+	top: 50%;
+	transform: translateY(-50%);
+	color: #a0a0a0;
+}
+
+/* Orders list */
+.orders-list {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.order-item {
+	display: flex;
+	justify-content: space-between;
+	background-color: #2c2c2c;
+	border-radius: 10px;
+	overflow: hidden;
+}
+
+.order-item:hover {
+	cursor: pointer;
+}
+
+.order-initials {
+	background-color: var(--red-bg);
+	color: white;
+	padding: 12px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-width: 100px;
+	text-align: center;
+}
+
+.reservationDay {
+	font-size: 24px;
+	font-style: italic;
+	font-weight: bold;
+}
+
+.reservationMonth {
+	font-size: 14px;
+	font-style: italic;
+}
+
+.order-details {
+	flex: 1;
+}
+
+.order-details h3 {
+	font-size: 16px;
+	margin-bottom: 5px;
+	color: white;
+}
+
+.order-details p {
+	font-size: 14px;
+	color: #a0a0a0;
+}
+
+.order-box {
+	display: flex;
+	align-items: center;
+	padding: 10px;
+}
+
+.order-table {
+	margin-right: 20px;
+}
+
+.order-table span {
+	background-color: #2c2c2c;
+	padding: 6px 12px;
+	border-radius: 20px;
+	font-size: 14px;
+	color: #ffc107;
+	border: 1px solid #ffc107;
+}
+
+.order-status {
+	text-align: right;
+	min-width: 120px;
+}
+
+.status-icon {
+	color: #1a8754;
+	margin-right: 5px;
+}
+
+.status-text {
+	color: #1a8754;
+	font-weight: 600;
+	font-style: italic;
+}
+
+.order-status p {
+	font-size: 12px;
+	color: #a0a0a0;
+	margin-top: 5px;
+}
+
+.client-notes-title, .client-notes {
+	display: flex;
+	justify-content: flex-end;
+	padding: 0px 30px;
+	font-style: italic;
+	color: #1a8754;
+	overflow-y: auto;
+}
+
+.client-notes-title {
+	font-weight: bold;
+	color: #00a65a;
+	margin-top: -10px;
+}
+
+.client-notes {
+	font-size: smaller;
+	padding-bottom: 15px;
+}
+
+.restaurant-reservation-actions {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 8px;
+	padding: 16px;
+}
+
+.restaurant-confirm-button,
+.restaurant-cancel-button {
+	display: flex;
+	align-items: center;
+	background-color: #1a8754;
+	padding: 6px 12px;
+	font-size: medium;
+	border-radius: 20px;
+	transition: background-color 0.2s;
+}
+
+.restaurant-confirm-button {
+	background-color: #1a8754;
+	border: 1px solid #1a8754;
+	color: white;
+	transition: background-color 0.5s ease-in-out;
+}
+
+.restaurant-confirm-button:hover {
+	background-color: #115535;
+	cursor: pointer;
+}
+
+.restaurant-cancel-button {
+	background-color: transparent;
+	border: 1px solid #C53030;
+	color: white;
+}
+
+.restaurant-cancel-button:hover {
+	background-color: #9B2424;
+	cursor: pointer;
+}
+
+.reviews {
+	height: fit-content;
+	background-color: #2C2C2C;
+	max-width: 700px;
+	padding: 30px;
+	border-radius: 30px;
+}
+
+.review-section-header {
+	display: flex;
+	gap: 30px;
+}
+
+.review-section-header h2 {
+	color: orange;
+}
+
+.review-view-btn {
+	display: flex;
+	align-items: center;
+	background-color: #1a8754;
+	padding: 0px 10px;
+	font-size: large;
+	border-radius: 20px;
+}
+
+.review-section-header .review-view-btn:hover {
+	color: #105233;
+}
+
+.review-section-header a {
+	color: white;
+	text-decoration: none;
+}
+
+/* Review list */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Rating Overview */
+
+.rating-overview-res-dashboard-page {
+	background: #f8f9fa;
+	display: flex;
+	align-items: flex-start;
+	gap: 40px;
+	margin-bottom: 40px;
+	padding: 30px;
+	border-radius: 15px;
+	box-shadow: 0 10px 2px rgba(0, 0, 0, 0.05);
+}
+
+.rating-score-res-dashboard-page {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+}
+
+.big-score-res-dashboard-page {
+	font-size: 64px;
+	font-weight: 700;
+	color: #333;
+	line-height: 1;
+}
+
+.rating-stars-display-res-dashboard-page {
+	display: flex;
+	gap: 4px;
+}
+
+.total-reviews-res-dashboard-page {
+	font-size: 14px;
+	color: #666;
+	margin-top: 5px;
+}
+
+.rating-bars-res-dashboard-page {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.rating-bar-container-res-dashboard-page {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.rating-bar-label-res-dashboard-page {
+	font-size: 14px;
+	color: #666;
+	width: 15px;
+	text-align: center;
+}
+
+.rating-bar-background-res-dashboard-page {
+	flex: 1;
+	height: 12px;
+	background-color: #e9ecef;
+	border-radius: 6px;
+	overflow: hidden;
+}
+
+.rating-bar-fill-res-dashboard-page {
+	height: 100%;
+	background-color: #00a65a;
+	border-radius: 6px;
+}
+
+
+/* Reviews List */
+.reviews-list-res-dashboard-page {
+	max-height: 700px;
+	overflow-y: auto;
+	padding-right: 15px;
+	/* Adiciona um padding para a barra de rolagem não ficar colada no conteúdo */
+	-webkit-overflow-scrolling: touch;
+	/* Melhoria de rolagem para dispositivos iOS */
+}
+
+.reviews-list-title-dashboard-page {
+	font-size: 20px;
+	font-weight: 600;
+	color: #00a65a;
+	margin-bottom: 20px;
+}
+
+.review-item-res-dashboard-page {
+	padding: 25px 0;
+	border-bottom: 1px solid #e0e0e0;
+}
+
+.review-item-res-dashboard-page:last-child {
+	border-bottom: none;
+}
+
+.review-header-res-dashboard-page {
+	display: flex;
+	align-items: center;
+	gap: 15px;
+	margin-bottom: 15px;
+}
+
+.review-avatar-res-dashboard-page {
+	width: 40px;
+	height: 40px;
+	background: #00a65a;
+	color: white;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 18px;
+	font-weight: 600;
+}
+
+.review-info-res-dashboard-page {
+	flex: 1;
+}
+
+.review-name-res-dashboard-page {
+	font-size: 16px;
+	font-weight: 600;
+	color: white;
+	margin-bottom: 5px;
+}
+
+.review-meta-res-dashboard-page {
+	display: flex;
+	align-items: center;
+	gap: 15px;
+}
+
+/* Stars Styles */
+.stars-container-res-dashboard-page {
+	display: flex;
+	gap: 8px;
+	justify-content: center;
+}
+
+.review-star-res-dashboard-page,
+.review-star-large-res-dashboard-page {
+	background: none;
+	border: none;
+	font-size: 22px;
+	color: #ddd;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	padding: 4px;
+	border-radius: 50%;
+}
+
+.review-star-large-res-dashboard-page {
+	font-size: 32px;
+}
+
+.review-star-res-dashboard-page.filled-res-dashboard-page,
+.review-star-large-res-dashboard-page.filled-res-dashboard-page {
+	color: #ffd700;
+	text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.star-res-page.interactive-res-page:hover,
+.star-large-res-page.interactive-res-page:hover {
+	transform: scale(1.2);
+	background: rgba(255, 215, 0, 0.1);
+}
+
+.review-star-res-page.display-res-page,
+.review-star-large-res-page.display-res-dashboard-page {
+	cursor: default;
+}
+
+.review-stars-res-dashboard-page {
+	display: flex;
+	gap: 2px;
+}
+
+.review-star-res-dashboard-page {
+	font-size: 16px;
+	color: #ddd;
+}
+
+.review-star-res-page.filled-res-dashboard-page {
+	color: #ffd700;
+}
+
+.review-date-res-dashboard-page {
+	font-size: 14px;
+	color: #666;
+}
+
+.review-options-res-dashboard-page {
+	background-color: #007bff;
+	border: none;
+	font-size: 20px;
+	font-style: italic;
+	color: white;
+	cursor: pointer;
+	border-radius: 30px;
+	padding: 5px 15px;
+	transition: background-color 0.2s ease;
+}
+
+.review-options-res-dashboard-page:hover {
+	background-color: #0056b3;
+}
+
+.review-content-res-dashboard-page {
+	margin-bottom: 15px;
+}
+
+.review-text-res-dashboard-page {
+	overflow-wrap: break-word;
+	font-size: 16px;
+	line-height: 1.6;
+	color: #ddd;
+}
+
+.review-tags-res-dashboard-page {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.review-tag-res-dashboard-page {
+	background: #e9ecef;
+	color: #495057;
+	padding: 4px 12px;
+	border-radius: 16px;
+	font-size: 12px;
+}
+
+.reviews-actions-res-dashboard-page {
+	text-align: center;
+	margin-top: 30px;
+}
+
+.review-show-more-reviews-btn-res-dashboard-page {
+	background: transparent;
+	color: #00a65a;
+	border: 2px solid #00a65a;
+	padding: 12px 30px;
+	border-radius: 8px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	font-size: 16px;
+}
+
+.review-show-more-reviews-btn-res-dashboard-page:hover {
+	background: #00a65a;
+	color: white;
+	transform: translateY(-2px);
+	box-shadow: 0 4px 15px rgba(0, 166, 90, 0.3);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Responsive styles */
+@media (max-width: 1024px) {
+	.dashboard-content {
+		flex-direction: column;
+	}
+
+	.popular-dishes {
+		margin-top: 30px;
+	}
+}
+
+@media (max-width: 768px) {
+	.dashboard-header {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.time-display {
+		text-align: left;
+		margin-top: 15px;
+	}
+
+	.dashboard-stats {
+		flex-direction: column;
+	}
+
+	.order-item {
+		flex-wrap: wrap;
+	}
+
+	.order-table {
+		margin-top: 10px;
+		margin-bottom: 10px;
+		width: 100%;
+	}
+
+	.order-status {
+		width: 100%;
+		text-align: left;
+		display: flex;
+		align-items: center;
+		gap: 5px;
+	}
+
+	.order-status p {
+		margin-top: 0;
+		margin-left: 10px;
+	}
+}
+
+@media (max-width: 480px) {
+	.greeting h1 {
+		font-size: 24px;
+	}
+
+	.time-display h2 {
+		font-size: 24px;
+	}
+
+	.stat-content h2 {
+		font-size: 28px;
+	}
+}

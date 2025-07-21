@@ -254,9 +254,9 @@ const RestaurantTables = () => {
 				</div>
 			</div>
 
-			<div className="tables-results-info">
+			{/* <div className="tables-results-info">
 				<span>Mostrando {filteredTables.length} mesa(s)</span>
-			</div>
+			</div> */}
 
 			<div className="tables-tables-grid">
 				{filteredTables.map((table) => {

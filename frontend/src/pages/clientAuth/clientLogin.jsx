@@ -25,15 +25,19 @@ export default function ClientLogin() {
             }
 
             const token = response.data.token
+            const role = response.data.user.type
 
-            localStorage.setItem('token', token)  // <--- ESSENTIAL
+            localStorage.setItem('token', token)
+            localStorage.setItem('role', role)
 
             console.log('Token armazenado response.data.token: ', token);
 
             if (user.type === 'client') {
                 window.location.href = '/client-profile'
             } else if (user.type === 'restaurant') {
-                window.location.href = '/restaurant-profile'
+                window.location.href = '/restaurant-dashboard'
+            } else if (user.type === 'admin') {
+                window.location.href = '/admin'
             }
 
             alert('Seja bem vindo ao nosso sistema!')

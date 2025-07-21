@@ -45,6 +45,7 @@
 }
 
 .navbarLinkLogout:hover {
+    cursor: pointer;
     background-color: darkred;
     transform: scale(1.05);
 }

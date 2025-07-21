@@ -1,5 +1,5 @@
 import express from 'express'
-import { registerClient, getClients, getClientById, getClientType, updateClient, updateClientHistory , deleteClient} from '../controllers/clientController.js'
+import { registerClient, getClients, getClientById, getClientType, updateClient, updateClientHistory , deleteClient, getTotalClients} from '../controllers/clientController.js'
 import { loginController } from '../controllers/loginController.js'
 import { verifyToken } from '../middelwares/auth.js'
 import upload from '../multer/uploadConfig.js'
@@ -14,6 +14,9 @@ router.get('/client/get-many', getClients)
 
 // Rota que devolve um cliente específico
 router.get('/client/get-one', verifyToken, getClientById)
+
+// Rota que devolve o total de clientes
+router.get('/client/get-total', getTotalClients)
 
 // Rota que devolve o tipo
 router.get('/client/get-type', getClientType)

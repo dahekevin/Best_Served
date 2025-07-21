@@ -1,6 +1,5 @@
 import { PrismaClient } from "../../generated/prisma/client.js";
 import bcrypt from "bcrypt";
-import { table } from "console";
 import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
@@ -21,7 +20,7 @@ export const registerRestaurant = async (req, res) => {
 
 
         const avatarFile = req.files?.['restaurant-avatar']?.[0]
-        const menuFile = req.files?.['tables']?.[0]
+        const menuFile = req.files?.['menu']?.[0]
 
         console.log('Dados do restaurante:', req.body);
         console.log("FILES: ", req.files);
@@ -33,9 +32,13 @@ export const registerRestaurant = async (req, res) => {
         const numberOfTables = parseInt(req.body.tables) || 0
 
         const generatedTables = Array.from({ length: numberOfTables }, () => ({
-            capacity: req.body.capacity || '0',
+            seats: req.body.capacity || '0',
             status: 'Available'
         }))
+
+        console.log('Generated Tables: ', generatedTables);
+
+        const parsedTags = req.body.tags ? JSON.parse(req.body.tags) : []
 
         const restaurant = await prisma.restaurant.create({
             data: {
@@ -51,26 +54,25 @@ export const registerRestaurant = async (req, res) => {
                 description: req.body.description || '',
                 avatar: avatarFile ? avatarFile.path : '',
                 menu: menuFile ? menuFile.path : '',
+                tags: parsedTags,
                 tables: {
                     create: generatedTables
                 }
             }
-        })
+        })        
 
         res.status(201).json({ message: "Restaurante Cadastrado com sucesso!", restaurant })
 
     } catch (error) {
-        res.status(500).json({ message: "Erro no servidor, tente novamente." })
+        res.status(500).json({ message: "Erro no servidor, tente novamente.", error })
     }
 }
 
 export const getRestaurants = async (req, res) => {
-
     try {
         let restaurants = []
 
         console.log(req.query.id);
-
 
         if (req.query.id || req.query.email || req.query.name) {
             restaurants = await prisma.restaurant.findMany({
@@ -79,16 +81,46 @@ export const getRestaurants = async (req, res) => {
                     email: req.query.email,
                     name: req.query.name
                 },
-                include: { 
+                include: {
                     tables: true,
-                    review: true
+                    review: true,
+                    reservations: true
                 }
             })
             res.status(201).json({ message: 'Lista de restaurantes: ', restaurants })
         } else {
             restaurants = await prisma.restaurant.findMany()
             res.status(201).json({ message: 'Lista de restaurantes: ', restaurants })
-        }
+        } 
+
+    } catch (error) {
+        res.status(500).json({ message: "Erro no servidor, tente novamente." })
+    }
+}
+
+export const getRestaurantByRating = async (req, res) => {
+    
+    try {
+        const restaurants = await prisma.restaurant.findMany({
+            orderBy: { rating: 'desc' },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                phone: true,
+                fullAddress: true,
+                tags: true,
+                rating: true,
+                status: true,
+                isActive: true,
+                createdAt: true,
+                _count: {
+                    select: { reservations: true }
+                }
+            },
+        })        
+
+        res.status(201).json({ message: 'Lista de restaurantes por rating', restaurants })
 
     } catch (error) {
         res.status(500).json({ message: "Erro no servidor, tente novamente." })
@@ -103,7 +135,8 @@ export const getRestaurantById = async (req, res) => {
             },
             include: { 
                 tables: true,
-                review: true
+                review: true,
+                reservations: true
             }
         })
 
@@ -195,7 +228,7 @@ export const updateRestaurant = async (req, res) => {
 
 
         const avatarFile = req.files?.['restaurant-avatar']?.[0]
-        const menuFile = req.files?.['tables']?.[0]
+        const menuFile = req.files?.['menu']?.[0]
 
         console.log('Dados do restaurante:', req.body);
         console.log("FILES: ", req.files);
@@ -210,6 +243,8 @@ export const updateRestaurant = async (req, res) => {
             capacity: req.body.capacity || '0',
             status: req.body.status
         }))
+
+        const parsedTags = req.body.tags ? JSON.parse(req.body.tags) : []
 
         const restaurant = await prisma.restaurant.update({
             where: {
@@ -227,7 +262,8 @@ export const updateRestaurant = async (req, res) => {
                 mapsUrl: req.body.mapsUrl || '',
                 description: req.body.description || '',
                 avatar: avatarFile ? avatarFile.path : '',
-                tables: menuFile ? menuFile.path : '',
+                menu: menuFile ? menuFile.path : '',
+                tags: parsedTags,
                 tables: {
                     create: generatedTables
                 }
@@ -243,11 +279,40 @@ export const updateRestaurant = async (req, res) => {
     }
 }
 
+export const updateRestaurantStatus = async (req, res) => {
+    try {
+        if (req.body.status) {
+            const restaurant = await prisma.restaurant.update({
+                where: { id: req.query.id },
+                data: { status: req.body.status }
+            })
+
+            res.status(202).json({ message: "Status do restaurante atualizados com sucesso!", restaurant })
+        }
+
+    } catch (error) {
+        res.status(500).json({ message: "Erro no servidor, tente novamente." })
+    }
+}
+
+export const updateRestaurantIsActiveStatus = async (req, res) => {
+    try {
+        const restaurant = await prisma.restaurant.update({
+            where: { id: req.query.id },
+            data: { isActive: req.body.isActive }
+        })
+
+        res.status(201).json({ success: true, restaurant })
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao atualizar status.' })
+    }
+}
+
 export const deleteRestaurant = async (req, res) => {
     try {
         const restaurant = await prisma.restaurant.delete({
             where: {
-                id: req.userId
+                id: req.query.id
             }
         })
 

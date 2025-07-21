@@ -57,6 +57,7 @@ export default function RestaurantPage() {
 		avatar: "",
 		menu: "",
 		review: [],
+		tags: [],
 	})
 
 	// Calcular média das avaliações (sempre retorna número)
@@ -274,9 +275,10 @@ export default function RestaurantPage() {
 	}, [client.id, restaurantInfo.review]); // Dependências: client.id e o array client.review
 
 	console.log('Reordered Reviews: ', reorderedReviews);
-	
+
 
 	const displayedReviews = showAllReviews ? reorderedReviews : reorderedReviews.slice(0, 3);
+
 
 
 
@@ -313,7 +315,7 @@ export default function RestaurantPage() {
 			setClient(response.data)
 
 		} catch (error) {
-			console.error('É preciso estar logado para fazer um reserva.', error);
+			console.error('É preciso estar logado como cliente para fazer uma reserva.', error);
 			Swal.fire({
 				position: 'top-end',
 				icon: 'warning',
@@ -330,7 +332,6 @@ export default function RestaurantPage() {
 
 	const getRestaurantInfo = useCallback(async () => {
 		try {
-
 			const response = await api.get(
 				restaurantId
 					? `/restaurant/get-many?id=${restaurantId}`
@@ -354,14 +355,15 @@ export default function RestaurantPage() {
 				avatar: data.avatar,
 				menu: data.menu,
 				review: data.review,
+				tags: data.tags
 			})
 
-			console.log('REvciew: ', data.review);
+			console.log('TAGS: ', data.tags);
 
 			return data
 		} catch (error) {
 			console.error("Falha ao carregar informações do restaurante.", error)
-			alert("Falha ao carregar informações do restaurante.")
+			// alert("Falha ao carregar informações do restaurante.")
 		}
 	}, [restaurantId])
 
@@ -397,6 +399,9 @@ export default function RestaurantPage() {
 	}, [showReviewForm])
 
 	useEffect(() => {
+		console.log(client.restaurantHistory);
+		console.log('dfgs', restaurantInfo.id);
+
 		if (client.restaurantHistory && restaurantInfo.id) {
 			const hasReserved = client.restaurantHistory.some(historyItem => {
 				return historyItem === restaurantInfo.id
@@ -405,8 +410,9 @@ export default function RestaurantPage() {
 			setAlreadyAClient(hasReserved)
 
 			console.log(`Cliente ${client.name} já fez reserva no restaurante ${restaurantInfo.name}`);
-			
+
 		} else {
+			console.log(`Cliente ${client.name} nunca fez reserva no restaurante ${restaurantInfo.name}`);
 			setAlreadyAClient(false)
 		}
 	}, [client.restaurantHistory, client.name, restaurantInfo])
@@ -448,10 +454,12 @@ export default function RestaurantPage() {
 										<div className="info-content-res-page">
 											<h4>Horário de Funcionamento</h4>
 											<p>
-												<strong>Segunda a Sexta:</strong> {restaurantInfo.opensAt}
+												{/* <strong>Segunda a Sexta:</strong> {restaurantInfo.opensAt} */}
+												<strong>Abre às:</strong> {restaurantInfo.opensAt}
 											</p>
 											<p>
-												<strong>Sábado e Domingo:</strong> {restaurantInfo.closesAt}
+												{/* <strong>Sábado e Domingo:</strong> {restaurantInfo.closesAt} */}
+												<strong>Fecha às:</strong> {restaurantInfo.closesAt}
 											</p>
 										</div>
 									</div>
@@ -497,7 +505,14 @@ export default function RestaurantPage() {
 						</div>
 
 						<div className="restaurant-card-res-page">
-							<div className="restaurant-badge-res-page">Bar e Restaurante</div>
+							<div className="restaurant-badge-res-page">
+								{restaurantInfo.tags.map((tag, index) => (
+									<span key={index}>
+										{tag}
+										{index < restaurantInfo.tags.length - 1 && ' • '}
+									</span>
+								))}
+							</div>
 							<h1 className="restaurant-name-res-page">{restaurantInfo.name}</h1>
 							<p className="restaurant-description-res-page">{restaurantInfo.description}</p>
 

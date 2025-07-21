@@ -179,6 +179,12 @@ export default function Profile() {
                                     <div className="client-reservation-details">
                                         <p>Horário: {reservation.time} • {reservation.day}</p>
                                         <p className="client-confirmation">Restaurante: {reservation.restaurant.name}</p>
+                                        <p>Status da Reserva:
+                                            {reservation.status === 'Confirmed'
+                                                ? <span style={{color: "green"}}> Confirmada ✓</span>
+                                                : <span style={{color: "green"}}> Pendente 🕜</span>
+                                            }
+                                        </p>
                                     </div>
                                     <div className="client-reservation-actions">
                                         <button onClick={() => { handleModifyBtn(reservation) }} className="client-modify-button">Modificar</button>

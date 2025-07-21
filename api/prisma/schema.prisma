@@ -15,6 +15,22 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
+model Notification {
+    id        String    @id @default(auto()) @map("_id") @db.ObjectId
+    type      String?
+    activity  String?
+    createdAt DateTime? @default(now())
+
+    clientId String? @db.ObjectId
+    client   Client? @relation(fields: [clientId], references: [id])
+
+    restaurantId String?     @db.ObjectId
+    restaurant   Restaurant? @relation(fields: [restaurantId], references: [id])
+
+    adminId String? @db.ObjectId
+    admin   Admin?  @relation(fields: [adminId], references: [id])
+}
+
 model Review {
     id         String    @id @default(auto()) @map("_id") @db.ObjectId
     rating     Int
@@ -34,7 +50,7 @@ model Review {
 
 model Subscription {
     id            String    @id @default(auto()) @map("_id") @db.ObjectId
-    status        String    @default("pending") // pending, active, cancelled
+    status        String    @default("Pending") // pending, active, cancelled
     createdAt     DateTime  @default(now())
     updatedAt     DateTime  @updatedAt
     endsAt        DateTime?
@@ -59,16 +75,18 @@ model Tables {
 }
 
 model Reservations {
-    id        String    @id @default(auto()) @map("_id") @db.ObjectId
-    date      DateTime? // Day of the reservation
-    time      String?
-    day       String?
-    month     String?
-    guests    Int?
-    status    String? // Pending, Active, Canceled
-    notes     String?
-    createdAt DateTime? @default(now())
-    updatedAt DateTime? @updatedAt
+    id             String    @id @default(auto()) @map("_id") @db.ObjectId
+    date           DateTime? // Day of the reservation
+    time           String?
+    day            String?
+    month          String?
+    guests         Int?
+    status         String? // Pending, Active, Canceled
+    notes          String?
+    createdAt      DateTime? @default(now())
+    updatedAt      DateTime? @updatedAt
+    clientName     String?
+    restaurantName String?
 
     // Client Relations
     clientId String @db.ObjectId
@@ -83,6 +101,20 @@ model Reservations {
     table   Tables @relation(fields: [tableId], references: [id])
 }
 
+model Admin {
+    id            String   @id @default(auto()) @map("_id") @db.ObjectId
+    type          String   @default("admin")
+    email         String   @unique
+    name          String?
+    password      String?
+    phone         String?
+    fullAddress   String?
+    avatar        String?
+    prevMonthInfo String[]
+
+    notification Notification[]
+}
+
 model Restaurant {
     id          String    @id @default(auto()) @map("_id") @db.ObjectId
     type        String    @default("restaurant") // user or restaurant
@@ -92,6 +124,8 @@ model Restaurant {
     cnpj        String // CNPJ is a unique identifier for Brazilian companies. Use @unique if needed.
     fullAddress String?
     phone       String?
+    status      String?   @default("Pending")
+    isActive    Boolean?  @default(true)
     opensAt     String?
     closesAt    String?
     mapsUrl     String?
@@ -110,6 +144,7 @@ model Restaurant {
     subscriptions Subscription[]
     review        Review[]
     tables        Tables[]
+    notification  Notification[]
 }
 
 model Client {
@@ -127,4 +162,5 @@ model Client {
     // Relations
     reservations Reservations[]
     review       Review[]
+    notification Notification[]
 }

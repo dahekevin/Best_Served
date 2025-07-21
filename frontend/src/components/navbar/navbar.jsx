@@ -37,6 +37,19 @@ export default function Navbar() {
             console.error("Erro ao buscar informações do usuário: ", error.response?.data || error.message || error);
         }
     }, [])
+    
+    const getAdminInfo = useCallback(async (token) => {
+        try {
+            const response = await api.get('/admin/get', {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+
+            setAvatar(`http://localhost:3000/uploads/admin/avatars/${response.data.admin.avatar}`)
+
+        } catch (error) {
+            console.error("Erro ao buscar informações do usuário: ", error.response?.data || error.message || error);
+        }
+    }, [])
 
     useEffect(() => {
         const token = localStorage.getItem('token')
@@ -49,6 +62,8 @@ export default function Navbar() {
                 getClientInfo(token)
             } else if (role === 'restaurant') {
                 getRestaurantInfo(token)
+            } else if (role === 'admin') {
+                getAdminInfo(token)
             }
 
             setIsLoggedIn(true)
@@ -57,7 +72,7 @@ export default function Navbar() {
             setIsLoggedIn(false)
             setUserType(null)
         }
-    }, [getClientInfo, getRestaurantInfo])
+    }, [getClientInfo, getRestaurantInfo, getAdminInfo])
 
     const handleOpenMenu = () => {
         setOpenMenu(!openMenu)
@@ -90,18 +105,31 @@ export default function Navbar() {
 
                                 {userType === 'restaurant' && (
                                     <>
-                                        <Link to='/restaurant-profile' className='navbarLink'>Painel do Restaurante</Link>
+                                        <Link to='/restaurant-dashboard' className='navbarLink'>Painel do Restaurante</Link>
+                                    </>
+                                )}
+                                
+                                {userType === 'admin' && (
+                                    <>
+                                        <Link to='/admin' className='navbarLink'>
+                                            <div className='navbarProfileContainer'>
+                                                <div className='navbarLinkProfile'>
+                                                    {avatar && <img className='navbarAvatar' src={avatar} />}
+                                                </div>
+                                                <span>Perfil</span>
+                                            </div>
+                                        </Link>
                                     </>
                                 )}
 
-                                <Link to='/' onClick={() => {
+                                <p to='/' onClick={() => {
                                     localStorage.clear();
-                                    window.location.href = "/";
-                                }} className='navbarLinkLogout'>Sair</Link>
+                                    window.location.href = '/'
+                                }} className='navbarLinkLogout'>Sair</p>
                             </>
                         ) : (
                             <>
-                                <Link to='/' className='navbarLink'>Sobre Nós</Link>
+                                {/* <Link to='/' className='navbarLink'>Sobre Nós</Link> */}
                                 <Link to='/restaurants' className='navbarLink'>Restaurantes</Link>
                                 <Link to='/login' className='navbarLink'>Entrar</Link>
                                 <Link to='/client-registration' className='navbarRegisterLink'>Cadastrar</Link>
@@ -123,7 +151,7 @@ export default function Navbar() {
                     onClose={handleOpenMenu}
                 >
                     <div className='drawer'>
-                        <a className='navbarLink' href="">Sobre</a>
+                        {/* <a className='navbarLink' href="">Sobre</a> */}
                         <a className='navbarLink' href="">Perfil</a>
                         <a className='navbarLink' href="">Restaurantes</a>
                         <a className='navbarLink' href="">Cadastrar</a>

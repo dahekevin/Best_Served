@@ -9,7 +9,7 @@ import Home from './pages/home/Home.jsx'
 import Profile from './pages/profile/Profile.jsx'
 import Auth from './pages/auth/auth.jsx'
 import ReservationList from './pages/reservation/Reservation.jsx'
-import RestaurantDashboard from './pages/dashboard/Dashboard.jsx'
+import RestaurantDashboard from './pages/restaurantDashboard/RestaurantDashboard.jsx'
 import Tables from './pages/tables/Tables.jsx'
 import Plans from './pages/plans/Plans.jsx'
 import RestaurantList from './pages/restaurants/Restaurants.jsx'
@@ -22,6 +22,8 @@ import ClientLogin from './pages/clientAuth/clientLogin.jsx'
 import ClientRegister from './pages/clientAuth/clientRegister.jsx'
 import ProfileTeste from './pages/profileTeste/ProfileTeste.jsx'
 import ResProfile from './pages/resProfile/ResProfile.jsx'
+import AdminDashboard from './pages/admPage/admPage.jsx'
+import UpdateAdmProfile from './pages/updateAdmPage/UpdateAdmPage.jsx'
 
 const pages = createBrowserRouter([
 	{
@@ -43,8 +45,10 @@ const pages = createBrowserRouter([
 			{ path: '/client-profile', element: <Profile /> },
 			{ path: '/client-registration', element: <ClientRegister /> },
 			{ path: '/auth', element: <Auth /> },
-			{ path: '/dashboard', element: <RestaurantDashboard /> },
-			{ path: '/client-profile/me', element: <ProfileTeste /> }
+			{ path: '/restaurant-dashboard', element: <RestaurantDashboard /> },
+			{ path: '/client-profile/me', element: <ProfileTeste /> },
+			{ path: '/admin', element: <AdminDashboard /> },
+			{ path: '/admin-update', element: <UpdateAdmProfile /> },
 		]
 	}
 ])

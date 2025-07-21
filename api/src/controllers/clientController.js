@@ -103,6 +103,16 @@ export const getClientById = async (req, res) => {
     }
 }
 
+export const getTotalClients = async (req, res) => {
+    try {
+        const total = await prisma.client.count()
+
+        res.status(202).json({ message: 'Tota de clientes', total })
+    } catch (error) {
+        res.status(500).json({ message: "Erro no servidor, tente novamente" });
+    }
+}
+
 export const getClientType = async (req, res) => {
     try {
         
@@ -179,9 +189,7 @@ export const updateClientHistory = async (req, res) => {
     try {
         console.log('UpdateClientehistory: ', req.body.restaurantId);
         const clientId = req.userId; 
-        const newRestaurantId = req.body.restaurantId; 
-
-        
+        const newRestaurantId = req.body.restaurantId;         
 
         if (!clientId || !newRestaurantId) {
             return res.status(400).json({ message: 'ID do cliente ou ID do restaurante ausente.' });

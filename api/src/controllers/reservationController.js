@@ -17,7 +17,7 @@ export const registerReservation = async (req, res) => {
 
         const isoString = reservationDateTime.toISOString();
         console.log('ISO String:', isoString);
-        
+
         const formattedDay = capitalize(new Intl.DateTimeFormat("pt-BR", { weekday: "long" }).format(reservationDateTime));
         const formattedMonth = capitalize(new Intl.DateTimeFormat("pt-BR", { month: "long" }).format(reservationDateTime));
 
@@ -54,18 +54,71 @@ export const getReservations = async (req, res) => {
     try {
         let reservations
 
-        console.log('Reservas Backend', req.query.restaurantId);
+        console.log('Reservas Backend', req.query);
+
+        if (req.query.date) {
+            const selectedDate = new Date(req.query.date)
+            const nextDay = new Date(selectedDate)
+            nextDay.setDate(nextDay.getDate() + 1)
+            reservations = await prisma.reservations.findMany({
+                where: {
+                    date: {
+                        gte: selectedDate,
+                        lt: nextDay
+                    }
+                },
+                include: {
+                    client: {
+                        select: { name: true }
+                    },
+                    restaurant: {
+                        select: { name: true }
+                    }
+                }
+            })
+
+            console.log('Reservations: ', reservations);
+
+            return res.status(201).json({ message: 'Lista de reservas:', reservations })
+        }
 
         if (req.query.restaurantId) {
             reservations = await prisma.reservations.findMany({
-                where: { restaurantId: req.query.restaurantId }
+                where: { restaurantId: req.query.restaurantId },
+                include: {
+                    client: {
+                        select: { name: true }
+                    },
+                    restaurant: {
+                        select: { name: true }
+                    }
+                }
             })
             res.status(201).json({ message: 'Lista de reservas:', reservations })
         } else {
-            reservations = await prisma.reservations.findMany()
+            reservations = await prisma.reservations.findMany({
+                include: {
+                    client: {
+                        select: { name: true }
+                    },
+                    restaurant: {
+                        select: { name: true }
+                    }
+                }
+            })
             res.status(201).json({ message: 'Lista de reservas:', reservations })
         }
 
+    } catch (error) {
+        res.status(500).json({ message: 'Erro no servidor, tente novamente.' })
+    }
+}
+
+export const getTotalReservations = async (req, res) => {
+    try {
+        const total = await prisma.reservations.count()
+
+        res.status(201).json({ message: 'Total de reservas', total })
     } catch (error) {
         res.status(500).json({ message: 'Erro no servidor, tente novamente.' })
     }
@@ -86,7 +139,7 @@ export const updateReservation = async (req, res) => {
 
         const isoString = reservationDateTime.toISOString();
         console.log('ISO String:', isoString);
-        
+
         const formattedDay = capitalize(new Intl.DateTimeFormat("pt-BR", { weekday: "long" }).format(reservationDateTime));
         const formattedMonth = capitalize(new Intl.DateTimeFormat("pt-BR", { month: "long" }).format(reservationDateTime));
 
@@ -109,11 +162,28 @@ export const updateReservation = async (req, res) => {
         if (!reservation) { return console.log('Erro ao tentar criar reserva.'); }
 
         console.log(reservation);
-        
+
         res.status(202).json({ message: 'Reserva atualizada com sucesso!' })
 
     } catch (error) {
         res.status(500).json({ message: 'Erro ao atualizar informações, tente novamente.' })
+    }
+}
+
+export const updateReservationStatus = async (req, res) => {
+    try {
+        console.log('UpdateReservationStatus: ', req.body.status);
+
+        if (!req.body.status) { return res.status(400).json({ message: 'Status não fornecido.' }) }
+
+        const status = await prisma.reservations.update({
+            where: { id: req.body.id },
+            data: { status: req.body.status }
+        })
+
+        res.status(201).json({ message: 'Status de reserva atualizado com sucesso!', status })
+    } catch (error) {
+        res.status(500).json({ message: 'Erro ao atualizar status, tente novamente.', error })
     }
 }
 

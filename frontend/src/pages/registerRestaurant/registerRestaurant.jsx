@@ -2,7 +2,8 @@ import "./registerRestaurant.css"
 import api from "../../service/api"
 
 import { useState } from "react"
-import { TextField, Button } from '@mui/material'
+import { TextField } from '@mui/material'
+import Select from 'react-select'
 
 const RestaurantRegistration = () => {
 	const [profile, setProfile] = useState({
@@ -20,7 +21,15 @@ const RestaurantRegistration = () => {
 		avatar: "/placeholder.svg?height=200&width=200",
 		tables: 0,
 		capacity: 0,
+		tags: [],
 	})
+
+	const tagOptions = [
+		{ value: "Churrascaria", label: "Churrascaria" },
+		{ value: "Sorveteria", label: "Sorveteria" },
+		{ value: "Karaokê", label: "Karaokê" },
+		{ value: "Bar", label: "Bar" }
+	];
 
 	const [paymentMethod, setPaymentMethod] = useState("credit")
 	const [creditCardInfo, setCreditCardInfo] = useState({
@@ -29,15 +38,23 @@ const RestaurantRegistration = () => {
 		expiryDate: "",
 		cvv: "",
 	})
+	
+	const [previewImage, setPreviewImage] = useState(profile.image)
 	const [menuPdf, setMenuPdf] = useState(null)
 	const [menuPdfName, setMenuPdfName] = useState("")
-	const [previewImage, setPreviewImage] = useState(profile.image)
 
 	const handleInputChange = (e) => {
 		const { name, value } = e.target
 		setProfile({
 			...profile,
 			[name]: value,
+		})
+	}
+
+	const handleTagChange = (selectedTags) => {
+		setProfile({
+			...profile,
+			tags: selectedTags || [],
 		})
 	}
 
@@ -111,9 +128,12 @@ const RestaurantRegistration = () => {
 			formData.append('tables', profile.tables)
 			formData.append('capacity', (profile.capacity))
 
+			const tagValues = profile.tags.map(tag => tag.value)
+			formData.append('tags', JSON.stringify(tagValues))
+
 			console.log('Avatar: ', profile.avatar);
 			console.log('Menu: ', menuPdf);
-			
+
 			if (profile.avatar instanceof File) {
 				formData.append('restaurant-avatar', profile.avatar);
 			}
@@ -535,6 +555,30 @@ const RestaurantRegistration = () => {
 						</div>
 
 						<div className="form-group">
+							<label htmlFor="opensAt">Horário de Abertura</label>
+							<TextField
+								type="time"
+								id="opensAt"
+								name="opensAt"
+								value={profile.opensAt}
+								onChange={handleInputChange}
+								className="form-input"
+							/>
+						</div>
+
+						<div className="form-group">
+							<label htmlFor="closesAt">Horário de Fechamento</label>
+							<TextField
+								type="time"
+								id="closesAt"
+								name="closesAt"
+								value={profile.closesAt}
+								onChange={handleInputChange}
+								className="form-input"
+							/>
+						</div>
+
+						<div className="form-group">
 							<TextField
 								type="number"
 								id="tables"
@@ -547,7 +591,7 @@ const RestaurantRegistration = () => {
 								placeholder="Digite a quantidade de mesas"
 							/>
 						</div>
-						
+
 						<div className="form-group">
 							<TextField
 								type="number"
@@ -559,6 +603,21 @@ const RestaurantRegistration = () => {
 								fullWidth
 								label="Capacidade das Mesas"
 								placeholder="Digite a capacidade das mesas"
+								/>
+						</div>
+
+						<div className="form-group">
+							<Select
+								id="tags"
+								name="tags"
+								isMulti
+								className="form-input"
+								options={tagOptions}
+								value={profile.tags}
+								onChange={handleTagChange}
+								fullWidth
+								label="Tags do estabelecimento"
+								placeholder="Tags"
 							/>
 						</div>
 					</div>
