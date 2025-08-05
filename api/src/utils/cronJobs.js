@@ -14,7 +14,7 @@ cron.schedule('*/10 * * * *' /* Checa a cada 15 min */, async () => {
         const reservations = await prisma.reservations.findMany({
             where: {
                 status: {
-                    in: ['Pending', 'Active'],
+                    in: ['Pending', 'Confirmed'],
                 },
             },
         })

@@ -229,16 +229,18 @@ export const updateClientHistory = async (req, res) => {
 export const deleteClient = async (req, res) => {
 
     try {
+        
         const client = await prisma.client.delete({
             where: {
                 id: req.userId
             }
         })
-
+        
+        console.log('aaaaaaaaaaaaalo', req.userId);
         res.status(203).json({ message: 'Cliente deletado!', client })
 
     } catch (error) {
-        res.status(500).json({ message: 'Erro no servidor, tente novamente' })
+        res.status(500).json({ message: 'Erro no servidor, tente novamente', error })
     }
 }
 

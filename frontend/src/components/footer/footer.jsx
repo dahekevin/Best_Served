@@ -42,7 +42,7 @@ export default function Footer() {
                 </div>
                 <div className='footerCopyRight'>
                     <p>© Copyright Best Served. Todos os direitos reservados.
-                        Desenvolvido por Dahe Kevin.</p>
+                        Desenvolvido por Dev Squad.</p>
                 </div>
             </footer>
         </>

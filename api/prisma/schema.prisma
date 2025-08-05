@@ -18,7 +18,9 @@ datasource db {
 model Notification {
     id        String    @id @default(auto()) @map("_id") @db.ObjectId
     type      String?
-    activity  String?
+    title     String?
+    message   String?
+    read      Boolean?  @default(false)
     createdAt DateTime? @default(now())
 
     clientId String? @db.ObjectId
@@ -81,7 +83,7 @@ model Reservations {
     day            String?
     month          String?
     guests         Int?
-    status         String? // Pending, Active, Canceled
+    status         String? // Pending, Confirmed, Canceled
     notes          String?
     createdAt      DateTime? @default(now())
     updatedAt      DateTime? @updatedAt
@@ -90,15 +92,15 @@ model Reservations {
 
     // Client Relations
     clientId String @db.ObjectId
-    client   Client @relation(fields: [clientId], references: [id])
+    client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
     // Restaurant Relations
     restaurantId String     @db.ObjectId
-    restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+    restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
 
     // Tables Relations
     tableId String @db.ObjectId
-    table   Tables @relation(fields: [tableId], references: [id])
+    table   Tables @relation(fields: [tableId], references: [id], onDelete: Cascade)
 }
 
 model Admin {
@@ -112,7 +114,7 @@ model Admin {
     avatar        String?
     prevMonthInfo String[]
 
-    notification Notification[]
+    notification  Notification[]
 }
 
 model Restaurant {
