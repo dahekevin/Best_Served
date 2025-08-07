@@ -7,18 +7,18 @@ import Select from 'react-select'
 
 const RestaurantRegistration = () => {
 	const [profile, setProfile] = useState({
-		name: "Sabor Brasileiro",
-		email: "contato@saborbrasileiro.com",
-		password: "123@321",
-		phone: "12345678",
-		cnpj: "99.999.999/0009-99",
-		fullAddress: "Av. Paulista, 1234, São Paulo, SP",
-		opensAt: "07:00",
-		closesAt: "12:00",
+		name: "",
+		email: "",
+		password: "",
+		phone: "",
+		cnpj: "",
+		fullAddress: "",
+		opensAt: "",
+		closesAt: "",
 		description:
-			"Culinária brasileira autêntica com um toque moderno. Oferecemos uma variedade de pratos tradicionais feitos com ingredientes frescos e locais.",
-		mapsUrl: "https://maps.google.com/?q=Av.+Paulista,+1234,+São+Paulo",
-		avatar: "/placeholder.svg?height=200&width=200",
+			"",
+		mapsUrl: "",
+		avatar: "",
 		tables: 0,
 		capacity: 0,
 		tags: [],
@@ -26,8 +26,10 @@ const RestaurantRegistration = () => {
 
 	const tagOptions = [
 		{ value: "Churrascaria", label: "Churrascaria" },
+		{ value: "Lanchonete", label: "Lanchonete" },
 		{ value: "Sorveteria", label: "Sorveteria" },
 		{ value: "Karaokê", label: "Karaokê" },
+		{ value: "Boteco", label: "Boteco" },
 		{ value: "Bar", label: "Bar" }
 	];
 
@@ -38,10 +40,13 @@ const RestaurantRegistration = () => {
 		expiryDate: "",
 		cvv: "",
 	})
-	
+
 	const [previewImage, setPreviewImage] = useState(profile.image)
 	const [menuPdf, setMenuPdf] = useState(null)
 	const [menuPdfName, setMenuPdfName] = useState("")
+
+	const [numberOfTables, setNumberOfTables] = useState(0)
+	const [tableCapacities, setTableCapacities] = useState([4, 4, 6, 8, 2])
 
 	const handleInputChange = (e) => {
 		const { name, value } = e.target
@@ -110,6 +115,28 @@ const RestaurantRegistration = () => {
 		}
 	}
 
+	const handleNumberOfTablesChange = (e) => {
+		const newNumber = parseInt(e.target.value) || 0
+		setNumberOfTables(newNumber)
+
+		// Adjust table capacities array
+		const currentCapacities = [...tableCapacities]
+		if (newNumber > currentCapacities.length) {
+			// Add new tables with default capacity of 4
+			const newTables = Array(newNumber - currentCapacities.length).fill(4)
+			setTableCapacities([...currentCapacities, ...newTables])
+		} else if (newNumber < currentCapacities.length) {
+			// Remove excess tables
+			setTableCapacities(currentCapacities.slice(0, newNumber))
+		}
+	}
+
+	const handleTableCapacityChange = (tableIndex, capacity) => {
+		const newCapacities = [...tableCapacities]
+		newCapacities[tableIndex] = parseInt(capacity) || 0
+		setTableCapacities(newCapacities)
+	}
+
 	const fetchRestaurantData = async () => {
 		try {
 			console.log("Atualizando dados do restaurante:", profile);
@@ -125,8 +152,14 @@ const RestaurantRegistration = () => {
 			formData.append('closesAt', profile.closesAt);
 			formData.append('description', profile.description);
 			formData.append('mapsUrl', profile.mapsUrl);
-			formData.append('tables', profile.tables)
-			formData.append('capacity', (profile.capacity))
+
+			if (numberOfTables > 0) {
+				const tables = tableCapacities.map((capacity, index) => ({
+					id: index + 1,
+					seats: capacity
+				}));
+				formData.append('tables', JSON.stringify(tables));
+			}
 
 			const tagValues = profile.tags.map(tag => tag.value)
 			formData.append('tags', JSON.stringify(tagValues))
@@ -579,34 +612,6 @@ const RestaurantRegistration = () => {
 						</div>
 
 						<div className="form-group">
-							<TextField
-								type="number"
-								id="tables"
-								name="tables"
-								value={profile.tables}
-								onChange={handleInputChange}
-								className="form-input"
-								fullWidth
-								label="Quantidade de Mesas"
-								placeholder="Digite a quantidade de mesas"
-							/>
-						</div>
-
-						<div className="form-group">
-							<TextField
-								type="number"
-								id="capacity"
-								name="capacity"
-								value={profile.capacity}
-								onChange={handleInputChange}
-								className="form-input"
-								fullWidth
-								label="Capacidade das Mesas"
-								placeholder="Digite a capacidade das mesas"
-								/>
-						</div>
-
-						<div className="form-group">
 							<Select
 								id="tags"
 								name="tags"
@@ -620,6 +625,66 @@ const RestaurantRegistration = () => {
 								placeholder="Tags"
 							/>
 						</div>
+					</div>
+				</div>
+
+				<div className="tables-section">
+					<h2 className="section-title">Configuração das Mesas</h2>
+					<p className="tables-description">
+						Configure a quantidade de mesas do seu restaurante e a capacidade de cada uma.
+					</p>
+
+					<div className="tables-config">
+						<div className="form-group">
+							<label htmlFor="numberOfTables">Número de Mesas</label>
+							<input
+								type="number"
+								id="numberOfTables"
+								name="numberOfTables"
+								value={numberOfTables}
+								onChange={handleNumberOfTablesChange}
+								className="form-input"
+								min="0"
+								max="50"
+							/>
+						</div>
+
+						{numberOfTables > 0 && (
+							<div className="tables-capacity-section">
+								<h3>Capacidade de Cada Mesa</h3>
+								<div className="tables-grid">
+									{Array.from({ length: numberOfTables }, (_, index) => (
+										<div key={index} className="table-capacity-item">
+											<label htmlFor={`table-${index + 1}`}>Mesa {index + 1}</label>
+											<div className="capacity-input-wrapper">
+												<input
+													type="number"
+													id={`table-${index + 1}`}
+													value={tableCapacities[index] || 0}
+													onChange={(e) => handleTableCapacityChange(index, e.target.value)}
+													className="form-input capacity-input"
+													min="1"
+													max="20"
+												/>
+												<span className="capacity-label">pessoas</span>
+											</div>
+										</div>
+									))}
+								</div>
+								<div className="tables-summary">
+									<div className="summary-item">
+										<span className="summary-label">Total de Mesas:</span>
+										<span className="summary-value">{numberOfTables}</span>
+									</div>
+									<div className="summary-item">
+										<span className="summary-label">Capacidade Total:</span>
+										<span className="summary-value">
+											{tableCapacities.reduce((total, capacity) => total + (capacity || 0), 0)} pessoas
+										</span>
+									</div>
+								</div>
+							</div>
+						)}
 					</div>
 				</div>
 
