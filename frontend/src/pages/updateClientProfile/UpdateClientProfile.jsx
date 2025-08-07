@@ -44,7 +44,6 @@ const UpdateClientProfile = () => {
 	const fetchClient = async () => {
 		const token = localStorage.getItem('token')
 		
-
 		try {
 			const response = await api.get('/client/get-one', {
 				headers: { Authorization: `Bearer ${token}` }

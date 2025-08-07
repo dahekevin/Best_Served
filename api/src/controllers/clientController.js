@@ -140,10 +140,26 @@ export const updateClient = async (req, res) => {
     console.log("Dados recebidos para atualização:", req.body);
 
     try {
-        const salt = await bcrypt.genSalt(10)
-        const hashPassword = await bcrypt.hash(req.body.password, salt)
-        const newAvatar = req.file ? req.file.filename : null;
-        console.log("Imagem atualizada!", req.file);
+
+        const rawData = {
+            name: req.body.name,
+            email: req.body.email,
+            phone: req.body.phone,
+            password: req.body.password,
+        }
+
+        const cleanedData = Object.fromEntries(
+            Object.entries(rawData).filter(([_, value]) => value !== undefined && value !== null && value !== '')
+        )
+
+        if (cleanedData.password) {
+            const salt = await bcrypt.genSalt(10)
+            cleanedData.password = await bcrypt.hash(cleanedData.password, salt)
+        }
+
+        if (req.file && req.file.filename !== "apagar") {
+            cleanedData.avatar = req.file.filename
+        }
 
         // 1. Searches Current Client
         const clientBeforeUpdate = await prisma.client.findUnique({
@@ -152,7 +168,7 @@ export const updateClient = async (req, res) => {
 
 
         // 2. Deletes the previous avatar if it exists and if it is different from the new one
-        if ((clientBeforeUpdate.avatar && newAvatar && (clientBeforeUpdate.avatar != newAvatar)) || (newAvatar === "apagar")) {
+        if ((clientBeforeUpdate.avatar && cleanedData.avatar && (clientBeforeUpdate.avatar != cleanedData.avatar)) || (cleanedData.avatar === "apagar")) {
             const filePath = path.resolve('src', 'uploads', clientBeforeUpdate.avatar);
             console.log('Tentando deletar arquivo em:', filePath);
 
@@ -167,15 +183,9 @@ export const updateClient = async (req, res) => {
 
         const client = await prisma.client.update({
             where: {
-                id: req.userId // Assuming you have middleware that sets req.userId
+                id: req.userId
             },
-            data: {
-                email: req.body.email,
-                phone: req.body.phone || null, // Allow phone to be optional
-                name: req.body.name,
-                password: hashPassword,
-                avatar: newAvatar ?? undefined, // se for opcional
-            }
+            data: cleanedData
         })
 
         res.status(202).json({ message: "Clientes atualizado com sucesso!!!", client })

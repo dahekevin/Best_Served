@@ -1,33 +1,36 @@
 import "./UpdateRestaurantProfile.css"
 import api from "../../service/api"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { TextField, Button } from "@mui/material"
 import Select from 'react-select'
 
 const RestaurantProfileUpdate = () => {
 	const [profile, setProfile] = useState({
-		name: "São & Salvo",
-		email: "sao@salvo.com",
-		password: "123@321",
-		phone: "12345678",
-		cnpj: "12.345.678/0001-90",
-		fullAddress: "Av. Paulista, 1234, São Paulo, SP",
-		opensAt: "07:00",
-		closesAt: "12:00",
+		name: "",
+		email: "",
+		password: "",
+		phone: "",
+		cnpj: "",
+		fullAddress: "",
+		opensAt: "",
+		closesAt: "",
 		description:
-			"Culinária brasileira autêntica com um toque moderno. Oferecemos uma variedade de pratos tradicionais feitos com ingredientes frescos e locais.",
-		mapsUrl: "https://maps.google.com/?q=Av.+Paulista,+1234,+São+Paulo",
-		avatar: null,
+			"",
+		mapsUrl: "",
+		avatar: "",
 		tables: 0,
 		capacity: 0,
 		tags: [],
 	})
 
+
 	const tagOptions = [
 		{ value: "Churrascaria", label: "Churrascaria" },
+		{ value: "Lanchonete", label: "Lanchonete" },
 		{ value: "Sorveteria", label: "Sorveteria" },
 		{ value: "Karaokê", label: "Karaokê" },
+		{ value: "Boteco", label: "Boteco" },
 		{ value: "Bar", label: "Bar" }
 	];
 
@@ -110,6 +113,33 @@ const RestaurantProfileUpdate = () => {
 		}
 	}
 
+	const fetchRestaurant = async () => {
+		const token = localStorage.getItem('token')
+
+		try {
+			const response = await api.get('/restaurant/get-one', {
+				headers: { Authorization: `Bearer ${token}` }
+			})
+
+			console.log("Dados do restaurante: ", response.data.restaurant)
+
+			const restaurant = response.data.restaurant
+
+			setProfile({ ...restaurant, password: "" })
+
+			if (restaurant.avatar) {
+				setPreviewImage(`http://localhost:3000/${restaurant.avatar.replace("src\\", "")}`)
+			}
+
+		} catch (error) {
+			console.error("Erro ao buscar perfil:", error.response?.data || error.message || error);
+		}
+	}
+
+	useEffect(() => {
+		fetchRestaurant()
+	}, [])
+
 	async function updateRestaurantData() {
 
 		const token = localStorage.getItem('token')
@@ -145,7 +175,7 @@ const RestaurantProfileUpdate = () => {
 		}
 
 		console.log('MENUUU', menuPdf);
-		
+
 
 		console.log("FormData being sent:", formData);
 
@@ -214,6 +244,7 @@ const RestaurantProfileUpdate = () => {
 						</div>
 
 						<div className="form-group">
+							<label htmlFor="descricao">Descrição</label>
 							<TextField
 								id="description"
 								name="description"
@@ -222,7 +253,6 @@ const RestaurantProfileUpdate = () => {
 								className="form-textarea"
 								multiline
 								rows={0}
-								label="Descrição"
 								placeholder="Descreva o restaurante"
 							/>
 						</div>
@@ -353,7 +383,7 @@ const RestaurantProfileUpdate = () => {
 								className="form-input"
 								fullWidth
 								placeholder="Digite a capacidade das mesas"
-								/>
+							/>
 						</div>
 
 						<div className="form-group">

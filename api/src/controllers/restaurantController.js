@@ -59,7 +59,7 @@ export const registerRestaurant = async (req, res) => {
                     create: generatedTables
                 }
             }
-        })        
+        })
 
         res.status(201).json({ message: "Restaurante Cadastrado com sucesso!", restaurant })
 
@@ -91,7 +91,7 @@ export const getRestaurants = async (req, res) => {
         } else {
             restaurants = await prisma.restaurant.findMany()
             res.status(201).json({ message: 'Lista de restaurantes: ', restaurants })
-        } 
+        }
 
     } catch (error) {
         res.status(500).json({ message: "Erro no servidor, tente novamente." })
@@ -99,7 +99,7 @@ export const getRestaurants = async (req, res) => {
 }
 
 export const getRestaurantByRating = async (req, res) => {
-    
+
     try {
         const restaurants = await prisma.restaurant.findMany({
             orderBy: { rating: 'desc' },
@@ -118,7 +118,7 @@ export const getRestaurantByRating = async (req, res) => {
                     select: { reservations: true }
                 }
             },
-        })        
+        })
 
         res.status(201).json({ message: 'Lista de restaurantes por rating', restaurants })
 
@@ -133,7 +133,7 @@ export const getRestaurantById = async (req, res) => {
             where: {
                 id: req.userId
             },
-            include: { 
+            include: {
                 tables: true,
                 review: true,
                 reservations: true
@@ -177,8 +177,8 @@ export const getTables = async (req, res) => {
         }
 
         if (!tables) { return res.status(404).json({ message: 'Nenhuma mesa encontrada.' }) }
-        
-        const formattedTables = tables.map(table => {            
+
+        const formattedTables = tables.map(table => {
             return {
                 id: table.id,
                 seats: table.seats,
@@ -223,19 +223,33 @@ export const updateRestaurant = async (req, res) => {
 
     try {
 
-        const salt = await bcrypt.genSalt(10)
-        const hashPassword = await bcrypt.hash(req.body.password, salt)
-
-
         const avatarFile = req.files?.['restaurant-avatar']?.[0]
         const menuFile = req.files?.['menu']?.[0]
 
-        console.log('Dados do restaurante:', req.body);
-        console.log("FILES: ", req.files);
+        const rawData = {
+            name: req.body.name,
+            email: req.body.email,
+            password: req.body.password,
+            cnpj: req.body.cnpj,
+            fullAddress: req.body.fullAddress,
+            opensAt: req.body.opensAt,
+            closesAt: req.body.closesAt,
+            phone: req.body.phone,
+            mapsUrl: req.body.mapsUrl,
+            description: req.body.description,
+            tags: req.body.tags ? JSON.parse(req.body.tags) : [],
+            avatar: avatarFile ? avatarFile.path : '',
+            menu: menuFile ? menuFile.path : '',
+        }
 
-        console.log('BODY:', req.body);
-        console.log('AVATAR FILE:', avatarFile);
-        console.log('MENU FILE:', menuFile);
+        const cleanedData = Object.fromEntries(
+            Object.entries(rawData).filter(([_, value]) => value !== undefined && value !== null && value !== '')
+        )
+
+        if (cleanedData.password) {
+            const salt = await bcrypt.genSalt(10)
+            cleanedData.password = await bcrypt.hash(req.body.password, salt)
+        }
 
         const numberOfTables = parseInt(req.body.tables)
 
@@ -244,30 +258,20 @@ export const updateRestaurant = async (req, res) => {
             status: req.body.status
         }))
 
-        const parsedTags = req.body.tags ? JSON.parse(req.body.tags) : []
+        await prisma.restaurant.update({
+            where: { id: req.userId },
+            data: {
+                tables: {
+                    create: generatedTables
+                }
+            }
+        })
 
         const restaurant = await prisma.restaurant.update({
             where: {
                 id: req.userId
             },
-            data: {
-                name: req.body.name,
-                email: req.body.email,
-                password: hashPassword,
-                cnpj: req.body.cnpj,
-                fullAddress: req.body.fullAddress,
-                opensAt: req.body.opensAt,
-                closesAt: req.body.closesAt,
-                phone: req.body.phone,
-                mapsUrl: req.body.mapsUrl || '',
-                description: req.body.description || '',
-                avatar: avatarFile ? avatarFile.path : '',
-                menu: menuFile ? menuFile.path : '',
-                tags: parsedTags,
-                tables: {
-                    create: generatedTables
-                }
-            }
+            data: cleanedData
         })
 
         if (!restaurant) { return res.status(500).json({ message: "Erro ao atualizar restaurante." }) }
@@ -275,6 +279,7 @@ export const updateRestaurant = async (req, res) => {
         res.status(201).json({ message: "Restaurante atualizado com sucesso!", restaurant })
 
     } catch (error) {
+        console.error("Erro ao atualizar restaurante:", error); // Adicione isso
         res.status(500).json({ message: "Erro no servidor, tente novamente." })
     }
 }
