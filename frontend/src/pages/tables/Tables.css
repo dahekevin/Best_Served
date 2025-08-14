@@ -274,6 +274,11 @@
 	border: 1px solid #333;
 }
 
+.opening-hours {
+	color: yellowgreen;
+	font-style: italic;
+}
+
 .tables-search-row {
 	display: flex;
 	gap: 15px;

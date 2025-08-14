@@ -27,6 +27,7 @@ export default function AdminDashboard() {
     const [showAllClientsModal, setShowAllClientsModal] = useState(false)
     const [allClients, setAllClients] = useState([])
     const [showActiveRestaurantsModal, setShowActiveRestaurantsModal] = useState(false)
+    const [showNonActiveRestaurantsModal, setShowNonActiveRestaurantsModal] = useState(false)
 
     const stats = [
         {
@@ -194,6 +195,16 @@ export default function AdminDashboard() {
 
         return topRestaurants.filter(res => {
             return res.status && res.status === 'Approved' && res.isActive === true
+        })
+    }, [topRestaurants])
+    
+    const nonActiveRestaurants = useMemo(() => {
+        if (!Array.isArray(topRestaurants)) {
+            return []
+        }
+
+        return topRestaurants.filter(res => {
+            return res.status && res.status === 'Approved' && res.isActive === false
         })
     }, [topRestaurants])
 
@@ -400,7 +411,7 @@ export default function AdminDashboard() {
 
                     <div onClick={() => { handleSeeAllClients() }} className="stat-card">
                         <div className="stat-header">
-                            <span className="stat-title">Usuários Registrados</span>
+                            <span className="stat-title">Clientes Registrados</span>
                             <div className={`stat-icon`}>👥</div>
                         </div>
                         <div className="stat-value">{totalClients}</div>
@@ -412,10 +423,22 @@ export default function AdminDashboard() {
 
                     <div onClick={() => { setShowActiveRestaurantsModal(true); }} className="stat-card">
                         <div className="stat-header">
-                            <span className="stat-title">Restaurantes Ativos</span>
+                            <span className="stat-title">Restaurantes Ativos no Momento</span>
                             <div className={`stat-icon`}>🏪</div>
                         </div>
-                        <div className="stat-value">{topRestaurants.length - activeRestaurants.length - pendingRestaurants.length}</div>
+                        <div className="stat-value">{activeRestaurants.length}</div>
+                        {/* <div className={`stat-change ${admin.prevMonthRestaurants <= (topRestaurants.length - activeRestaurants.length - pendingRestaurants.length) ? "positive" : "negative"}`}>
+                            <span>{admin.prevMonthRestaurants <= (topRestaurants.length - activeRestaurants.length - pendingRestaurants.length) ? "↗" : "↘"}</span>
+                            {(Math.abs(((100 * parseFloat((topRestaurants.length - activeRestaurants.length - pendingRestaurants.length))) / parseFloat(admin.prevMonthRestaurants)) - 100)).toFixed(2)}% vs mês anterior
+                        </div> */}
+                    </div>
+                    
+                    <div onClick={() => { setShowNonActiveRestaurantsModal(true); }} className="stat-card">
+                        <div className="stat-header">
+                            <span className="stat-title">Restaurantes Não Ativos no momento</span>
+                            <div className={`stat-icon`}>🏪</div>
+                        </div>
+                        <div className="stat-value">{nonActiveRestaurants.length}</div>
                         {/* <div className={`stat-change ${admin.prevMonthRestaurants <= (topRestaurants.length - activeRestaurants.length - pendingRestaurants.length) ? "positive" : "negative"}`}>
                             <span>{admin.prevMonthRestaurants <= (topRestaurants.length - activeRestaurants.length - pendingRestaurants.length) ? "↗" : "↘"}</span>
                             {(Math.abs(((100 * parseFloat((topRestaurants.length - activeRestaurants.length - pendingRestaurants.length))) / parseFloat(admin.prevMonthRestaurants)) - 100)).toFixed(2)}% vs mês anterior
@@ -564,11 +587,11 @@ export default function AdminDashboard() {
                                         <td>{reservation.restaurant.name}</td>
                                         <td>
                                             {/* CORREÇÃO: Crie o objeto Date a partir da data e da hora */}
-                                            {new Date(`${reservation.date.split('T')[0]}T${reservation.time}`).toLocaleDateString('pt-BR', {
+                                            {new Date(`${reservation.date.split('T')[0]}T${reservation.startsAt}`).toLocaleDateString('pt-BR', {
                                                 month: 'long',
                                                 day: 'numeric',
                                                 year: 'numeric'
-                                            })} às {reservation.time}
+                                            })} às {reservation.startsAt}
                                         </td>
                                         <td>{reservation.guests}</td>
                                         <td>{getStatusBadge(reservation.status)}</td>
@@ -639,6 +662,7 @@ export default function AdminDashboard() {
                                                 <div className="activity-content">
                                                     <div className="activity-text">{reservation.date.split("T")[0]}</div>
                                                     <div className="activity-time">{reservation.time}</div>
+                                                    <div className="activity-time">{reservation.status === 'Confirmed' ? 'Confirmado' : (reservation.status === 'Pending' ? 'Pendente' : 'Cancelado')}</div>
                                                 </div>
                                             </div>
                                         ))}
@@ -697,7 +721,7 @@ export default function AdminDashboard() {
                                     <div className="activity-list">
                                         {activeRestaurants.map((restaurant, index) => (
                                             <div key={index} className="activity-item">
-                                                <img style={{ height: "50px", width: "50px", objectFit: "cover" }} src={`http://localhost:3000/uploads/restaurant/avatars/${restaurant.avatar}`} alt="" />
+                                                <img style={{ height: "50px", width: "50px", objectFit: "cover" }} src={`http://localhost:3000/${restaurant.avatar.replace('src\\', '')}`} alt="" />
                                                 <div className="activity-content">
                                                     <div className="activity-text">{restaurant.name}</div>
                                                 </div>
@@ -711,6 +735,38 @@ export default function AdminDashboard() {
 
                                 <div className="tables-modal-buttons">
                                     <button className="tables-btn-cancel" onClick={() => { setShowActiveRestaurantsModal(false) }}>
+                                        Fechar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )
+                }
+                
+                {
+                    showNonActiveRestaurantsModal && (
+                        <div className="tables-modal-overlay">
+                            <div style={{ minWidth: "600px" }} className="tables-modal">
+                                <h2 className="table-title">Restaurantes Ativos no Momento</h2>
+                                {/* Recent Activity */}
+                                <div className="table-container">
+                                    <div className="activity-list">
+                                        {nonActiveRestaurants.map((restaurant, index) => (
+                                            <div key={index} className="activity-item">
+                                                <img style={{ height: "50px", width: "50px", objectFit: "cover" }} src={`http://localhost:3000/uploads/restaurant/avatars/${restaurant.avatar}`} alt="" />
+                                                <div className="activity-content">
+                                                    <div className="activity-text">{restaurant.name}</div>
+                                                </div>
+                                                <div className="activity-content">
+                                                    <div className="activity-time">{String(restaurant.createdAt).split("T")[0]}</div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="tables-modal-buttons">
+                                    <button className="tables-btn-cancel" onClick={() => { setShowNonActiveRestaurantsModal(false) }}>
                                         Fechar
                                     </button>
                                 </div>

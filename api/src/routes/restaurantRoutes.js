@@ -34,7 +34,7 @@ router.patch('/restaurant/update-rating', updateRestaurantRating)
 router.patch('/restaurant/update-status', updateRestaurantStatus)
 
 // Rota que edita o status de ativo do restaurante
-router.patch('/restaurant/update-isActive', updateRestaurantIsActiveStatus)
+router.patch('/restaurant/update-isActive', verifyToken, updateRestaurantIsActiveStatus)
 
 // Rota que deleta restaurantes
 router.delete('/restaurant/delete', verifyToken, deleteRestaurant)

@@ -192,7 +192,7 @@ export default function RestaurantPage() {
 						response = await api.post('/review/register', review)
 
 						console.log('Registrar Review: ', response);
-
+						
 						Swal.fire('Review publicada!', "success", 1500)
 
 					} catch (error) {
@@ -220,6 +220,7 @@ export default function RestaurantPage() {
 				const updatedReviews = [review, ...reviews]
 				setReviews(updatedReviews)
 
+				setReview(true)
 
 				setNewReview({ name: "", comment: "", rating: 0, tags: [] })
 				setUserRating(0)
@@ -344,17 +345,6 @@ export default function RestaurantPage() {
 
 		} catch (error) {
 			console.error('É preciso estar logado como cliente para fazer uma reserva.', error);
-			Swal.fire({
-				position: 'top-end',
-				icon: 'warning',
-				title: 'Você não está logado!',
-				text: 'Faça login para fazer uma reserva.',
-				timer: 1500,
-				showConfirmButton: false,
-				willClose: () => {
-					window.location.href = '/login'
-				}
-			})
 		}
 	}, [])
 
@@ -428,7 +418,7 @@ export default function RestaurantPage() {
 
 	useEffect(() => {
 		console.log(client.restaurantHistory);
-		console.log('dfgs', restaurantInfo.id);
+		console.log('Restaurant ID: ', restaurantInfo.id);
 
 		if (client.restaurantHistory && restaurantInfo.id) {
 			const hasReserved = client.restaurantHistory.some(historyItem => {
@@ -473,9 +463,12 @@ export default function RestaurantPage() {
 										<div className="info-content-res-page">
 											<h4>Endereço</h4>
 											<p>{restaurantInfo.address}</p>
-											<button className="directions-btn-res-page" onClick={openGoogleMaps}>
-												Como Chegar
-											</button>
+											{(restaurantInfo.mapsURL !== '' && restaurantInfo.mapsURL !== null && restaurantInfo.mapsURL !== undefined && restaurantInfo.mapsURL !== 'null')
+												&&
+												<button className="directions-btn-res-page" onClick={openGoogleMaps}>
+													Como Chegar
+												</button>
+											}
 										</div>
 									</div>
 
@@ -510,7 +503,7 @@ export default function RestaurantPage() {
 								</div>
 
 								{/* Google Maps Embed */}
-								{restaurantInfo.mapsURL &&
+								{(restaurantInfo.mapsURL !== '' && restaurantInfo.mapsURL !== null && restaurantInfo.mapsURL !== undefined && restaurantInfo.mapsURL !== 'null') &&
 									<div className="map-container-res-page">
 										<div className="map-header-res-page">
 											<h4>Localização</h4>

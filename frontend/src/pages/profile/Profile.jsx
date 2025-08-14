@@ -50,7 +50,7 @@ export default function Profile() {
         }
     }
 
-    const handleModifyBtn = (reservation) => {
+    const handleModifyBtn = (e, reservation) => {
         const restaurantID = reservation.restaurantId
         Swal.fire({
             title: "Tem certeza?",
@@ -64,8 +64,8 @@ export default function Profile() {
             reverseButtons: true
         }).then((result) => {
             if (result.isConfirmed) {
-                
-                deleteReservation(reservation.id)
+
+                deleteReservation(e, reservation.id)
 
                 Swal.fire({
                     position: "top-end",
@@ -80,7 +80,37 @@ export default function Profile() {
 
             } else if (
                 result.dismiss === Swal.DismissReason.cancel
-            ) {/**/}
+            ) {/**/ }
+        });
+    };
+    
+    const handleDeleteReservation = (e, reservation) => {
+        Swal.fire({
+            title: "Tem certeza?",
+            text: "Esta ação excluirá sua reserva atual. Você não poderá reverter isso!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: "Sim, apagar!",
+            cancelButtonText: "Não, cancelar!",
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                deleteReservation(e, reservation.id)
+
+                Swal.fire({
+                    position: "top-end",
+                    icon: "warning",
+                    title: "Reserva Apagada!",
+                    showConfirmButton: false,
+                    timer: 1500,
+                });
+
+            } else if (
+                result.dismiss === Swal.DismissReason.cancel
+            ) {/**/ }
         });
     };
 
@@ -169,33 +199,38 @@ export default function Profile() {
                     <div className="client-section">
                         <h3 className="client-section-title">Suas Reservas</h3>
 
-                        <div className="client-reservations">
-                            {client.reservations.map((reservation, index) => (
-                                <div className="client-reservation-card" key={index}>
-                                    <div className="client-date-box">
-                                        <div className="client-day">{(reservation.date.split("T")[0]).replace(/-/g, "/")}</div>
-                                        <div className="client-month">{reservation.month}</div>
-                                    </div>
-                                    <div className="client-reservation-details">
-                                        <p>Horário: {reservation.time} • {reservation.day}</p>
-                                        <p className="client-confirmation">Restaurante: {reservation.restaurant.name}</p>
-                                        <p>Status da Reserva:
-                                            {reservation.status === 'Confirmed'
-                                                ? <span style={{color: "green"}}> Confirmada ✓</span>
-                                                : (reservation.status === 'Pending' ? <span style={{color: "yellow"}}> Pendente 🕜</span>
-                                                    : <span style={{color: "red"}}> Cancelado ❌</span>
-                                                )
-                                            }
-                                        </p>
-                                    </div>
-                                    <div className="client-reservation-actions">
-                                        <button onClick={() => { handleModifyBtn(reservation) }} className="client-modify-button">Modificar</button>
-                                        <button onClick={(e) => { deleteReservation(e, reservation.id) }} className="client-cancel-button">Cancelar</button>
-                                    </div>
-                                </div>
-                            ))}
+                        {client.reservations.length > 0 
+                            ?
+                                <div className="client-reservations">
+                                    {client.reservations.map((reservation, index) => (
+                                        <div className="client-reservation-card" key={index}>
+                                            <div className="client-date-box">
+                                                <div className="client-day">{(reservation.date.split("T")[0]).replace(/-/g, "/")}</div>
+                                                <div className="client-month">{reservation.month}</div>
+                                            </div>
+                                            <div className="client-reservation-details">
+                                                <p>Horário: {reservation.time} • {reservation.day}</p>
+                                                <p className="client-confirmation">Restaurante: {reservation.restaurant.name}</p>
+                                                <p>Status da Reserva:
+                                                    {reservation.status === 'Confirmed'
+                                                        ? <span style={{ color: "green" }}> Confirmada ✓</span>
+                                                        : (reservation.status === 'Pending' ? <span style={{ color: "yellow" }}> Pendente 🕜</span>
+                                                            : <span style={{ color: "red" }}> Cancelado ❌</span>
+                                                        )
+                                                    }
+                                                </p>
+                                            </div>
+                                            <div className="client-reservation-actions">
+                                                <button onClick={(e) => { handleModifyBtn(e, reservation) }} className="client-modify-button">Modificar</button>
+                                                <button onClick={(e) => { handleDeleteReservation(e, reservation) }} className="client-cancel-button">Cancelar</button>
+                                            </div>
+                                        </div>
+                                    ))}
 
-                        </div>
+                                </div>
+                            :
+                                <div>Nenhuma reserva cadastrada</div>
+                        }
                     </div>
                 </div>
             </div >

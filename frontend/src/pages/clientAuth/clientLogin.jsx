@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { data, Link } from 'react-router-dom';
 import { TextField, Button } from '@mui/material'
 import api from '../../service/api';
 import './clientAuth.css';
@@ -31,6 +31,16 @@ export default function ClientLogin() {
             localStorage.setItem('role', role)
 
             console.log('Token armazenado response.data.token: ', token);
+
+            if (role === 'restaurant') {
+                await api.patch('/restaurant/update-isActive', { isActive: true },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                )                
+            }
 
             if (user.type === 'client') {
                 window.location.href = '/client-profile'

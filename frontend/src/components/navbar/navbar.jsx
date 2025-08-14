@@ -37,7 +37,7 @@ export default function Navbar() {
             console.error("Erro ao buscar informações do usuário: ", error.response?.data || error.message || error);
         }
     }, [])
-    
+
     const getAdminInfo = useCallback(async (token) => {
         try {
             const response = await api.get('/admin/get', {
@@ -78,6 +78,28 @@ export default function Navbar() {
         setOpenMenu(!openMenu)
     }
 
+    const setIsActiveFalse = async () => {
+        const token = localStorage.getItem('token')
+        const role = localStorage.getItem('role')
+
+        try {
+            if (role === 'restaurant') {
+                await api.patch('/restaurant/update-isActive', { isActive: false },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                )
+            }
+        } catch (error) {
+            console.error('Erro ao atualizar o estado de atividade do restaurante.', error);
+        }
+
+        localStorage.clear();
+        window.location.href = '/'
+    }
+
     return (
         <>
             <nav className='navbarContainer enhanced-navbar'>
@@ -89,7 +111,7 @@ export default function Navbar() {
                         {isLoggedIn ? (
                             <>
                                 <Link to='/restaurants' className='navbarLink'>Restaurantes</Link>
-                                
+
                                 {userType === 'client' && (
                                     <>
                                         <Link to='/client-profile' className='navbarLink'>
@@ -108,7 +130,7 @@ export default function Navbar() {
                                         <Link to='/restaurant-dashboard' className='navbarLink'>Painel do Restaurante</Link>
                                     </>
                                 )}
-                                
+
                                 {userType === 'admin' && (
                                     <>
                                         <Link to='/admin' className='navbarLink'>
@@ -122,9 +144,8 @@ export default function Navbar() {
                                     </>
                                 )}
 
-                                <p to='/' onClick={() => {
-                                    localStorage.clear();
-                                    window.location.href = '/'
+                                <p onClick={() => {
+                                    setIsActiveFalse();
                                 }} className='navbarLinkLogout'>Sair</p>
                             </>
                         ) : (

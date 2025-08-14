@@ -39,6 +39,8 @@ const RestaurantProfileUpdate = () => {
 
 	const [numberOfTables, setNumberOfTables] = useState(0)
 	const [tableCapacities, setTableCapacities] = useState([4, 4, 6, 8, 2])
+	const [tablesToUpdate, setTablesToUpdate] = useState([])
+	const [existingTables, setExistingTables] = useState([]);
 
 	const handleInputChange = (e) => {
 		const { name, value } = e.target
@@ -115,6 +117,25 @@ const RestaurantProfileUpdate = () => {
 		}
 	}
 
+	// Função para comparar se as mesas foram alteradas
+	const areTablesChanged = (newCapacities, oldTables) => {
+		// Caso 1: O número de mesas mudou
+		if (newCapacities.length !== oldTables.length) {
+			return true;
+		}
+		// Caso 2: A capacidade de alguma mesa mudou
+		// Mapeie os `seats` dos dados antigos para um array para comparação
+		const oldCapacities = oldTables.map(table => table.seats);
+		for (let i = 0; i < newCapacities.length; i++) {
+			// Lembre-se de converter para o mesmo tipo para comparar
+			if (String(Number(newCapacities[i] || 0)) !== String(Number(oldCapacities[i] || 0))) {
+				return true;
+			}
+		}
+		// Se nenhum dos casos acima for verdadeiro, as mesas não mudaram
+		return false;
+	};
+
 	const handleNumberOfTablesChange = (e) => {
 		const newNumber = parseInt(e.target.value) || 0
 		setNumberOfTables(newNumber)
@@ -149,7 +170,7 @@ const RestaurantProfileUpdate = () => {
 
 			const restaurant = response.data.restaurant
 
-			setProfile({ ...restaurant, password: "" })
+			setProfile({ ...restaurant, password: "", mapsUrl: (restaurant.mapsUrl !== 'null' && restaurant.mapsUrl !== null && restaurant.mapsUrl !== undefined && restaurant.mapsUrl !== '') ? restaurant.mapsUrl : "" })
 
 			if (restaurant.tags && Array.isArray(restaurant.tags)) {
 				// CONVERTA O ARRAY DE STRINGS PARA UM ARRAY DE OBJETOS
@@ -176,10 +197,14 @@ const RestaurantProfileUpdate = () => {
 				const capacities = restaurant.tables.map(table => table.seats);
 				setTableCapacities(capacities);
 
+				// IMPORTANTE: Preencha o novo estado com as mesas completas do banco
+				setExistingTables(restaurant.tables);
+
 			} else {
 				// Se não houver mesas cadastradas, inicie com 0
 				setNumberOfTables(0);
 				setTableCapacities([]);
+				setExistingTables([]); // Limpa se não houver mesas
 			}
 
 			if (restaurant.avatar) {
@@ -212,12 +237,35 @@ const RestaurantProfileUpdate = () => {
 		formData.append('closesAt', profile.closesAt);
 		formData.append('capacity', (profile.capacity))
 
-		if (numberOfTables > 0) {
-			const tables = tableCapacities.map((capacity, index) => ({
-				id: index + 1,
-				seats: capacity
+		// if (numberOfTables > 0) {
+		// 	// Supondo que você tem um estado `existingTables`
+		// 	const tables = tableCapacities.map((capacity, index) => {
+		// 		// Use o ID da mesa existente se ela já existe, caso contrário, não passe o ID.
+		// 		// O `existingTables` precisa ter a mesma ordem do `tableCapacities`.
+		// 		const existingTable = profile.tables[index];
+
+		// 		return {
+		// 			id: existingTable ? existingTable.id : undefined, // Envia o ID real ou undefined para novas mesas
+		// 			seats: String(Number(capacity || 0)),
+		// 		};
+		// 	});
+		// 	formData.append('tables', JSON.stringify(tables));
+		// }
+
+		// --- LÓGICA OTIMIZADA PARA AS MESAS ---
+		// 1. Verifique se o número de mesas foi reduzido a zero
+		if (numberOfTables === 0 && existingTables.length > 0) {
+			// Envie um array vazio para o backend, indicando que todas as mesas devem ser removidas
+			formData.append('tables', JSON.stringify([]));
+		}
+		// 2. Se o número de mesas for maior que zero, verifique se houve alguma mudança
+		else if (numberOfTables > 0 && areTablesChanged(tableCapacities, existingTables)) {
+			// Apenas envie os dados das mesas se houver uma mudança real
+			const newTablesData = tableCapacities.map((capacity, index) => ({
+				seats: String(Number(capacity || 0)),
+				id: existingTables[index] ? existingTables[index].id : undefined
 			}));
-			formData.append('tables', JSON.stringify(tables));
+			formData.append('tables', JSON.stringify(newTablesData));
 		}
 
 		const tagValues = profile.tags.map(tag => tag.value)
@@ -464,6 +512,7 @@ const RestaurantProfileUpdate = () => {
 					</div>
 				</div>
 
+				{/* Configuração das mesas */}
 				<div className="tables-section">
 					<h2 className="section-title">Configuração das Mesas</h2>
 					<p className="tables-description">

@@ -266,7 +266,7 @@ export default function RestaurantDashboard() {
 		}).then((result) => {
 			if (result.isConfirmed) {
 
-				updateReservation(reservationID, 'Canceled')
+				updateReservation(reservationID, 'Cancelled')
 
 				Swal.fire({
 					position: "top-end",
@@ -402,56 +402,65 @@ export default function RestaurantDashboard() {
 					</div>
 
 					<div className="orders-list">
-						{displayedResevations.map((order) => (
-							<div className="order-item-container" onClick={() => { selectedReservation === order.id ? setSelectedReservation('') : setSelectedReservation(order.id) }}>
-								<div className="order-item" key={order.id}>
-									<div className="order-initials">
-										<div className="reservationDay">
-											<span>{String(new Date(order.date).getDate()).padStart(2, '0')}</span>
+						{displayedResevations.length > 0
+							?
+							displayedResevations.map((order) => (
+								<div className="order-item-container" onClick={() => { selectedReservation === order.id ? setSelectedReservation('') : setSelectedReservation(order.id) }}>
+									<div className="order-item" key={order.id}>
+										<div className="order-initials">
+											<div className="reservationDay">
+												<span>{String(new Date(order.date).getDate()).padStart(2, '0')}</span>
+											</div>
+											<div className="reservationMonth">
+												<span>{String(new Intl.DateTimeFormat('pt-BR', { month: 'long' }).format(new Date(order.date))).toUpperCase()}</span>
+											</div>
 										</div>
-										<div className="reservationMonth">
-											<span>{String(new Intl.DateTimeFormat('pt-BR', { month: 'long' }).format(new Date(order.date))).toUpperCase()}</span>
-										</div>
-									</div>
-									<div>
+										<div>
 
-										<div className="order-box">
-											<div className="client-reservation-details">
-												<p>Cliente: {order.client.name}</p>
-												<p>Total de pessoas: {order.guests}</p>
-												<p>Horário: {order.time} • {order.day}</p>
-											</div>
-											<div className="order-table">
-												<span>Mesa Nº: {order.tables.codeID}</span>
-											</div>
-											<div className="order-status">
-												{
-													order.status && (
-														<>
-															{order.status === 'Confirmed' ? <span className="status-text">Confirmado ✓</span> : (order.status === 'Pending' ? <> <span className="status-text">Pendente</span> <span className="timerIcon">⏳</span></> : <> <span className="status-text">Cancelado</span> <span className="timerIcon">❌</span></>)}
-														</>
-													)
+											<div className="order-box">
+												<div className="client-reservation-details">
+													<p>Cliente: {order.client.name}</p>
+													<p>Total de pessoas: {order.guests}</p>
+													<p>Horário: {order.time} • {order.day}</p>
+												</div>
+												<div className="order-table">
+													<span>Mesa Nº: {order.tables ? order.tables.codeID.padStart(3, '0') : 'SEM REGISTRO'}</span>
+												</div>
+												<div className="order-status">
+													{
+														order.status && (
+															<>
+																{order.status === 'Confirmed' ? <span className="status-text">Confirmado ✓</span> : (order.status === 'Pending' ? <> <span className="status-text">Pendente</span> <span className="timerIcon">⏳</span></> : <> <span className="status-text">Cancelado</span> <span className="timerIcon">❌</span></>)}
+															</>
+														)
+													}
+												</div>
+												{order.status && order.status !== 'Cancelled' &&
+													<div className="restaurant-reservation-actions">
+														{order.status && order.status !== 'Confirmed' &&
+															<button onClick={() => updateReservation(order.id, 'Confirmed')} className="restaurant-confirm-button">Confirmar</button>
+														}
+														<button onClick={() => handleCancelReservation(order.id)} className="restaurant-cancel-button">Cancelar</button>
+													</div>
 												}
 											</div>
-											{order.status && order.status !== 'Canceled' &&
-												<div className="restaurant-reservation-actions">
-													{order.status && order.status !== 'Confirmed' &&
-														<button onClick={() => updateReservation(order.id, 'Confirmed')} className="restaurant-confirm-button">Confirmar</button>
-													}
-													<button onClick={() => handleCancelReservation(order.id)} className="restaurant-cancel-button">Cancelar</button>
-												</div>
+											{order.notes &&
+												<>
+													<p className="client-notes-title">Nota do cliente:</p>
+													<p className="client-notes">{order.notes}</p>
+												</>
 											}
 										</div>
-										{order.notes &&
-											<>
-												<p className="client-notes-title">Nota do cliente:</p>
-												<p className="client-notes">{order.notes}</p>
-											</>
-										}
 									</div>
 								</div>
+							))
+							:
+							<div className="restaurant-reservation-placeholder" >
+								<hr />
+								<h2>*** Sem Pedidos no Momento ***</h2>
+								<hr />
 							</div>
-						))}
+						}
 					</div>
 				</div>
 
@@ -487,45 +496,53 @@ export default function RestaurantDashboard() {
 					{/* Reviews List */}
 					<h3 className="reviews-list-title-dashboard-page">Comentários dos clientes</h3>
 					<div className="reviews-list-res-dashboard-page">
-
-						{displayedReviews.map((review, index) => (
-							<div key={index} className="review-item-res-dashboard-page">
-								<div className="review-header-res-dashboard-page">
-									<div className="review-avatar-res-dashboard-page">{review.clientName ? review.clientName.charAt(0).toUpperCase() : "^_^"}</div>
-									<div className="review-info-res-dashboard-page">
-										<div className="review-name-res-dashboard-page">{review.clientName}</div>
-										<div className="review-meta-res-dashboard-page">
-											<div className="review-stars-res-dashboard-page">
-												{[1, 2, 3, 4, 5].map((star) => (
-													<span
-														key={star}
-														className={`review-star-res-dashboard-page ${star <= review.rating ? "filled-res-dashboard-page" : ""}`}
-													>
-														★
-													</span>
-												))}
+						{displayedReviews.length > 0
+							?
+							displayedReviews.map((review, index) => (
+								<div key={index} className="review-item-res-dashboard-page">
+									<div className="review-header-res-dashboard-page">
+										<div className="review-avatar-res-dashboard-page">{review.clientName ? review.clientName.charAt(0).toUpperCase() : "^_^"}</div>
+										<div className="review-info-res-dashboard-page">
+											<div className="review-name-res-dashboard-page">{review.clientName}</div>
+											<div className="review-meta-res-dashboard-page">
+												<div className="review-stars-res-dashboard-page">
+													{[1, 2, 3, 4, 5].map((star) => (
+														<span
+															key={star}
+															className={`review-star-res-dashboard-page ${star <= review.rating ? "filled-res-dashboard-page" : ""}`}
+														>
+															★
+														</span>
+													))}
+												</div>
+												<div className="review-date-res-dashboard-page">{formatDate(new Date(review.updatedAt))}</div>
+												<div className="review-date-res-dashboard-page">{formatTime(new Date(review.updatedAt))}</div>
 											</div>
-											<div className="review-date-res-dashboard-page">{formatDate(new Date(review.updatedAt))}</div>
-											<div className="review-date-res-dashboard-page">{formatTime(new Date(review.updatedAt))}</div>
 										</div>
 									</div>
-								</div>
 
-								<div className="review-content-res-dashboard-page">
-									<p className="review-text-res-dashboard-page">{review.comment}</p>
-								</div>
-
-								{review.tags && review.tags.length > 0 && (
-									<div className="review-tags-res-dashboard-page">
-										{review.tags.map((tag) => (
-											<span key={tag} className="review-tag-res-dashboard-page">
-												{tag}
-											</span>
-										))}
+									<div className="review-content-res-dashboard-page">
+										<p className="review-text-res-dashboard-page">{review.comment}</p>
 									</div>
-								)}
+
+									{review.tags && review.tags.length > 0 && (
+										<div className="review-tags-res-dashboard-page">
+											{review.tags.map((tag) => (
+												<span key={tag} className="review-tag-res-dashboard-page">
+													{tag}
+												</span>
+											))}
+										</div>
+									)}
+								</div>
+							))
+							:
+							<div className="restaurant-reservation-placeholder" >
+								<hr />
+								<h2>*** Sem Comentários ***</h2>
+								<hr />
 							</div>
-						))}
+						}
 
 						{displayedReviews.length > 3 && (
 							<div className="reviews-actions-res-page">

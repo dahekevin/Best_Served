@@ -16,6 +16,8 @@ const RestaurantTables = () => {
 	const [customerObservations, setCustomerObservations] = useState("")
 	const [maxSeats, setMaxSeats] = useState(0)
 	const [clientInfo, setClientInfo] = useState({ name: "", email: "", phone: "", avatar: "", password: "" })
+	const [minTime, setMinTime] = useState()
+	const [maxTime, setMaxTime] = useState()
 
 	let index = 0
 
@@ -23,7 +25,7 @@ const RestaurantTables = () => {
 		date: "",
 		starts: "",
 		ends: "",
-		guests: "",
+		guests: 0,
 	})
 
 	const [tables, setTables] = useState([])
@@ -82,7 +84,7 @@ const RestaurantTables = () => {
 		);
 
 		// CORREÇÃO 2: Verifica a capacidade (se `guests` for um número)
-		const hasCapacity = guests === "" || table.seats >= parseInt(guests, 10);
+		const hasCapacity = guests === 0 || table.seats >= parseInt(guests, 10);
 
 		// Lógica de filtro final
 		if (activeFilter === "Available") return !hasTimeConflict && hasCapacity;
@@ -131,7 +133,7 @@ const RestaurantTables = () => {
 				date: searchFilters.date,
 				startsAt: searchFilters.starts,
 				endsAt: searchFilters.ends,
-				guests: searchFilters.guests === '' ? 0 : searchFilters.guests,
+				guests: searchFilters.guests === 0 ? 0 : parseInt(searchFilters.guests),
 				notes: customerObservations,
 				clientId: clientInfo.id,
 				restaurantId: restaurantId,
@@ -216,9 +218,6 @@ const RestaurantTables = () => {
 	}, [tables]);
 
 	const handleSearchFilterChange = useCallback((key, value) => {
-		// Definir os limites de horário (se eles forem dinâmicos, pegue do estado do restaurante)
-		const minTime = filteredTables[0].opensAt;
-		const maxTime = filteredTables[0].closesAt;
 
 		console.log('MinTime: ', minTime);
 		console.log('MaxTime: ', maxTime);
@@ -248,20 +247,20 @@ const RestaurantTables = () => {
 				[key]: value
 			}));
 		}
-	}, [filteredTables])
+	}, [maxTime, minTime])
 
 	const clearFilters = () => {
 		setSearchFilters({
 			date: "",
 			starts: "",
 			ends: "",
-			guests: "",
+			guests: 0,
 		})
 	}
 
 	const getTables = useCallback(async () => {
 		try {
-			const response = await api.get('/restaurant/get-tables')
+			const response = await api.get(`/restaurant/get-tables?restaurantId=${restaurantId}`)
 
 			if (!response) { return 'Erro ao acessar mesas no banco.' }
 
@@ -269,15 +268,32 @@ const RestaurantTables = () => {
 
 			setTables(response.data.formattedTables)
 
+			setMinTime(response.data.formattedTables[0].opensAt);
+			setMaxTime(response.data.formattedTables[0].closesAt);
+
 		} catch (error) {
 			console.error('Erro ao acessar menus no banco.', error);
 			alert('Erro ao acessar menus no banco.')
 		}
-	}, [])
+	}, [restaurantId])
 
 	useEffect(() => {
 		const role = localStorage.getItem('role')
 		console.log('Role:', role)
+
+		if (role !== 'client') {
+			Swal.fire({
+				position: 'top-end',
+				icon: 'warning',
+				title: 'Você não está logado como cliente!',
+				text: 'Faça login como cliente acessar a página de mesas.',
+				timer: 1500,
+				showConfirmButton: false,
+				willClose: () => {
+					window.location.href = '/login'
+				}
+			})
+		}
 
 		getTables()
 
@@ -315,6 +331,10 @@ const RestaurantTables = () => {
 
 			{/* Filtros de Pesquisa */}
 			<div className="tables-search-filters">
+				<div className="opening-hours">
+					Horário de Funcionamento: {minTime} - {maxTime}
+				</div>
+				<hr style={{marginTop: "10px", marginBottom: "10px"}} />
 				<div className="tables-search-row">
 					{localStorage.getItem('role') === 'restaurant' &&
 						<div className="tables-search-field">
@@ -350,17 +370,18 @@ const RestaurantTables = () => {
 						/>
 					</div>
 					<div className="tables-search-field">
-						<label>Convidados:</label>
+						<label>Total de Pessoas:</label>
 						<input
 							type="number"
 							value={searchFilters.guests}
 							onChange={(e) => handleSearchFilterChange("guests", e.target.value)}
-							placeholder="Número de Convidados"
+							placeholder="Número de Pessoas"
 						/>
 					</div>
 					<button className="tables-clear-filters-btn" onClick={clearFilters}>
 						Limpar Filtros
 					</button>
+
 				</div>
 			</div>
 
@@ -372,22 +393,22 @@ const RestaurantTables = () => {
 				{filteredTables.map((table) => {
 					const isReserved = table.reservations.some(
 						(res) =>
-							searchFilters.starts === '' || searchFilters.ends === '' 
-							?
+							searchFilters.starts === '' || searchFilters.ends === ''
+								?
 								(res.reservationDate?.split("T")[0] === searchFilters.date)
-							:
-								(res.reservationDate?.split("T")[0] === searchFilters.date) && 
-								((res.reservationStarts >=  searchFilters.starts && res.reservationStarts <= searchFilters.ends) || 
-								(res.reservationEnds >=  searchFilters.starts && res.reservationEnds <=  searchFilters.ends))
+								:
+								(res.reservationDate?.split("T")[0] === searchFilters.date) &&
+								((res.reservationStarts >= searchFilters.starts && res.reservationStarts <= searchFilters.ends) ||
+									(res.reservationEnds >= searchFilters.starts && res.reservationEnds <= searchFilters.ends))
 
 					)
 
-					if (maxSeats < table.seats) { setMaxSeats(table.seats); }
+					if (parseInt(maxSeats) < parseInt(table.seats)) { setMaxSeats(parseInt(table.seats)); }
 
 					return (
 						<>
 							{table.restaurantId === restaurantId &&
-								(searchFilters.guests === '' ? true : (table.seats >= searchFilters.guests && (searchFilters.guests <= parseInt(maxSeats)))) &&
+								(searchFilters.guests === 0 ? true : (table.seats >= searchFilters.guests)) &&
 								<>
 									{(index += 1) &&
 										< div
@@ -404,11 +425,12 @@ const RestaurantTables = () => {
 													</span>
 												</div>
 
-												<div className={`tables-avatar ${isReserved ? "Not-Available" : "Available"}`} >{isReserved ? "Res" : "Dis"}</div>
+												<div className={`tables-avatar ${isReserved ? "Not-Available" : "Available"}`} >{table.codeID.padStart(3, '0')}</div>
+												{/* <div className={`tables-avatar ${isReserved ? "Not-Available" : "Available"}`} >{isReserved ? "Res" : "Dis"}</div> */}
 
 												<div className="tables-table-info">
 													<div className="tables-seats-info">Lugares: {table.seats}</div>
-													<div className="tables-restaurant-info">{table.restaurant} <br /> {table.codeID}</div>
+													<div className="tables-restaurant-info">{table.restaurant}</div>
 												</div>
 											</div>
 											{isReserved && (
@@ -462,14 +484,19 @@ const RestaurantTables = () => {
 							{selectedTable?.reservations.map(
 								(res) => (
 									<div className="tables-modal-info">
+										{res.customerName === clientInfo.name
+											?
+											<p>
+												<strong>SUA RESERVA 🗓️</strong>
+											</p>
+											:
+											<></>
+										}
 										<p>
 											<strong>Data:</strong> {new Date(res.reservationDate).toLocaleDateString("pt-BR")}
 										</p>
-										{/* <p>
-											<strong>Hora:</strong> {res.reservationStarts}
-										</p> */}
 										<p>
-											<strong>Cliente:</strong> {res.customerName}
+											<strong>Dás:</strong> {res.reservationStarts} <strong>Até:</strong> {res.reservationEnds}
 										</p>
 									</div>
 

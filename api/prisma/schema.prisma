@@ -67,7 +67,7 @@ model Subscription {
 model Tables {
     id     String  @id @default(auto()) @map("_id") @db.ObjectId
     codeID String?
-    seats  String?
+    seats  Int?
     status String? // Available, Reserved
 
     // Relations
@@ -101,8 +101,8 @@ model Reservations {
     restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
 
     // Tables Relations
-    tableId String @db.ObjectId
-    tables  Tables @relation(fields: [tableId], references: [id], onDelete: Cascade)
+    tableId String? @db.ObjectId
+    tables  Tables? @relation(fields: [tableId], references: [id], onDelete: SetNull)
 }
 
 model Admin {

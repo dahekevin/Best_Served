@@ -51,7 +51,7 @@ export const registerRestaurant = async (req, res) => {
 
             return {
                 codeID: tableCode.toString(),
-                seats: String(Number(table.seats || 0)),
+                seats: Number(table.seats || 0),
                 status: 'Available'
             };
         });
@@ -129,6 +129,7 @@ export const getRestaurantByRating = async (req, res) => {
                 rating: true,
                 status: true,
                 isActive: true,
+                avatar: true,
                 createdAt: true,
                 _count: {
                     select: { reservations: true }
@@ -184,11 +185,11 @@ export const getTables = async (req, res) => {
     try {
         let tables
 
-        console.log('GetTables: ', req.body);
+        console.log('GetTables: ', req.query);
 
-        if (req.query.email) {
+        if (req.query.restaurantId) {
             tables = await prisma.tables.findMany({
-                where: { email: req.query.email },
+                where: { restaurantId: req.query.restaurantId },
                 include: {
                     restaurant: true,
                     reservation: {
@@ -214,6 +215,7 @@ export const getTables = async (req, res) => {
                 id: table.id,
                 seats: table.seats,
                 status: table.status,
+                codeID: table.codeID,
                 restaurant: table.restaurant.name,
                 restaurantId: table.restaurant.id,
                 opensAt: table.restaurant.opensAt,
@@ -228,7 +230,7 @@ export const getTables = async (req, res) => {
             };
         });
 
-        // console.log('FormattedTables: ', formattedTables);        
+        console.log('FormattedTables: ', formattedTables);        
 
         res.status(201).json({ message: 'Mesas econtradas com sucesso!', formattedTables })
     } catch (error) {
@@ -285,27 +287,96 @@ export const updateRestaurant = async (req, res) => {
             cleanedData.password = await bcrypt.hash(req.body.password, salt)
         }
 
-        const parsedTables = req.body.tables ? JSON.parse(req.body.tables) : [];
+        // const parsedTables = req.body.tables ? JSON.parse(req.body.tables) : [];
 
-        const generatedTables = parsedTables.map((table, index) => {
-            // `index` começa em 0, então adicione 1 para começar a contagem em 1
-            const tableCode = index + 1;
+        // const generatedTables = parsedTables.map((table, index) => {
+        //     // `index` começa em 0, então adicione 1 para começar a contagem em 1
+        //     const tableCode = index + 1;
 
-            return {
-                codeID: tableCode.toString(),
-                seats: String(Number(table.seats || 0)),
-                status: 'Available'
-            };
+        //     return {
+        //         codeID: tableCode.toString(),
+        //         seats: String(Number(table.seats || 0)),
+        //         status: 'Available'
+        //     };
+        // });
+
+        // await prisma.restaurant.update({
+        //     where: { id: req.userId },
+        //     data: {
+        //         tables: {
+        //             create: generatedTables
+        //         }
+        //     }
+        // })
+
+        const restaurantBeforeUpdate = await prisma.restaurant.findUnique({
+            where: { id: req.userId },
+            include: { tables: true }
         });
 
-        await prisma.restaurant.update({
-            where: { id: req.userId },
-            data: {
-                tables: {
-                    create: generatedTables
+        if (!restaurantBeforeUpdate) {
+            return res.status(404).json({ message: "Restaurante não encontrado." });
+        }
+
+        // 1. Processar as mesas (a lógica crucial)
+        const parsedTables = req.body.tables ? JSON.parse(req.body.tables) : [];
+
+        // Crie uma lista dos IDs das mesas atuais que vieram do formulário
+        const newTableIds = new Set(parsedTables.map(table => table.id).filter(id => id));
+
+        // 2. Identificar mesas a serem deletadas
+        const tablesToDelete = restaurantBeforeUpdate.tables.filter(
+            table => !newTableIds.has(table.id)
+        );
+        const tablesToDeleteIds = tablesToDelete.map(table => table.id);
+
+        // 3. Identificar mesas a serem criadas
+        const tablesToCreate = parsedTables.filter(
+            table => !table.id // Mesas que não têm ID são novas
+        );
+        const newTablesData = tablesToCreate.map((table, index) => ({
+            codeID: (restaurantBeforeUpdate.tables.length + index + 1).toString(), // Novo ID de mesa
+            seats: Number(table.seats || 0),
+            status: 'Available'
+        }));
+
+        // 4. Identificar mesas a serem atualizadas
+        const tablesToUpdate = parsedTables.filter(table => newTableIds.has(table.id));
+
+        // 5. Executar as operações no banco de dados
+
+        // Se houver mesas para deletar, precisamos lidar com as reservas delas
+        if (tablesToDeleteIds.length > 0) {
+            // CANCELE ou lide com as reservas associadas a essas mesas
+            await prisma.reservations.updateMany({
+                where: { tableId: { in: tablesToDeleteIds } },
+                data: { status: 'Cancelled' }
+            });
+            // Agora, delete as mesas
+            await prisma.tables.deleteMany({
+                where: { id: { in: tablesToDeleteIds } }
+            });
+        }
+
+        // Crie as novas mesas
+        if (newTablesData.length > 0) {
+            await prisma.tables.createMany({
+                data: newTablesData.map(table => ({
+                    ...table,
+                    restaurantId: req.userId // Associar ao restaurante
+                }))
+            });
+        }
+
+        // Atualize as mesas existentes que foram modificadas
+        for (const updatedTable of tablesToUpdate) {
+            await prisma.tables.update({
+                where: { id: updatedTable.id },
+                data: {
+                    seats: Number(updatedTable.seats || 0),
                 }
-            }
-        })
+            });
+        }
 
         const restaurant = await prisma.restaurant.update({
             where: {
@@ -372,8 +443,11 @@ export const updateRestaurantStatus = async (req, res) => {
 
 export const updateRestaurantIsActiveStatus = async (req, res) => {
     try {
+        console.log('IsActive: ', req);
+        
+
         const restaurant = await prisma.restaurant.update({
-            where: { id: req.query.id },
+            where: { id: req.userId },
             data: { isActive: req.body.isActive }
         })
 
