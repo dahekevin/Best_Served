@@ -71,8 +71,8 @@ const UpdateAdmProfile = () => {
         formData.append("name", profile.name)
         formData.append("email", profile.email)
         formData.append("phone", profile.phone)
-        formData.append("password", profile.password)
-
+        formData.append("password", profile.password)     
+        
         if (profile.avatar instanceof File) {
             formData.append("admin-avatar", profile.avatar)
         }

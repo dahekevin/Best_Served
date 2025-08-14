@@ -14,7 +14,7 @@ export default function RestaurantDashboard() {
 
 	// Calcular média das avaliações (sempre retorna número)
 	function calculateAverageRating() {
-		if (restaurantInfo.review.length === 0) return 4.2 // valor padrão
+		if (restaurantInfo.review.length === 0) return 0 // valor padrão
 		const sum = restaurantInfo.review.reduce((acc, review) => acc + review.rating, 0)
 		return sum / restaurantInfo.review.length
 	}
@@ -213,12 +213,12 @@ export default function RestaurantDashboard() {
 		}
 	}
 
-	const updateReservation = async (reservationID) => {
+	const updateReservation = async (reservationID, status) => {
 		const token = localStorage.getItem('token')
 
 		const data = {
 			id: reservationID,
-			status: 'Confirmed'
+			status: status
 		}
 
 		try {
@@ -252,26 +252,26 @@ export default function RestaurantDashboard() {
 		}
 	}
 
-	const handleDeleteReservation = async (reservationID) => {
+	const handleCancelReservation = async (reservationID) => {
 		Swal.fire({
 			title: "Tem certeza?",
-			text: "Esta ação excluirá a reserva selecionada. Você não poderá reverter isso!",
+			text: "Esta ação cancelará a reserva selecionada. Você não poderá reverter isso!",
 			icon: "warning",
 			showCancelButton: true,
 			confirmButtonColor: '#3085d6',
 			cancelButtonColor: '#d33',
-			confirmButtonText: "Sim, apagar!",
-			cancelButtonText: "Não, cancelar!",
+			confirmButtonText: "Sim, cancelar reserva!",
+			cancelButtonText: "Não, manter reserva!",
 			reverseButtons: true
 		}).then((result) => {
 			if (result.isConfirmed) {
 
-				deleteReservation(reservationID)
+				updateReservation(reservationID, 'Canceled')
 
 				Swal.fire({
 					position: "top-end",
 					icon: "warning",
-					title: "Reserva Apagada!",
+					title: "Reserva Cancelada!",
 					showConfirmButton: false,
 					timer: 1500,
 				});
@@ -280,37 +280,6 @@ export default function RestaurantDashboard() {
 				result.dismiss === Swal.DismissReason.cancel
 			) {/**/ }
 		});
-	}
-
-	const deleteReservation = async (reservationID) => {
-		const token = localStorage.getItem('token')
-
-		try {
-			const response = api.delete('/reservation/delete', {
-				params: { id: reservationID },
-				headers: {
-					Authorization: `Bearer ${token}`
-				}
-			})
-
-			console.log('Resposta da deleção de reserva: ', response.data);
-
-			Swal.fire({
-				icon: 'success',
-				title: 'Reserva Deletada!',
-				text: response.data.message || 'Sua reserva foi cancelada com sucesso.',
-				timer: 1500,
-				showConfirmButton: false
-			});
-
-		} catch (error) {
-			console.error('Erro ao deletar reserva.', error);
-			Swal.fire({
-				icon: 'warning',
-				title: 'Oops',
-				text: 'Erro ao tentar deletar reserva, tente novamente.'
-			})
-		}
 	}
 
 	useEffect(() => {
@@ -448,30 +417,32 @@ export default function RestaurantDashboard() {
 
 										<div className="order-box">
 											<div className="client-reservation-details">
-												<p>Cliente: {order.clientId}</p>
+												<p>Cliente: {order.client.name}</p>
 												<p>Total de pessoas: {order.guests}</p>
 												<p>Horário: {order.time} • {order.day}</p>
 											</div>
 											<div className="order-table">
-												<span>Mesa Nº: {order.tableId}</span>
+												<span>Mesa Nº: {order.tables.codeID}</span>
 											</div>
 											<div className="order-status">
 												{
 													order.status && (
 														<>
-															{order.status === 'Confirmed' ? <span className="status-text">Confirmado ✓</span> : (order.status === 'Pending' ? <> <span className="status-text">Pendente</span> <span className="timerIcon">⏳</span></> : null)}
+															{order.status === 'Confirmed' ? <span className="status-text">Confirmado ✓</span> : (order.status === 'Pending' ? <> <span className="status-text">Pendente</span> <span className="timerIcon">⏳</span></> : <> <span className="status-text">Cancelado</span> <span className="timerIcon">❌</span></>)}
 														</>
 													)
 												}
 											</div>
-											<div className="restaurant-reservation-actions">
-												{order.status && order.status !== 'Confirmed' &&
-													<button onClick={() => updateReservation(order.id)} className="restaurant-confirm-button">Confirmar</button>
-												}
-												<button onClick={() => handleDeleteReservation(order.id)} className="restaurant-cancel-button">Cancelar</button>
-											</div>
+											{order.status && order.status !== 'Canceled' &&
+												<div className="restaurant-reservation-actions">
+													{order.status && order.status !== 'Confirmed' &&
+														<button onClick={() => updateReservation(order.id, 'Confirmed')} className="restaurant-confirm-button">Confirmar</button>
+													}
+													<button onClick={() => handleCancelReservation(order.id)} className="restaurant-cancel-button">Cancelar</button>
+												</div>
+											}
 										</div>
-										{order.notes && 
+										{order.notes &&
 											<>
 												<p className="client-notes-title">Nota do cliente:</p>
 												<p className="client-notes">{order.notes}</p>

@@ -15,6 +15,8 @@ export default function RestaurantPage() {
 	const [selectedReview, setSelectedReview] = useState(null)
 	const [update, setUpdate] = useState(false)
 	const [alreadyAClient, setAlreadyAClient] = useState(false)
+	const [review, setReview] = useState()
+
 	const reviewFormRef = useRef(null)
 
 	// Nota média do restaurante (simulada)
@@ -62,12 +64,31 @@ export default function RestaurantPage() {
 
 	// Calcular média das avaliações (sempre retorna número)
 	function calculateAverageRating() {
-		if (restaurantInfo.review.length === 0) return 4.2 // valor padrão
+		if (restaurantInfo.review.length === 0) return 0 // valor padrão
 		const sum = restaurantInfo.review.reduce((acc, review) => acc + review.rating, 0)
 		return sum / restaurantInfo.review.length
 	}
 
 	const averageRating = calculateAverageRating()
+
+	const updateRestaurantRating = async () => {
+		const token = localStorage.getItem('token')
+		try {
+			const response = await api.patch(`/restaurant/update-rating?restaurantId=${restaurantId}`, {
+				rating: averageRating // O backend espera um campo 'rating'
+			}, {
+				headers: {
+					Authorization: `Bearer ${token}`
+				}
+			});
+		} catch (error) {
+			console.log('Erro ao atualizar rating do restaurante', error);
+		}
+	}
+
+	useEffect(() => {
+		updateRestaurantRating()
+	})
 
 	// Calcular distribuição de avaliações
 	const calculateRatingDistribution = () => {
@@ -163,10 +184,12 @@ export default function RestaurantPage() {
 
 				if (!review) { return console.log('Erro na criação da review. Tente novamente.'); }
 
+				let response
+
 				if (!update) {
 
 					try {
-						const response = await api.post('/review/register', review)
+						response = await api.post('/review/register', review)
 
 						console.log('Registrar Review: ', response);
 
@@ -178,7 +201,7 @@ export default function RestaurantPage() {
 					}
 				} else {
 					try {
-						const response = await api.put(`/review/update/${selectedReview.id}`, review, {
+						response = await api.put(`/review/update/${selectedReview.id}`, review, {
 							headers: { Authorization: `Bearer ${token}` }
 						})
 
@@ -192,16 +215,17 @@ export default function RestaurantPage() {
 					}
 				}
 
-
-				console.log(averageRating);
+				console.log("AVERAGE RATING", averageRating);
 
 				const updatedReviews = [review, ...reviews]
 				setReviews(updatedReviews)
+
 
 				setNewReview({ name: "", comment: "", rating: 0, tags: [] })
 				setUserRating(0)
 				setHoverRating(0)
 				setShowReviewForm(false)
+
 
 				Swal.fire("Avaliação Enviada!", "Obrigado pela sua avaliação!", "success")
 
@@ -314,6 +338,10 @@ export default function RestaurantPage() {
 
 			setClient(response.data)
 
+			const rev = response.data.review.find(r => r.restaurantId === restaurantId);
+
+			setReview(rev)
+
 		} catch (error) {
 			console.error('É preciso estar logado como cliente para fazer uma reserva.', error);
 			Swal.fire({
@@ -406,6 +434,8 @@ export default function RestaurantPage() {
 			const hasReserved = client.restaurantHistory.some(historyItem => {
 				return historyItem === restaurantInfo.id
 			})
+
+			console.log('HasReserved: ', hasReserved);
 
 			setAlreadyAClient(hasReserved)
 
@@ -505,14 +535,16 @@ export default function RestaurantPage() {
 						</div>
 
 						<div className="restaurant-card-res-page">
-							<div className="restaurant-badge-res-page">
-								{restaurantInfo.tags.map((tag, index) => (
-									<span key={index}>
-										{tag}
-										{index < restaurantInfo.tags.length - 1 && ' • '}
-									</span>
-								))}
-							</div>
+							{restaurantInfo.tags && restaurantInfo.tags.length > 0 &&
+								<div className="restaurant-badge-res-page">
+									{restaurantInfo.tags.map((tag, index) => (
+										<span key={index}>
+											{tag}
+											{index < restaurantInfo.tags.length - 1 && ' • '}
+										</span>
+									))}
+								</div>
+							}
 							<h1 className="restaurant-name-res-page">{restaurantInfo.name}</h1>
 							<p className="restaurant-description-res-page">{restaurantInfo.description}</p>
 
@@ -612,7 +644,7 @@ export default function RestaurantPage() {
 									</div>
 								</div>
 
-								{alreadyAClient && client.review && !(client.review.length > 0) &&
+								{alreadyAClient && !review &&
 									<button className="rate-button-res-page" onClick={
 										() => {
 											setShowReviewForm(true);

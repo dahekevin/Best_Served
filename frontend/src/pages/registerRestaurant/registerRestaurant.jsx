@@ -645,7 +645,6 @@ const RestaurantRegistration = () => {
 								onChange={handleNumberOfTablesChange}
 								className="form-input"
 								min="0"
-								max="50"
 							/>
 						</div>
 
@@ -663,8 +662,7 @@ const RestaurantRegistration = () => {
 													value={tableCapacities[index] || 0}
 													onChange={(e) => handleTableCapacityChange(index, e.target.value)}
 													className="form-input capacity-input"
-													min="1"
-													max="20"
+													min="0"
 												/>
 												<span className="capacity-label">pessoas</span>
 											</div>

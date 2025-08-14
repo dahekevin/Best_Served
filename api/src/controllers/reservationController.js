@@ -8,7 +8,7 @@ export const registerReservation = async (req, res) => {
 
         const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1)
 
-        const reservationDateTime = new Date(`${req.body.date}T${req.body.time}:00`);
+        const reservationDateTime = new Date(`${req.body.date}T${req.body.startsAt}:00`);
         console.log('ReservationDateTime String: ', reservationDateTime);
 
         if (isNaN(reservationDateTime.getTime())) {
@@ -24,7 +24,8 @@ export const registerReservation = async (req, res) => {
         const reservation = await prisma.reservations.create({
             data: {
                 date: isoString,
-                time: req.body.time,
+                startsAt: req.body.startsAt,
+                endsAt: req.body.endsAt,
                 day: formattedDay,
                 month: formattedMonth,
                 guests: parseInt(req.body.guests),
@@ -57,29 +58,44 @@ export const getReservations = async (req, res) => {
         console.log('Reservas Backend', req.query);
 
         if (req.query.date) {
-            const selectedDate = new Date(req.query.date)
-            const nextDay = new Date(selectedDate)
-            nextDay.setDate(nextDay.getDate() + 1)
+            // CORREÇÃO: Tratar a data como local para o dia, e então converter para UTC.
+            const selectedDateString = req.query.date; // Ex: '2025-08-12'
+
+            // --- CORREÇÃO AQUI ---
+            // Cria um objeto Date que representa o início do dia no fuso horário UTC
+            const startOfDayUTC = new Date(`${selectedDateString}T00:00:00.000Z`);
+
+            // Cria o objeto Date para o início do dia seguinte (lt)
+            const endOfDayUTC = new Date(startOfDayUTC);
+            endOfDayUTC.setDate(endOfDayUTC.getDate() + 1);
+
+            console.log('Início da busca (UTC):', startOfDayUTC.toISOString());
+            console.log('Fim da busca (UTC):', endOfDayUTC.toISOString());
+
             reservations = await prisma.reservations.findMany({
                 where: {
                     date: {
-                        gte: selectedDate,
-                        lt: nextDay
+                        // Busca reservas a partir da meia-noite do dia selecionado
+                        gte: startOfDayUTC,
+                        // Busca reservas até o final do dia selecionado
+                        lte: endOfDayUTC
                     }
                 },
                 include: {
-                    client: {
-                        select: { name: true }
-                    },
-                    restaurant: {
-                        select: { name: true }
-                    }
+                    client: { select: { name: true } },
+                    restaurant: { select: { name: true } },
+                    tables: { select: { codeID: true } } // Inclua tableID para consistência
                 }
-            })
+            });
 
-            console.log('Reservations: ', reservations);
+            console.log('Reservations encontradas:', reservations);
 
-            return res.status(201).json({ message: 'Lista de reservas:', reservations })
+            // Verificação adicional, caso a lista de reservas seja vazia
+            if (!reservations || reservations.length === 0) {
+                return res.status(200).json({ message: 'Nenhuma reserva encontrada para a data.', reservations: [] });
+            }
+
+            return res.status(200).json({ message: 'Lista de reservas:', reservations });
         }
 
         if (req.query.restaurantId) {
@@ -110,6 +126,8 @@ export const getReservations = async (req, res) => {
         }
 
     } catch (error) {
+        console.log('Erro no servidor: ', error); 
+        
         res.status(500).json({ message: 'Erro no servidor, tente novamente.' })
     }
 }

@@ -182,7 +182,9 @@ export default function Profile() {
                                         <p>Status da Reserva:
                                             {reservation.status === 'Confirmed'
                                                 ? <span style={{color: "green"}}> Confirmada ✓</span>
-                                                : <span style={{color: "green"}}> Pendente 🕜</span>
+                                                : (reservation.status === 'Pending' ? <span style={{color: "yellow"}}> Pendente 🕜</span>
+                                                    : <span style={{color: "red"}}> Cancelado ❌</span>
+                                                )
                                             }
                                         </p>
                                     </div>

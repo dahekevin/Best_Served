@@ -106,7 +106,7 @@ export default function AdminDashboard() {
             console.log('Todos os clientes da plataforma: ', response.data);
 
             setAllClients(response.data)
-            
+
         } catch (error) {
             console.error('Falha ao acessar lista de clientes registrados no sistema, tente novamente.', error);
         }
@@ -123,7 +123,7 @@ export default function AdminDashboard() {
 
             if (!response) { return console.log('Algo deu errado, não é possível mostrar todas as reservas. Tente novamente.'); }
 
-            console.log('Todas as reservas: ', response);
+            console.log('Todas as reservas: ', response.data.reservations);
 
             setAllReservationsOfTheDay(response.data.reservations)
 
@@ -386,40 +386,40 @@ export default function AdminDashboard() {
                         </div>
                     ))} */}
 
-                    <div onClick={ () => { handleSeeAllReservations() } } className="stat-card">
+                    <div onClick={() => { handleSeeAllReservations() }} className="stat-card">
                         <div className="stat-header">
                             <span className="stat-title">Total de Reservas</span>
                             <div className={`stat-icon`}>📅</div>
                         </div>
                         <div className="stat-value">{totalReservations}</div>
-                        <div className={`stat-change ${admin.prevMonthReservations <= totalReservations ? "positive" : "negative"}`}>
+                        {/* <div className={`stat-change ${admin.prevMonthReservations <= totalReservations ? "positive" : "negative"}`}>
                             <span>{admin.prevMonthReservations <= totalReservations ? "↗" : "↘"}</span>
                             {(Math.abs(((100 * parseFloat(totalReservations)) / parseFloat(admin.prevMonthReservations)) - 100)).toFixed(2)}% vs mês anterior
-                        </div>
+                        </div> */}
                     </div>
 
-                    <div onClick={ () => { handleSeeAllClients() } } className="stat-card">
+                    <div onClick={() => { handleSeeAllClients() }} className="stat-card">
                         <div className="stat-header">
                             <span className="stat-title">Usuários Registrados</span>
                             <div className={`stat-icon`}>👥</div>
                         </div>
                         <div className="stat-value">{totalClients}</div>
-                        <div className={`stat-change ${admin.prevMonthClients <= totalClients ? "positive" : "negative"}`}>
+                        {/* <div className={`stat-change ${admin.prevMonthClients <= totalClients ? "positive" : "negative"}`}>
                             <span>{admin.prevMonthClients <= totalClients ? "↗" : "↘"}</span>
                             {(Math.abs(((100 * parseFloat(totalClients)) / parseFloat(admin.prevMonthClients)) - 100)).toFixed(2)}% vs mês anterior
-                        </div>
+                        </div> */}
                     </div>
 
-                    <div onClick={ () => { setShowActiveRestaurantsModal(true); } } className="stat-card">
+                    <div onClick={() => { setShowActiveRestaurantsModal(true); }} className="stat-card">
                         <div className="stat-header">
                             <span className="stat-title">Restaurantes Ativos</span>
                             <div className={`stat-icon`}>🏪</div>
                         </div>
                         <div className="stat-value">{topRestaurants.length - activeRestaurants.length - pendingRestaurants.length}</div>
-                        <div className={`stat-change ${admin.prevMonthRestaurants <= (topRestaurants.length - activeRestaurants.length - pendingRestaurants.length) ? "positive" : "negative"}`}>
+                        {/* <div className={`stat-change ${admin.prevMonthRestaurants <= (topRestaurants.length - activeRestaurants.length - pendingRestaurants.length) ? "positive" : "negative"}`}>
                             <span>{admin.prevMonthRestaurants <= (topRestaurants.length - activeRestaurants.length - pendingRestaurants.length) ? "↗" : "↘"}</span>
                             {(Math.abs(((100 * parseFloat((topRestaurants.length - activeRestaurants.length - pendingRestaurants.length))) / parseFloat(admin.prevMonthRestaurants)) - 100)).toFixed(2)}% vs mês anterior
-                        </div>
+                        </div> */}
                     </div>
 
                     {/* <div className="stat-card">
@@ -505,7 +505,7 @@ export default function AdminDashboard() {
                                 <h2 className="table-title">Top Restaurantes</h2>
                                 <button onClick={() => { setShowAllTopRestaurants(!showAllTopRestaurants) }} className="btn btn-secondary">Ver Todos</button>
                             </div>
-                            <div style={{ padding: "0 24px 24px" }}>
+                            <div>
                                 {displayedRestaurants.map((restaurant, index) => (
                                     <div
                                         key={index}
@@ -563,7 +563,8 @@ export default function AdminDashboard() {
                                         <td>{reservation.client.name}</td>
                                         <td>{reservation.restaurant.name}</td>
                                         <td>
-                                            {new Date(reservation.date).toLocaleDateString('pt-BR', {
+                                            {/* CORREÇÃO: Crie o objeto Date a partir da data e da hora */}
+                                            {new Date(`${reservation.date.split('T')[0]}T${reservation.time}`).toLocaleDateString('pt-BR', {
                                                 month: 'long',
                                                 day: 'numeric',
                                                 year: 'numeric'
@@ -619,7 +620,7 @@ export default function AdminDashboard() {
                         </div>
                     )
                 }
-                
+
                 {
                     showAllReservationsModal && (
                         <div className="tables-modal-overlay">
@@ -653,7 +654,7 @@ export default function AdminDashboard() {
                         </div>
                     )
                 }
-                
+
                 {
                     showAllClientsModal && (
                         <div className="tables-modal-overlay">
@@ -685,7 +686,7 @@ export default function AdminDashboard() {
                         </div>
                     )
                 }
-                
+
                 {
                     showActiveRestaurantsModal && (
                         <div className="tables-modal-overlay">

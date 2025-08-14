@@ -149,7 +149,38 @@ const RestaurantProfileUpdate = () => {
 
 			const restaurant = response.data.restaurant
 
-			setProfile({ ...restaurant, password: "" , tags: []})
+			setProfile({ ...restaurant, password: "" })
+
+			if (restaurant.tags && Array.isArray(restaurant.tags)) {
+				// CONVERTA O ARRAY DE STRINGS PARA UM ARRAY DE OBJETOS
+				const formattedTags = restaurant.tags.map(tag => ({
+					value: tag,
+					label: tag
+				}));
+
+				// ATUALIZE O ESTADO 'profile' COM AS TAGS FORMATADAS
+				setProfile(prevProfile => ({
+					...prevProfile,
+					tags: formattedTags
+				}));
+			}
+
+			console.log("number of tables: ", restaurant.tables.length);
+
+			if (restaurant.tables && restaurant.tables.length > 0) {
+				// Se houver mesas, atualize os estados de mesas com os dados do backend
+				setNumberOfTables(restaurant.tables.length);
+
+				// Crie um array de capacidades a partir dos dados das mesas existentes
+				// Mapeie os dados para um array de capacidades
+				const capacities = restaurant.tables.map(table => table.seats);
+				setTableCapacities(capacities);
+
+			} else {
+				// Se não houver mesas cadastradas, inicie com 0
+				setNumberOfTables(0);
+				setTableCapacities([]);
+			}
 
 			if (restaurant.avatar) {
 				setPreviewImage(`http://localhost:3000/${restaurant.avatar.replace("src\\", "")}`)
@@ -388,7 +419,7 @@ const RestaurantProfileUpdate = () => {
 								placeholder="Ex: (11) 91234-5678"
 							/>
 						</div>
-{/* 
+						{/* 
 						<div className="form-group">
 							<label htmlFor="tables">Quantidade de Mesas</label>
 							<TextField
@@ -450,7 +481,6 @@ const RestaurantProfileUpdate = () => {
 								onChange={handleNumberOfTablesChange}
 								className="form-input"
 								min="0"
-								max="50"
 							/>
 						</div>
 
@@ -468,8 +498,7 @@ const RestaurantProfileUpdate = () => {
 													value={tableCapacities[index] || 0}
 													onChange={(e) => handleTableCapacityChange(index, e.target.value)}
 													className="form-input capacity-input"
-													min="1"
-													max="20"
+													min="0"
 												/>
 												<span className="capacity-label">pessoas</span>
 											</div>
@@ -484,7 +513,7 @@ const RestaurantProfileUpdate = () => {
 									<div className="summary-item">
 										<span className="summary-label">Capacidade Total:</span>
 										<span className="summary-value">
-											{tableCapacities.reduce((total, capacity) => total + (capacity || 0), 0)} pessoas
+											{tableCapacities.reduce((total, capacity) => parseInt(total) + (parseInt(capacity) || 0), 0)} pessoas
 										</span>
 									</div>
 								</div>

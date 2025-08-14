@@ -1,7 +1,7 @@
 import express from 'express';
 import upload from '../multer/uploadConfig.js';
 import { verifyToken } from '../middelwares/auth.js';
-import { registerRestaurant, getRestaurants, getRestaurantById, getTables, getRestaurantType, updateRestaurant, deleteRestaurant, restaurantLogin, getRestaurantByRating, updateRestaurantStatus, updateRestaurantIsActiveStatus } from '../controllers/restaurantController.js';
+import { registerRestaurant, getRestaurants, getRestaurantById, getTables, getRestaurantType, updateRestaurant, deleteRestaurant, restaurantLogin, getRestaurantByRating, updateRestaurantStatus, updateRestaurantIsActiveStatus, updateRestaurantRating } from '../controllers/restaurantController.js';
 import { loginController } from '../controllers/loginController.js'
 
 const router = express.Router();
@@ -26,6 +26,9 @@ router.get('/restaurant/get-type', getRestaurantType)
 
 // Rota que edita um restaurante
 router.put('/restaurant/update', verifyToken, upload.fields([{ name: 'restaurant-avatar', maxCount: 1 }, { name: 'menu', maxCount: 1 }]), updateRestaurant)
+
+// Rota que edita o rating do restaurante
+router.patch('/restaurant/update-rating', updateRestaurantRating)
 
 // Rota que edita o status do restaurante
 router.patch('/restaurant/update-status', updateRestaurantStatus)

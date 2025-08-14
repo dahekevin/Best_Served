@@ -66,6 +66,7 @@ model Subscription {
 
 model Tables {
     id     String  @id @default(auto()) @map("_id") @db.ObjectId
+    codeID String?
     seats  String?
     status String? // Available, Reserved
 
@@ -79,7 +80,8 @@ model Tables {
 model Reservations {
     id             String    @id @default(auto()) @map("_id") @db.ObjectId
     date           DateTime? // Day of the reservation
-    time           String?
+    startsAt       String?
+    endsAt         String?
     day            String?
     month          String?
     guests         Int?
@@ -100,7 +102,7 @@ model Reservations {
 
     // Tables Relations
     tableId String @db.ObjectId
-    table   Tables @relation(fields: [tableId], references: [id], onDelete: Cascade)
+    tables  Tables @relation(fields: [tableId], references: [id], onDelete: Cascade)
 }
 
 model Admin {
@@ -114,7 +116,7 @@ model Admin {
     avatar        String?
     prevMonthInfo String[]
 
-    notification  Notification[]
+    notification Notification[]
 }
 
 model Restaurant {

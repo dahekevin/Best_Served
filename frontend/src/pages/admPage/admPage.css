@@ -373,7 +373,7 @@ body {
   border-right: 10px solid #00a65b60;
   border-bottom: 10px solid #00a65b60;
   height: fit-content;
-  overflow: hidden;
+  overflow: auto;
   margin: 10px;
 }
 

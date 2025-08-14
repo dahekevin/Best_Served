@@ -1,6 +1,8 @@
 import { PrismaClient } from "../../generated/prisma/client.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import path from 'path';
+import fs from 'fs';
 
 const prisma = new PrismaClient();
 
@@ -22,19 +24,39 @@ export const getAdmin = async (req, res) => {
 
 export const updateAdmin = async (req, res) => {
     try {
+        const rawData = {
+            name: req.body.name,
+            email: req.body.email,
+            phone: req.body.phone,
+            password: req.body.password,
+        }
 
-        if (!req.body.password) { return res.status(400).json({ message: 'Nova senha não fornecida.' }) }
+        const cleanedData = Object.fromEntries(
+            Object.entries(rawData).filter(([_, value]) => value !== undefined && value != null && value !== '')
+        )
 
-        const hashedPassword = await bcrypt.hash(req.body.password, 10)
-        const newAvatar = req.file ? req.file.filename : null
-        console.log('Imagem atualizada!', req.file);
-        
+        if (cleanedData.password) {
+            cleanedData.password = await bcrypt.hash(req.body.password, 10)
+        }
+
+        if (req.file && req.file.filename !== "apagar") {
+            cleanedData.avatar = req.file.filename
+        }
+
+        // 1. Searches Current Admin
         const adminBeforeUpdate = await prisma.admin.findFirst({
             where: { id: req.userId }
         })
 
-        if ((adminBeforeUpdate.avatar && newAvatar && (adminBeforeUpdate.avatar != newAvatar)) || (newAvatar === 'apagar')) {
-            const filePath = path.resolve('src', 'uploads', adminBeforeUpdate.avatar)
+        if (!adminBeforeUpdate) {
+            console.log('Administrador não encontrado.');
+            
+            return res.status(404).json({ message: 'Administrador não encontrado.' }) 
+        }        
+
+        // 2. Deletes the previous avatar if it exists and if it is different from the new one
+        if ((adminBeforeUpdate.avatar && cleanedData.avatar && (adminBeforeUpdate.avatar != cleanedData.avatar)) || (cleanedData.avatar === "apagar")) {
+            const filePath = path.resolve('src', 'uploads', adminBeforeUpdate.avatar);
             console.log('Tentando deletar arquivo em:', filePath);
 
             fs.unlink(filePath, (err) => {
@@ -44,24 +66,17 @@ export const updateAdmin = async (req, res) => {
                     console.log('Avatar antigo deletado com sucesso!');
                 }
             })
-            
         }
 
         const admin = await prisma.admin.update({
             where: { id: req.userId },
-            data: {
-                name: req.body.name,
-                email: req.body.email,
-                password: hashedPassword,
-                phone: req.body.phone || null,
-                avatar: newAvatar ?? undefined,
-            }
+            data: cleanedData
         })
 
         res.status(201).json({ message: 'Senha atualizado com sucesso!', admin })
 
     } catch (error) {
-        console.error('Erro ao atulizar senha:', error);
+        console.error('Erro ao atualizar informações do administrador:', error);
         res.status(500).json({ message: 'Erro no servidor.' });
     }
 }
@@ -83,8 +98,8 @@ export const adminLogin = async (req, res) => {
 
         const role = admin_db.type
 
-        res.status(200).json({ message: 'Login realizado com sucesso!', token,  role})
+        res.status(200).json({ message: 'Login realizado com sucesso!', token, role })
     } catch (error) {
-        
+
     }
 }

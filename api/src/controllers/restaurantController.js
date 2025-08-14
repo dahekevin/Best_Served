@@ -45,10 +45,16 @@ export const registerRestaurant = async (req, res) => {
 
         const parsedTables = req.body.tables ? JSON.parse(req.body.tables) : [];
 
-        const generatedTables = parsedTables.map((table) => ({
-            seats: String(Number(table.seats || 0)),
-            status: 'Available'
-        }));
+        const generatedTables = parsedTables.map((table, index) => {
+            // `index` começa em 0, então adicione 1 para começar a contagem em 1
+            const tableCode = index + 1;
+
+            return {
+                codeID: tableCode.toString(),
+                seats: String(Number(table.seats || 0)),
+                status: 'Available'
+            };
+        });
 
         const restaurant = await prisma.restaurant.create({
             data: cleanedData
@@ -146,7 +152,20 @@ export const getRestaurantById = async (req, res) => {
             include: {
                 tables: true,
                 review: true,
-                reservations: true
+                reservations: {
+                    include: {
+                        client: {
+                            select: {
+                                name: true
+                            }
+                        },
+                        tables: {
+                            select: {
+                                codeID: true
+                            }
+                        }
+                    },
+                }
             }
         })
 
@@ -155,6 +174,8 @@ export const getRestaurantById = async (req, res) => {
         res.status(201).json({ message: "Restaurante encontrado!", restaurant });
 
     } catch (error) {
+        console.log('Erro no servidor: ', error);
+
         res.status(500).json({ message: "Erro no servidor, tente novamente." })
     }
 }
@@ -195,10 +216,13 @@ export const getTables = async (req, res) => {
                 status: table.status,
                 restaurant: table.restaurant.name,
                 restaurantId: table.restaurant.id,
+                opensAt: table.restaurant.opensAt,
+                closesAt: table.restaurant.closesAt,
                 reservations: table.reservation.map((res, index) => ({
                     index,
                     reservationDate: res.date,
-                    reservationTime: res.time,
+                    reservationStarts: res.startsAt,
+                    reservationEnds: res.endsAt,
                     customerName: res.client?.name || null
                 }))
             };
@@ -263,10 +287,16 @@ export const updateRestaurant = async (req, res) => {
 
         const parsedTables = req.body.tables ? JSON.parse(req.body.tables) : [];
 
-        const generatedTables = parsedTables.map((table) => ({
-            seats: String(Number(table.seats || 0)),
-            status: 'Available'
-        }));
+        const generatedTables = parsedTables.map((table, index) => {
+            // `index` começa em 0, então adicione 1 para começar a contagem em 1
+            const tableCode = index + 1;
+
+            return {
+                codeID: tableCode.toString(),
+                seats: String(Number(table.seats || 0)),
+                status: 'Available'
+            };
+        });
 
         await prisma.restaurant.update({
             where: { id: req.userId },
@@ -293,6 +323,36 @@ export const updateRestaurant = async (req, res) => {
         res.status(500).json({ message: "Erro no servidor, tente novamente." })
     }
 }
+
+export const updateRestaurantRating = async (req, res) => {
+    try {
+        const restaurantId = req.query.restaurantId;
+        const { rating } = req.body; // Pega o novo rating do corpo da requisição
+
+        // Valide se o rating é um número
+        if (typeof rating !== 'number') {
+            return res.status(400).json({ message: "O rating deve ser um número." });
+        }
+
+        // Atualize apenas o campo 'rating' no banco de dados
+        const updatedRestaurant = await prisma.restaurant.update({
+            where: { id: restaurantId },
+            data: { rating: rating }
+        });
+
+        if (!updatedRestaurant) {
+            return res.status(404).json({ message: "Restaurante não encontrado para atualização." });
+        }
+
+        res.status(200).json({
+            message: "Nota do restaurante atualizada com sucesso!",
+            restaurant: updatedRestaurant
+        });
+    } catch (error) {
+        console.error("Erro ao atualizar a nota do restaurante:", error);
+        res.status(500).json({ message: "Erro no servidor, tente novamente." });
+    }
+};
 
 export const updateRestaurantStatus = async (req, res) => {
     try {
