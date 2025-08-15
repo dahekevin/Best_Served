@@ -107,7 +107,8 @@ export const getReservations = async (req, res) => {
                     },
                     restaurant: {
                         select: { name: true }
-                    }
+                    },
+                    tables: { select: { codeID: true } }
                 }
             })
             res.status(201).json({ message: 'Lista de reservas:', reservations })
@@ -119,7 +120,8 @@ export const getReservations = async (req, res) => {
                     },
                     restaurant: {
                         select: { name: true }
-                    }
+                    },
+                    tables: { select: { codeID: true } }
                 }
             })
             res.status(201).json({ message: 'Lista de reservas:', reservations })

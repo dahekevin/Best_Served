@@ -130,6 +130,7 @@ export const getRestaurantByRating = async (req, res) => {
                 status: true,
                 isActive: true,
                 avatar: true,
+                description: true,
                 createdAt: true,
                 _count: {
                     select: { reservations: true }

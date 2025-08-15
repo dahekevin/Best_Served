@@ -197,7 +197,7 @@ export default function AdminDashboard() {
             return res.status && res.status === 'Approved' && res.isActive === true
         })
     }, [topRestaurants])
-    
+
     const nonActiveRestaurants = useMemo(() => {
         if (!Array.isArray(topRestaurants)) {
             return []
@@ -263,9 +263,18 @@ export default function AdminDashboard() {
 
     const getReservations = async () => {
         try {
-            const today = new Date().toISOString().split('T')[0];
+            // Obtém a data e hora atual no fuso horário local
+            const now = new Date();
 
-            console.log(today);
+            // Extrai o ano, mês e dia no fuso horário local
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0'); // Mês de 0-11, então +1
+            const day = String(now.getDate()).padStart(2, '0');
+
+            // Formata a string no formato YYYY-MM-DD
+            const today = `${year}-${month}-${day}`;
+
+            console.log(today); // Exibirá "2025-08-14"
 
             const response = await api.get(`/reservation/get-many?date=${today}`)
 
@@ -432,7 +441,7 @@ export default function AdminDashboard() {
                             {(Math.abs(((100 * parseFloat((topRestaurants.length - activeRestaurants.length - pendingRestaurants.length))) / parseFloat(admin.prevMonthRestaurants)) - 100)).toFixed(2)}% vs mês anterior
                         </div> */}
                     </div>
-                    
+
                     <div onClick={() => { setShowNonActiveRestaurantsModal(true); }} className="stat-card">
                         <div className="stat-header">
                             <span className="stat-title">Restaurantes Não Ativos no momento</span>
@@ -742,7 +751,7 @@ export default function AdminDashboard() {
                         </div>
                     )
                 }
-                
+
                 {
                     showNonActiveRestaurantsModal && (
                         <div className="tables-modal-overlay">
@@ -838,7 +847,7 @@ export default function AdminDashboard() {
                                         <strong>Convidados:</strong> {selectedReservation?.guests}
                                     </p>
                                     <p>
-                                        <strong>ID da mesa:</strong> {selectedReservation?.tableId}
+                                        <strong>ID da mesa:</strong> {selectedReservation?.tables && selectedReservation?.tables.codeID ? selectedReservation?.tables.codeID : 'SEM IDENTIFICAÇÃO'}
                                     </p>
                                     {selectedReservation?.status !== "Available" && (
                                         <>
@@ -849,7 +858,7 @@ export default function AdminDashboard() {
                                                 <strong>Data:</strong> {selectedReservation?.date.split("T")[0]}
                                             </p>
                                             <p>
-                                                <strong>Horário:</strong> {selectedReservation?.time}
+                                                <strong>Horário:</strong> Dás: {selectedReservation?.startsAt} Até: {selectedReservation?.endsAt}
                                             </p>
                                             {selectedReservation?.notes && (
                                                 <p>

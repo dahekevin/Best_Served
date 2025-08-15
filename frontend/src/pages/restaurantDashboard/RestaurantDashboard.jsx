@@ -9,7 +9,9 @@ export default function RestaurantDashboard() {
 	const [searchReservation, setSearchReservation] = useState('')
 	const [showAllReservations, setShowAllReservations] = useState(false)
 	const [showAllReviews, setShowAllReviews] = useState(false)
+	const [showClientNoteModal, setShowClientNoteModal] = useState(false)
 	const [selectedReservation, setSelectedReservation] = useState([])
+	const [note, setNote] = useState([])
 	const [restaurantInfo, setRestaurantInfo] = useState({ name: "", email: "", phone: "", fullAdress: "", avatar: "", reservations: [], review: [] })
 
 	// Calcular média das avaliações (sempre retorna número)
@@ -103,7 +105,7 @@ export default function RestaurantDashboard() {
 			const monthMatch = res.month && res.month.toLowerCase().includes(searchTerm)
 			const dayMatch = res.day && res.day.toLowerCase().includes(searchTerm)
 			const tableIdMatch = res.tableId && res.tableId.toLowerCase().includes(searchTerm);
-			const clientNameMatch = res.clientId && res.clientId.toLowerCase().includes(searchTerm);
+			const clientNameMatch = res.customerName && res.customerName.toLowerCase().includes(searchTerm);
 
 			return statusMatch || monthMatch || dayMatch || tableIdMatch || clientNameMatch;
 		});
@@ -350,6 +352,11 @@ export default function RestaurantDashboard() {
 		)
 	}
 
+	const handleSeeNote = (order) => {
+		setNote(order)
+		setShowClientNoteModal(true)
+	}
+
 	return (
 		<div className="dashboard">
 			<div className="dashboard-header">
@@ -415,6 +422,11 @@ export default function RestaurantDashboard() {
 												<span>{String(new Intl.DateTimeFormat('pt-BR', { month: 'long' }).format(new Date(order.date))).toUpperCase()}</span>
 											</div>
 										</div>
+										{order.notes &&
+											<div className="client-notes-btn">
+												<p className="client-notes-title" onClick={() => { handleSeeNote(order) }} >• Nota de Cliente </p>
+											</div>
+										}
 										<div>
 
 											<div className="order-box">
@@ -437,19 +449,13 @@ export default function RestaurantDashboard() {
 												</div>
 												{order.status && order.status !== 'Cancelled' &&
 													<div className="restaurant-reservation-actions">
-														{order.status && order.status !== 'Confirmed' &&
+														{order.tables && order.status && order.status !== 'Confirmed' &&
 															<button onClick={() => updateReservation(order.id, 'Confirmed')} className="restaurant-confirm-button">Confirmar</button>
 														}
 														<button onClick={() => handleCancelReservation(order.id)} className="restaurant-cancel-button">Cancelar</button>
 													</div>
 												}
 											</div>
-											{order.notes &&
-												<>
-													<p className="client-notes-title">Nota do cliente:</p>
-													<p className="client-notes">{order.notes}</p>
-												</>
-											}
 										</div>
 									</div>
 								</div>
@@ -552,6 +558,25 @@ export default function RestaurantDashboard() {
 							</div>
 						)}
 					</div>
+
+					{/* Show Client Note Modal */}
+
+					{
+						showClientNoteModal && (
+							<div className="tables-modal-overlay">
+								<div style={{ minWidth: "600px" }} className="tables-modal">
+									<h2 className="table-title">Observações do Cliente <br /> <span style={{color:"yellowgreen"}}>{note.client.name}</span></h2>
+									<p>{note.notes}</p>
+
+									<div className="tables-modal-buttons">
+										<button className="tables-btn-cancel" onClick={() => { setShowClientNoteModal(false) }}>
+											Fechar
+										</button>
+									</div>
+								</div>
+							</div>
+						)
+					}
 				</div>
 			</div>
 		</div>

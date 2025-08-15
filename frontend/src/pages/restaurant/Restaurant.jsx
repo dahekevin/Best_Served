@@ -192,7 +192,7 @@ export default function RestaurantPage() {
 						response = await api.post('/review/register', review)
 
 						console.log('Registrar Review: ', response);
-						
+
 						Swal.fire('Review publicada!', "success", 1500)
 
 					} catch (error) {
@@ -437,6 +437,85 @@ export default function RestaurantPage() {
 		}
 	}, [client.restaurantHistory, client.name, restaurantInfo])
 
+	const handleClickMakeReservation = async () => {
+		const token = localStorage.getItem('token')
+		const role = localStorage.getItem('role')
+		console.log('Role:', role)
+
+		if (token && role === 'client') {
+			window.location.href = `/tables?restaurantId=${restaurantInfo.id}`
+		} else {
+			Swal.fire({
+				position: 'top-end',
+				icon: 'warning',
+				title: 'Você não está logado como cliente!',
+				text: 'Faça login como cliente acessar a página de mesas.',
+				timer: 1500,
+				showConfirmButton: false,
+				willClose: () => {
+					window.location.href = '/login'
+				}
+			})
+		}
+
+		// if (token && role !== 'client') {
+		// 	let response
+
+		// 	if (role !== 'restaurant') {
+		// 		Swal.fire({
+		// 			position: 'top-end',
+		// 			icon: 'warning',
+		// 			title: 'Você não está logado como cliente!',
+		// 			text: 'Faça login como cliente acessar a página de mesas.',
+		// 			timer: 1500,
+		// 			showConfirmButton: false,
+		// 			willClose: () => {
+		// 				window.location.href = '/login'
+		// 			}
+		// 		})
+		// 	} else {
+		// 		try {
+		// 			response = await api.get('/restaurant/get-one', {
+		// 				headers: { Authorization: `Bearer ${token}` }
+		// 			})
+		// 		} catch (error) {
+		// 			console.log('Erro ao buscar restaurante no banco.', error);
+		// 		}
+
+		// 		console.log('response.data.id: ', response.data.restaurant.id, 'restaurantInfo.id: ', restaurantInfo.id);
+		// 		if (response.data.restaurant.id !== restaurantInfo.id) {
+		// 			Swal.fire({
+		// 				position: 'top-end',
+		// 				icon: 'warning',
+		// 				title: 'Você não está logado como cliente!',
+		// 				text: 'Faça login como cliente acessar a página de mesas.',
+		// 				timer: 1500,
+		// 				showConfirmButton: false,
+		// 				willClose: () => {
+		// 					window.location.href = '/login'
+		// 				}
+		// 			})
+		// 		} else {
+		// 			window.location.href = `/tables?restaurantId=${restaurantInfo.id}`
+		// 		}
+		// 	}
+		// } else if (role === 'client') {
+		// 	window.location.href = `/tables?restaurantId=${restaurantInfo.id}`
+		// } else {
+		// 	Swal.fire({
+		// 		position: 'top-end',
+		// 		icon: 'warning',
+		// 		title: 'Você não está logado como cliente!',
+		// 		text: 'Faça login como cliente acessar a página de mesas.',
+		// 		timer: 1500,
+		// 		showConfirmButton: false,
+		// 		willClose: () => {
+		// 			window.location.href = '/login'
+		// 		}
+		// 	})
+		// }
+	}
+
 	return (
 		<div className="restaurant-page-res-page">
 			{/* Hero Section */}
@@ -556,7 +635,7 @@ export default function RestaurantPage() {
 
 							{/* Action Buttons */}
 							<div className="action-buttons-res-page">
-								<Link to={!localStorage.getItem('token') ? '/login' : `/tables?restaurantId=${restaurantId}`} className="reservation-btn-res-page">Fazer Reserva</Link>
+								<button onClick={() => { handleClickMakeReservation() }} className="reservation-btn-res-page">Fazer Reserva</button>
 								<button className="whatsapp-btn-res-page" onClick={handleWhatsAppContact}>
 									<img className="whatsapp-icon-res-page" src="/whatsapp-logo1.png" alt="" />
 									Falar no WhatsApp

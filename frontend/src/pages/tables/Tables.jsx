@@ -278,23 +278,6 @@ const RestaurantTables = () => {
 	}, [restaurantId])
 
 	useEffect(() => {
-		const role = localStorage.getItem('role')
-		console.log('Role:', role)
-
-		if (role !== 'client') {
-			Swal.fire({
-				position: 'top-end',
-				icon: 'warning',
-				title: 'Você não está logado como cliente!',
-				text: 'Faça login como cliente acessar a página de mesas.',
-				timer: 1500,
-				showConfirmButton: false,
-				willClose: () => {
-					window.location.href = '/login'
-				}
-			})
-		}
-
 		getTables()
 
 	}, [restaurantId, getTables])
@@ -376,6 +359,7 @@ const RestaurantTables = () => {
 							value={searchFilters.guests}
 							onChange={(e) => handleSearchFilterChange("guests", e.target.value)}
 							placeholder="Número de Pessoas"
+							min="1"
 						/>
 					</div>
 					<button className="tables-clear-filters-btn" onClick={clearFilters}>

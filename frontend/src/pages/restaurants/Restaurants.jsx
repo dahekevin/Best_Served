@@ -11,16 +11,11 @@ export default function RestaurantList() {
 	const getRestaurants = useCallback(async () => {
 
 		try {
-			const response = await api.get(
-				search !== ''
-					? `/restaurant/get-many?name=${search}`
-					: `/restaurant/get-many`
-			);
+			const response = await api.get(`/restaurant/get-orderByRating`);
 
 			if (!response) { return console.log('Restaurantes não encontrados.'); }
 
 			console.log('Lista de restaurantes: ', response.data);
-			
 
 			setRestaurants(response.data.restaurants)
 
@@ -28,7 +23,7 @@ export default function RestaurantList() {
 			console.log('Erro ao buscar restaurantes.', error);
 			alert('Erro ao buscar restaurantes.')
 		}
-	}, [search])
+	}, [])
 
 	useEffect(() => {
 		getRestaurants()
@@ -51,9 +46,29 @@ export default function RestaurantList() {
 
 		return restaurantList
 	}
-
-	const displayedRestaurants = approvedRestaurants()
 	
+	const approvedRestaurantsList = approvedRestaurants()
+
+	const searchResult = () => {
+		if (search.trim() === '') {
+			return approvedRestaurantsList;
+		}
+
+		const searchTerm = search.toLowerCase().trim(); // Limpa espaços e normaliza
+
+		return approvedRestaurantsList.filter(res => {
+			const restaurantNameMatch = res.name && res.name.toLowerCase().includes(searchTerm);
+			const restaurantEmailMatch = res.email && res.email.toLowerCase().includes(searchTerm);
+			const restaurantTagsMatch = res.tags && res.tags.some(tag => ( tag && tag.toLowerCase().includes(searchTerm)));
+			const restaurantAddressMatch = res.fullAddress && res.fullAddress.toLowerCase().includes(searchTerm);
+			const restaurantRatingMatch = res.rating && parseInt(res.rating) === parseInt(searchTerm);
+			const restaurantDescriptionMatch = res.description && res.description.toLowerCase().includes(searchTerm);
+
+			return restaurantNameMatch || restaurantEmailMatch || restaurantTagsMatch || restaurantAddressMatch || restaurantRatingMatch || restaurantDescriptionMatch;
+		});
+	};
+
+	const displayedRestaurants = searchResult()
 
 	return (
 		<div className="restaurant-container">
@@ -72,6 +87,11 @@ export default function RestaurantList() {
 						key={restaurant.id}
 						id={restaurant.id}
 						title={restaurant.name}
+						email={restaurant.email}
+						tags={restaurant.tags}
+						phone={restaurant.phone}
+						address={restaurant.fullAddress}
+						rating={restaurant.rating}
 						description={restaurant.description}
 						image={`http://localhost:3000/${restaurant.avatar.replace("src\\", '')}`}
 					/>

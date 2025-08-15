@@ -83,7 +83,7 @@ export default function Profile() {
             ) {/**/ }
         });
     };
-    
+
     const handleDeleteReservation = (e, reservation) => {
         Swal.fire({
             title: "Tem certeza?",
@@ -138,6 +138,39 @@ export default function Profile() {
         }
     }
 
+    const handleDeleteAccount = async (e) => {
+        Swal.fire({
+            title: "Tem certeza?",
+            text: "Esta ação excluirá sua conta atual. Você não poderá reverter isso!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: "Sim, apagar!",
+            cancelButtonText: "Não, cancelar!",
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                deleteAccount(e)
+
+                Swal.fire({
+                    position: "top-end",
+                    icon: "warning",
+                    title: "Conta Apagada!",
+                    showConfirmButton: false,
+                    timer: 1500,
+                    willClose: () => {
+                        window.location.href = '/';
+                    }
+                });
+
+            } else if (
+                result.dismiss === Swal.DismissReason.cancel
+            ) {/**/ }
+        });
+    }
+
     async function deleteReservation(e, reservationID) {
         e.preventDefault()
         const token = localStorage.getItem('token')
@@ -181,7 +214,7 @@ export default function Profile() {
                         <h1>Seu Perfil</h1>
                         <div className="client-header-buttons">
                             <Link to={`/update-client-profile`} className="client-edit-button">Editar Perfil</Link>
-                            <button onClick={(e) => { deleteAccount(e) }} className="client-delete-button">Excluir</button>
+                            <button onClick={(e) => { handleDeleteAccount(e) }} className="client-delete-button">Excluir</button>
                         </div>
                     </div>
 
@@ -199,37 +232,37 @@ export default function Profile() {
                     <div className="client-section">
                         <h3 className="client-section-title">Suas Reservas</h3>
 
-                        {client.reservations.length > 0 
+                        {client.reservations.length > 0
                             ?
-                                <div className="client-reservations">
-                                    {client.reservations.map((reservation, index) => (
-                                        <div className="client-reservation-card" key={index}>
-                                            <div className="client-date-box">
-                                                <div className="client-day">{(reservation.date.split("T")[0]).replace(/-/g, "/")}</div>
-                                                <div className="client-month">{reservation.month}</div>
-                                            </div>
-                                            <div className="client-reservation-details">
-                                                <p>Horário: {reservation.time} • {reservation.day}</p>
-                                                <p className="client-confirmation">Restaurante: {reservation.restaurant.name}</p>
-                                                <p>Status da Reserva:
-                                                    {reservation.status === 'Confirmed'
-                                                        ? <span style={{ color: "green" }}> Confirmada ✓</span>
-                                                        : (reservation.status === 'Pending' ? <span style={{ color: "yellow" }}> Pendente 🕜</span>
-                                                            : <span style={{ color: "red" }}> Cancelado ❌</span>
-                                                        )
-                                                    }
-                                                </p>
-                                            </div>
-                                            <div className="client-reservation-actions">
-                                                <button onClick={(e) => { handleModifyBtn(e, reservation) }} className="client-modify-button">Modificar</button>
-                                                <button onClick={(e) => { handleDeleteReservation(e, reservation) }} className="client-cancel-button">Cancelar</button>
-                                            </div>
+                            <div className="client-reservations">
+                                {client.reservations.map((reservation, index) => (
+                                    <div className="client-reservation-card" key={index}>
+                                        <div className="client-date-box">
+                                            <div className="client-day">{(reservation.date.split("T")[0]).replace(/-/g, "/")}</div>
+                                            <div className="client-month">{reservation.month}</div>
                                         </div>
-                                    ))}
+                                        <div className="client-reservation-details">
+                                            <p>Horário: {reservation.time} • {reservation.day}</p>
+                                            <p className="client-confirmation">Restaurante: {reservation.restaurant.name}</p>
+                                            <p>Status da Reserva:
+                                                {reservation.status === 'Confirmed'
+                                                    ? <span style={{ color: "green" }}> Confirmada ✓</span>
+                                                    : (reservation.status === 'Pending' ? <span style={{ color: "yellow" }}> Pendente 🕜</span>
+                                                        : <span style={{ color: "red" }}> Cancelado ❌</span>
+                                                    )
+                                                }
+                                            </p>
+                                        </div>
+                                        <div className="client-reservation-actions">
+                                            <button onClick={(e) => { handleModifyBtn(e, reservation) }} className="client-modify-button">Modificar</button>
+                                            <button onClick={(e) => { handleDeleteReservation(e, reservation) }} className="client-cancel-button">Cancelar</button>
+                                        </div>
+                                    </div>
+                                ))}
 
-                                </div>
+                            </div>
                             :
-                                <div>Nenhuma reserva cadastrada</div>
+                            <div>Nenhuma reserva cadastrada</div>
                         }
                     </div>
                 </div>

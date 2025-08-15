@@ -207,10 +207,6 @@
 	overflow: hidden;
 }
 
-.order-item:hover {
-	cursor: pointer;
-}
-
 .order-initials {
 	background-color: var(--red-bg);
 	color: white;
@@ -290,10 +286,15 @@
 	margin-top: 5px;
 }
 
+.client-notes-btn {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
 .client-notes-title, .client-notes {
 	display: flex;
 	justify-content: flex-end;
-	padding: 0px 30px;
 	font-style: italic;
 	color: #1a8754;
 	overflow-y: auto;
@@ -302,7 +303,14 @@
 .client-notes-title {
 	font-weight: bold;
 	color: #00a65a;
-	margin-top: -10px;
+	border: none;
+	border-radius: 10px;
+	font-size: 0.9em;
+}
+
+.client-notes-title:hover {
+	cursor: pointer;
+	text-decoration: underline;
 }
 
 .client-notes {
