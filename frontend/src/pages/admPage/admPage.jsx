@@ -350,8 +350,34 @@ export default function AdminDashboard() {
     }
 
     const handleDeleteRestaurant = async () => {
-        setShowRestaurantsModal(false)
-        deleteRestaurant()
+        Swal.fire({
+            title: "Tem certeza?",
+            text: "Esta ação excluirá o restaurante selecionado. Você não poderá reverter isso!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: "Sim, apagar!",
+            cancelButtonText: "Não, cancelar!",
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                setShowRestaurantsModal(false)
+                deleteRestaurant()
+
+                Swal.fire({
+                    position: "top-end",
+                    icon: "warning",
+                    title: "Restaurante Apagado!",
+                    showConfirmButton: false,
+                    timer: 1500,
+                });
+
+            } else if (
+                result.dismiss === Swal.DismissReason.cancel
+            ) {/**/ }
+        });
     }
 
     return (
@@ -537,35 +563,39 @@ export default function AdminDashboard() {
                                 <h2 className="table-title">Top Restaurantes</h2>
                                 <button onClick={() => { setShowAllTopRestaurants(!showAllTopRestaurants) }} className="btn btn-secondary">Ver Todos</button>
                             </div>
-                            <div>
-                                {displayedRestaurants.map((restaurant, index) => (
-                                    <div
-                                        key={index}
-                                        className="restaurant-info"
-                                        onClick={() => { window.location.href = `/restaurant-page?restaurantId=${restaurant.id}` }}
-                                        style={{
-                                            borderBottom: index < topRestaurants.length - 1 ? "1px solid #00a65b60" : "none",
-                                        }}
-                                    >
-                                        <div className="restaurant-avatar">{restaurant.name.charAt(0)}</div>
-                                        <div className="restaurant-details" style={{ flex: 1 }}>
-                                            <h4>{restaurant.name}</h4>
-                                            <p>
-                                                {restaurant._count.reservations} reservas
-                                                •
-                                                {restaurant.tags.slice(0, 4).map((tag) => (
-                                                    <span className="restaurant-tag">{tag}</span>
-                                                ))}
-                                            </p>
-                                        </div>
-                                        <div style={{ textAlign: "right" }}>
-                                            <div style={{ fontSize: "14px", fontWeight: "600", color: "white" }}>
-                                                ⭐ {restaurant.rating}
+                            {displayedRestaurants.length > 0 ?
+                                <div>
+                                    {displayedRestaurants.map((restaurant, index) => (
+                                        <div
+                                            key={index}
+                                            className="restaurant-info"
+                                            onClick={() => { window.location.href = `/restaurant-page?restaurantId=${restaurant.id}` }}
+                                            style={{
+                                                borderBottom: index < topRestaurants.length - 1 ? "1px solid #00a65b60" : "none",
+                                            }}
+                                        >
+                                            <div className="restaurant-avatar">{restaurant.name.charAt(0)}</div>
+                                            <div className="restaurant-details" style={{ flex: 1 }}>
+                                                <h4>{restaurant.name}</h4>
+                                                <p>
+                                                    {restaurant._count.reservations} reservas
+                                                    •
+                                                    {restaurant.tags.slice(0, 4).map((tag) => (
+                                                        <span className="restaurant-tag">{tag}</span>
+                                                    ))}
+                                                </p>
+                                            </div>
+                                            <div style={{ textAlign: "right" }}>
+                                                <div style={{ fontSize: "14px", fontWeight: "600", color: "white" }}>
+                                                    ⭐ {restaurant.rating}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
-                            </div>
+                                    ))}
+                                </div>
+                                :
+                                <h1 className="table-default-placeholder">Ainda não há restaurantes cadastrados na plataforma</h1>
+                            }
                         </div>
                     </div>
                 </div>
@@ -756,7 +786,7 @@ export default function AdminDashboard() {
                     showNonActiveRestaurantsModal && (
                         <div className="tables-modal-overlay">
                             <div style={{ minWidth: "600px" }} className="tables-modal">
-                                <h2 className="table-title">Restaurantes Ativos no Momento</h2>
+                                <h2 className="table-title">Restaurantes Não Ativos no Momento</h2>
                                 {/* Recent Activity */}
                                 <div className="table-container">
                                     <div className="activity-list">
@@ -816,13 +846,13 @@ export default function AdminDashboard() {
                                 </div>
 
                                 <div className="tables-modal-buttons">
-                                    <button className="tables-btn-cancel" onClick={() => { setShowRestaurantsModal(false); setSelectedRestaurant(null) }}>
+                                    <button className="adm-tables-btn-cancel" onClick={() => { setShowRestaurantsModal(false); setSelectedRestaurant(null) }}>
                                         Fechar
                                     </button>
-                                    <button style={{ background: "red", }} className="tables-btn-cancel" onClick={() => { handleDeleteRestaurant() }}>
+                                    <button className="adm-tables-btn-delete" onClick={() => { handleDeleteRestaurant() }}>
                                         Excluir Restaurante
                                     </button>
-                                    <button className="tables-btn-confirm" onClick={handleConfirmRestaurant}>
+                                    <button className="adm-tables-btn-confirm" onClick={handleConfirmRestaurant}>
                                         Aprovar Restaurante
                                     </button>
                                 </div>

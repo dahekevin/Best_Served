@@ -238,8 +238,12 @@ export default function Profile() {
                                 {client.reservations.map((reservation, index) => (
                                     <div className="client-reservation-card" key={index}>
                                         <div className="client-date-box">
-                                            <div className="client-day">{(reservation.date.split("T")[0]).replace(/-/g, "/")}</div>
-                                            <div className="client-month">{reservation.month}</div>
+                                            <div className="reservationDay">
+                                                <span>{String(new Date(reservation.date).getDate()).padStart(2, '0')}</span>
+                                            </div>
+                                            <div className="reservationMonth">
+                                                <span>{String(new Intl.DateTimeFormat('pt-BR', { month: 'long' }).format(new Date(reservation.date))).toUpperCase()}</span>
+                                            </div>
                                         </div>
                                         <div className="client-reservation-details">
                                             <p>Horário: {reservation.time} • {reservation.day}</p>
@@ -262,7 +266,7 @@ export default function Profile() {
 
                             </div>
                             :
-                            <div>Nenhuma reserva cadastrada</div>
+                            <div style={{ fontStyle: "italic", color: "tomato" }}>• Nenhuma reserva cadastrada</div>
                         }
                     </div>
                 </div>

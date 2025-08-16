@@ -75,7 +75,31 @@ const RestaurantTables = () => {
 				// Lógica de sobreposição de intervalos:
 				// O conflito acontece se o novo horário de início for antes do término do existente E
 				// o novo horário de término for depois do início do existente.
-				const hasOverlap = starts && ends ? ((existingStarts >= starts && existingStarts <= ends) || (existingEnds >= starts && existingEnds <= ends)) : false;
+				
+				// const hasOverlap = (starts && ends) ? (
+				// 	(existingStarts >= starts && existingStarts <= ends) || (existingEnds >= starts && existingEnds <= ends) ||
+				// 	(starts >= existingStarts && starts <= existingEnds) || (ends >= existingStarts && ends <= existingEnds)
+				// ) : false;
+
+				
+
+				let hasOverlap = false
+
+				if (starts <= ends) {
+					hasOverlap = (() => {
+						if (starts && ends) {
+							if (starts < existingStarts) { // não há choque aqui
+								if (ends < existingStarts) { return true } // não há conflito - (Disponível)
+								return false
+							} else if (starts > existingStarts && starts > existingEnds) { return true } // não há choque nem conflito - (Disponível)
+						}
+						return false;
+					})();
+				} else {
+					const endsHour = ends.split(':')[0]
+					const endsMin = ends.split(':')[1]
+				}
+
 
 				console.log(`HasOverlap: ${hasOverlap} | isSameDay: ${isSameDay} | starts: ${starts} | existingStarts: ${existingStarts} | ends: ${ends} | existingEnds: ${existingEnds}`);
 
@@ -224,22 +248,43 @@ const RestaurantTables = () => {
 
 
 		if (key === 'starts' || key === 'ends') {
-			// 1. Verifique se o valor está dentro do intervalo
-			if (value >= minTime && value <= maxTime) {
-				// Se for válido, atualize o estado
-				setSearchFilters(prevFilters => ({
-					...prevFilters,
-					[key]: value
-				}));
-			} else if (value === '') {
-				// Permite limpar o campo
-				setSearchFilters(prevFilters => ({
-					...prevFilters,
-					[key]: ''
-				}));
+			if (maxTime < minTime) {
+				const auxMaxTime = "23:59"
+				const auxMinTime = "00:00"
+
+				// 1. Verifique se o valor está dentro do intervalo
+				if ((value >= minTime && value <= auxMaxTime) || (value >= auxMinTime && value <= maxTime)) {
+					// Se for válido, atualize o estado
+					setSearchFilters(prevFilters => ({
+						...prevFilters,
+						[key]: value
+					}));
+				} else if (value === '') {
+					// Permite limpar o campo
+					setSearchFilters(prevFilters => ({
+						...prevFilters,
+						[key]: ''
+					}));
+				}
+			} else {
+				// 1. Verifique se o valor está dentro do intervalo
+				if (value >= minTime && value <= maxTime) {
+					// Se for válido, atualize o estado
+					setSearchFilters(prevFilters => ({
+						...prevFilters,
+						[key]: value
+					}));
+				} else if (value === '') {
+					// Permite limpar o campo
+					setSearchFilters(prevFilters => ({
+						...prevFilters,
+						[key]: ''
+					}));
+				}
+				// 2. Se for inválido, não atualize o estado.
+				// O valor do input voltará ao último estado válido.
 			}
-			// 2. Se for inválido, não atualize o estado.
-			// O valor do input voltará ao último estado válido.
+
 		} else {
 			// Lógica para outros campos de pesquisa
 			setSearchFilters(prevFilters => ({
@@ -317,7 +362,7 @@ const RestaurantTables = () => {
 				<div className="opening-hours">
 					Horário de Funcionamento: {minTime} - {maxTime}
 				</div>
-				<hr style={{marginTop: "10px", marginBottom: "10px"}} />
+				<hr style={{ marginTop: "10px", marginBottom: "10px" }} />
 				<div className="tables-search-row">
 					{localStorage.getItem('role') === 'restaurant' &&
 						<div className="tables-search-field">

@@ -26,8 +26,10 @@ const RestaurantRegistration = () => {
 
 	const tagOptions = [
 		{ value: "Churrascaria", label: "Churrascaria" },
+		{ value: "Restaurante", label: "Restaurante" },
 		{ value: "Lanchonete", label: "Lanchonete" },
 		{ value: "Sorveteria", label: "Sorveteria" },
+		{ value: "Pizzaria", label: "Pizzaria" },
 		{ value: "Karaokê", label: "Karaokê" },
 		{ value: "Boteco", label: "Boteco" },
 		{ value: "Bar", label: "Bar" }
@@ -807,7 +809,7 @@ const RestaurantRegistration = () => {
 						<h4>Requisitos do arquivo:</h4>
 						<ul>
 							<li>Formato: PDF apenas</li>
-							<li>Tamanho máximo: 10 MB</li>
+							{/* <li>Tamanho de arquivo recomendado até: 10 MB</li> */}
 							<li>Recomendação: Use imagens de alta qualidade para melhor visualização</li>
 							<li>Certifique-se de que o texto esteja legível</li>
 						</ul>

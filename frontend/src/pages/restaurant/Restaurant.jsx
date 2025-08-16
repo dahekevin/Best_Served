@@ -16,6 +16,7 @@ export default function RestaurantPage() {
 	const [update, setUpdate] = useState(false)
 	const [alreadyAClient, setAlreadyAClient] = useState(false)
 	const [review, setReview] = useState()
+	const [activeReservation, setActiveReservation] = useState(null)
 
 	const reviewFormRef = useRef(null)
 
@@ -304,9 +305,6 @@ export default function RestaurantPage() {
 
 	const displayedReviews = showAllReviews ? reorderedReviews : reorderedReviews.slice(0, 3);
 
-
-
-
 	// const displayedReviews = showAllReviews ? restaurantInfo.review : restaurantInfo.review.slice(0, 3)
 	const ratingDistribution = calculateRatingDistribution()
 
@@ -340,6 +338,14 @@ export default function RestaurantPage() {
 			setClient(response.data)
 
 			const rev = response.data.review.find(r => r.restaurantId === restaurantId);
+
+			const res = response.data.reservations.find(r => r.restaurantId === restaurantId)
+
+			console.log('Res:', res);			
+
+			if (res) {
+				setActiveReservation(res)
+			}
 
 			setReview(rev)
 
@@ -716,7 +722,7 @@ export default function RestaurantPage() {
 									</div>
 								</div>
 
-								{alreadyAClient && !review &&
+								{alreadyAClient && !review && activeReservation === null &&
 									<button className="rate-button-res-page" onClick={
 										() => {
 											setShowReviewForm(true);
@@ -803,64 +809,70 @@ export default function RestaurantPage() {
 							)}
 
 							{/* Reviews List */}
-							<h3 className="reviews-list-title-res-page">Comentários dos clientes</h3>
-							<div className="reviews-list-res-page">
+							{displayedReviews.length > 0 ?
+								<>
+									<h3 className="reviews-list-title-res-page">Comentários dos clientes</h3>
+									<div className="reviews-list-res-page">
 
-								{displayedReviews.map((review, index) => (
-									<div key={index} className="review-item-res-page">
-										<div className="review-header-res-page">
-											<div className="reviewer-avatar-res-page">{review.clientName ? review.clientName.charAt(0).toUpperCase() : "^_^"}</div>
-											<div className="reviewer-info-res-page">
-												<div className="reviewer-name-res-page">{review.clientName}</div>
-												<div className="review-meta-res-page">
-													<div className="review-stars-res-page">
-														{[1, 2, 3, 4, 5].map((star) => (
-															<span
-																key={star}
-																className={`review-star-res-page ${star <= review.rating ? "filled-res-page" : ""}`}
-															>
-																★
+										{displayedReviews.map((review, index) => (
+											<div key={index} className="review-item-res-page">
+												<div className="review-header-res-page">
+													<div className="reviewer-avatar-res-page">{review.clientName ? review.clientName.charAt(0).toUpperCase() : "^_^"}</div>
+													<div className="reviewer-info-res-page">
+														<div className="reviewer-name-res-page">{review.clientName}</div>
+														<div className="review-meta-res-page">
+															<div className="review-stars-res-page">
+																{[1, 2, 3, 4, 5].map((star) => (
+																	<span
+																		key={star}
+																		className={`review-star-res-page ${star <= review.rating ? "filled-res-page" : ""}`}
+																	>
+																		★
+																	</span>
+																))}
+															</div>
+															<div className="review-date-res-page">{formatDate(new Date(review.updatedAt).toISOString())}</div>
+														</div>
+													</div>
+													{review.clientId === client.id &&
+														<button onClick={
+															() => {
+																setShowReviewForm(true)
+																setSelectedReview(review)
+																setUpdate(true)
+															}
+														} className="review-options-res-page">Editar📝</button>
+													}
+												</div>
+
+												<div className="review-content-res-page">
+													<p className="review-text-res-page">{review.comment}</p>
+												</div>
+
+												{review.tags && review.tags.length > 0 && (
+													<div className="review-tags-res-page">
+														{review.tags.map((tag) => (
+															<span key={tag} className="review-tag-res-page">
+																{tag}
 															</span>
 														))}
 													</div>
-													<div className="review-date-res-page">{formatDate(new Date(review.updatedAt).toISOString())}</div>
-												</div>
+												)}
 											</div>
-											{review.clientId === client.id &&
-												<button onClick={
-													() => {
-														setShowReviewForm(true)
-														setSelectedReview(review)
-														setUpdate(true)
-													}
-												} className="review-options-res-page">Editar📝</button>
-											}
-										</div>
+										))}
 
-										<div className="review-content-res-page">
-											<p className="review-text-res-page">{review.comment}</p>
-										</div>
-
-										{review.tags && review.tags.length > 0 && (
-											<div className="review-tags-res-page">
-												{review.tags.map((tag) => (
-													<span key={tag} className="review-tag-res-page">
-														{tag}
-													</span>
-												))}
+										{reviews.length > 3 && (
+											<div className="reviews-actions-res-page">
+												<button className="show-more-reviews-btn-res-page" onClick={() => setShowAllReviews(!showAllReviews)}>
+													{showAllReviews ? "Ver Menos Avaliações" : `Ver Todas as Avaliações`}
+												</button>
 											</div>
 										)}
 									</div>
-								))}
-
-								{reviews.length > 3 && (
-									<div className="reviews-actions-res-page">
-										<button className="show-more-reviews-btn-res-page" onClick={() => setShowAllReviews(!showAllReviews)}>
-											{showAllReviews ? "Ver Menos Avaliações" : `Ver Todas as Avaliações`}
-										</button>
-									</div>
-								)}
-							</div>
+								</>
+								:
+								<h3 className="reviews-list-title-res-page">• Sem Comentários no Momento</h3>
+							}
 						</div>
 					</div>
 				</section>

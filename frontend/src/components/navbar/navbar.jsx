@@ -31,7 +31,10 @@ export default function Navbar() {
                 headers: { Authorization: `Bearer ${token}` }
             })
 
-            setAvatar(`http://localhost:3000/uploads/restaurant/avatars/${response.data.avatar}`)
+            console.log('Avatar: ', response.data.restaurant.avatar);
+
+
+            setAvatar(`http://localhost:3000/${response.data.restaurant.avatar.replace('src\\', '')}`)
 
         } catch (error) {
             console.error("Erro ao buscar informações do usuário: ", error.response?.data || error.message || error);
@@ -104,22 +107,23 @@ export default function Navbar() {
         <>
             <nav className='navbarContainer enhanced-navbar'>
                 <div className='navbarItems'>
-                    <Link to="/">
-                        <img className='logo' src="./logo.png" alt="logo" />
-                    </Link>
+                    <div>
+                        <Link to="/">
+                            <img className='logo' src="./logo.png" alt="logo" />
+                        </Link>
+                    </div>
                     <div className='navbarLinksContainer'>
                         {isLoggedIn ? (
                             <>
-                                <Link to='/restaurants' className='navbarLink'>Restaurantes</Link>
 
                                 {userType === 'client' && (
                                     <>
-                                        <Link to='/client-profile' className='navbarLink'>
+                                        <Link onClick={() => { getClientInfo() }} to='/client-profile' className='navbarLink'>
                                             <div className='navbarProfileContainer'>
+                                                <span>Perfil</span>
                                                 <div className='navbarLinkProfile'>
                                                     {avatar && <img className='navbarAvatar' src={avatar} />}
                                                 </div>
-                                                <span>Perfil</span>
                                             </div>
                                         </Link>
                                     </>
@@ -127,7 +131,14 @@ export default function Navbar() {
 
                                 {userType === 'restaurant' && (
                                     <>
-                                        <Link to='/restaurant-dashboard' className='navbarLink'>Painel do Restaurante</Link>
+                                        <Link to='/restaurant-dashboard' className='navbarLink'>
+                                            <div className='navbarProfileContainer'>
+                                                <span>Painel de Controle</span>
+                                                <div className='navbarLinkProfileRestaurant'>
+                                                    {avatar && <img className='navbarAvatar' src={avatar} />}
+                                                </div>
+                                            </div>
+                                        </Link>
                                     </>
                                 )}
 
@@ -135,14 +146,15 @@ export default function Navbar() {
                                     <>
                                         <Link to='/admin' className='navbarLink'>
                                             <div className='navbarProfileContainer'>
+                                                <span>Perfil</span>
                                                 <div className='navbarLinkProfile'>
                                                     {avatar && <img className='navbarAvatar' src={avatar} />}
                                                 </div>
-                                                <span>Perfil</span>
                                             </div>
                                         </Link>
                                     </>
                                 )}
+                                <Link to='/restaurants' className='navbarLink'>Restaurantes 🍽️</Link>
 
                                 <p onClick={() => {
                                     setIsActiveFalse();

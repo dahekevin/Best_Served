@@ -129,9 +129,11 @@ export default function RestaurantDashboard() {
 
 			setRestaurantInfo({
 				...restaurantInfo,
+				id: response.data.restaurant.id,
 				name: response.data.restaurant.name,
 				email: response.data.restaurant.email,
 				phone: response.data.restaurant.phone,
+				status: response.data.restaurant.status,
 				fullAdress: response.data.restaurant.fullAddress,
 				avatar: `http://localhost:3000/${avatarURL}`,
 				tables: response.data.restaurant.tables,
@@ -198,7 +200,7 @@ export default function RestaurantDashboard() {
 		const token = localStorage.getItem('token')
 
 		try {
-			const response = await api.delete('/restaurant/delete', {
+			const response = await api.delete(`/restaurant/delete?id=${restaurantInfo.id}`, {
 				headers: { Authorization: `Bearer ${token}` }
 			})
 
@@ -207,8 +209,7 @@ export default function RestaurantDashboard() {
 			console.log("Tentando apagar usuário:", response.data.restaurant);
 
 			localStorage.clear()
-			window.location.href = '/';
-			alert("Perfil excluído com sucesso!");
+			// alert("Perfil excluído com sucesso!");
 
 		} catch (error) {
 			console.error('Erro ao deletar conta! ', error);
@@ -366,7 +367,7 @@ export default function RestaurantDashboard() {
 				</div>
 				<div className="time-display">
 					<h2>{formatTime(currentTime)}🕜</h2>
-					<p>{formatDate(currentTime)}</p>
+					<p> <span style={{fontStyle: "italic"}}>• Status de Restaurante:</span> {restaurantInfo && restaurantInfo.status === 'Approved' ? <span style={{color: "yellowgreen", fontStyle: "italic"}}>Aprovado ✓</span> : <span style={{color: "yellow", fontStyle: "italic"}}>Pendente ⏳</span>} • {formatDate(currentTime)}</p>
 				</div>
 			</div>
 
@@ -433,7 +434,8 @@ export default function RestaurantDashboard() {
 												<div className="client-reservation-details">
 													<p>Cliente: {order.client.name}</p>
 													<p>Total de pessoas: {order.guests}</p>
-													<p>Horário: {order.time} • {order.day}</p>
+													<p>Horário: {order.startsAt} até {order.endsAt}</p>
+													<p>Dia: {order.day}</p>
 												</div>
 												<div className="order-table">
 													<span>Mesa Nº: {order.tables ? order.tables.codeID.padStart(3, '0') : 'SEM REGISTRO'}</span>
@@ -565,7 +567,7 @@ export default function RestaurantDashboard() {
 						showClientNoteModal && (
 							<div className="tables-modal-overlay">
 								<div style={{ minWidth: "600px" }} className="tables-modal">
-									<h2 className="table-title">Observações do Cliente <br /> <span style={{color:"yellowgreen"}}>{note.client.name}</span></h2>
+									<h2 className="table-title">Observações do Cliente <br /> <span style={{ color: "yellowgreen" }}>{note.client.name}</span></h2>
 									<p>{note.notes}</p>
 
 									<div className="tables-modal-buttons">

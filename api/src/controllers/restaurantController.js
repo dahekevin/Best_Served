@@ -319,12 +319,16 @@ export const updateRestaurant = async (req, res) => {
             return res.status(404).json({ message: "Restaurante não encontrado." });
         }
 
-        // 1. Processar as mesas (a lógica crucial)
-        const parsedTables = req.body.tables ? JSON.parse(req.body.tables) : [];
+        console.log('tables: ', req.body.tables);
+        
+        if (req.body.tables) {
 
-        // Crie uma lista dos IDs das mesas atuais que vieram do formulário
+            // 1. Processar as mesas (a lógica crucial)
+            const parsedTables = req.body.tables ? JSON.parse(req.body.tables) : [];
+
+            // Crie uma lista dos IDs das mesas atuais que vieram do formulário
         const newTableIds = new Set(parsedTables.map(table => table.id).filter(id => id));
-
+        
         // 2. Identificar mesas a serem deletadas
         const tablesToDelete = restaurantBeforeUpdate.tables.filter(
             table => !newTableIds.has(table.id)
@@ -343,22 +347,22 @@ export const updateRestaurant = async (req, res) => {
 
         // 4. Identificar mesas a serem atualizadas
         const tablesToUpdate = parsedTables.filter(table => newTableIds.has(table.id));
-
+        
         // 5. Executar as operações no banco de dados
-
+        
         // Se houver mesas para deletar, precisamos lidar com as reservas delas
         if (tablesToDeleteIds.length > 0) {
             // CANCELE ou lide com as reservas associadas a essas mesas
             await prisma.reservations.updateMany({
                 where: { tableId: { in: tablesToDeleteIds } },
                 data: { status: 'Cancelled' }
-            });
+                });
             // Agora, delete as mesas
             await prisma.tables.deleteMany({
                 where: { id: { in: tablesToDeleteIds } }
             });
         }
-
+        
         // Crie as novas mesas
         if (newTablesData.length > 0) {
             await prisma.tables.createMany({
@@ -368,7 +372,7 @@ export const updateRestaurant = async (req, res) => {
                 }))
             });
         }
-
+        
         // Atualize as mesas existentes que foram modificadas
         for (const updatedTable of tablesToUpdate) {
             await prisma.tables.update({
@@ -378,7 +382,8 @@ export const updateRestaurant = async (req, res) => {
                 }
             });
         }
-
+    }
+        
         const restaurant = await prisma.restaurant.update({
             where: {
                 id: req.userId

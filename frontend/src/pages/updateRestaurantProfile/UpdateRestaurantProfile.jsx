@@ -26,8 +26,10 @@ const RestaurantProfileUpdate = () => {
 
 	const tagOptions = [
 		{ value: "Churrascaria", label: "Churrascaria" },
+		{ value: "Restaurante", label: "Restaurante" },
 		{ value: "Lanchonete", label: "Lanchonete" },
 		{ value: "Sorveteria", label: "Sorveteria" },
+		{ value: "Pizzaria", label: "Pizzaria" },
 		{ value: "Karaokê", label: "Karaokê" },
 		{ value: "Boteco", label: "Boteco" },
 		{ value: "Bar", label: "Bar" }
@@ -128,7 +130,7 @@ const RestaurantProfileUpdate = () => {
 		const oldCapacities = oldTables.map(table => table.seats);
 		for (let i = 0; i < newCapacities.length; i++) {
 			// Lembre-se de converter para o mesmo tipo para comparar
-			if (String(Number(newCapacities[i] || 0)) !== String(Number(oldCapacities[i] || 0))) {
+			if (Number(newCapacities[i] || 0) !== Number(oldCapacities[i] || 0)) {
 				return true;
 			}
 		}
@@ -255,6 +257,8 @@ const RestaurantProfileUpdate = () => {
 		// --- LÓGICA OTIMIZADA PARA AS MESAS ---
 		// 1. Verifique se o número de mesas foi reduzido a zero
 		if (numberOfTables === 0 && existingTables.length > 0) {
+			console.log('aquiiiiiiiiiiiiiiiiii');
+			
 			// Envie um array vazio para o backend, indicando que todas as mesas devem ser removidas
 			formData.append('tables', JSON.stringify([]));
 		}
@@ -692,7 +696,7 @@ const RestaurantProfileUpdate = () => {
 						<h4>Requisitos do arquivo:</h4>
 						<ul>
 							<li>Formato: PDF apenas</li>
-							<li>Tamanho máximo: 10 MB</li>
+							{/* <li>Tamanho máximo: 10 MB</li> */}
 							<li>Recomendação: Use imagens de alta qualidade para melhor visualização</li>
 							<li>Certifique-se de que o texto esteja legível</li>
 						</ul>
