@@ -56,7 +56,7 @@
     background-color: #f0f0f0;
     background: linear-gradient(to right, rgba(255, 99, 71, 0.274), white 99%);
     border-radius: 30px;
-    padding-left: 15px;
+    padding-right: 15px;
 }
 
 .navbarProfileContainer:hover {
@@ -75,10 +75,10 @@
 .navbarProfileContainer:hover span {
     /* opacity: 1; */
     visibility: visible;
-    transform: translateX(25px);
-    font-size: 0.9em;
-    padding: 5px 10px;
-    margin-right: 10px;
+    transform: translateX(-25px);
+    /* font-size: 0.9em; */
+    /* padding: 5px 10px; */
+    /* margin-right: 10px; */
 }
 
 .navbarLinkProfile, .navbarLinkProfileRestaurant {
@@ -95,13 +95,13 @@
 .navbarProfileContainer:hover .navbarLinkProfile {
     opacity: 1;
     /* visibility: visible; */
-    transform: translateX(-95px);
+    transform: translateX(75px);
 }
 
 .navbarProfileContainer:hover .navbarLinkProfileRestaurant {
     opacity: 1;
     /* visibility: visible; */
-    transform: translateX(-195px);
+    transform: translateX(195px);
 }
 
 .navbarAvatar {

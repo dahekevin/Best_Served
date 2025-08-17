@@ -14,7 +14,23 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	margin-bottom: 30px;
+	/* margin-bottom: 30px; */
+	border-radius: 100px;
+	padding: 15px 70px;
+	margin-bottom: 20px;
+	background-image: linear-gradient(to right,
+		/* O gradiente vai do fundo para o topo */
+		#1a1a1a 10%,
+		/* Cor preta opaca no fundo (cobrirá a imagem) */
+		#2c2c2c 25%,
+		/* Transparente no meio (a imagem aparece) */
+		rgba(0, 0, 0, 0) 75%
+		/* Totalmente transparente no topo */
+	),
+	url('/back5.jpg');
+
+	background-size: cover;
+	background-position: center;
 }
 
 .tables-back-button {
@@ -36,12 +52,38 @@
 }
 
 .tables-title {
+	display: flex;
+	justify-content: flex-start;
 	color: #ff6b35;
 	font-size: 35px;
 	font-weight: bold;
-	margin: 0;
-	flex: 1;
-	margin-left: 20px;
+	/* flex: 1; */
+	/* margin-left: 20px; */
+}
+
+.tables-subtitle {
+	display: flex;
+	justify-content: flex-start;
+	/* margin-left: 100px; */
+	font-weight: bold;
+	margin-top: 10px;
+	color: orangered;
+	font-size: 20px;
+	/* margin-top: 10px; */
+	font-style: italic;
+}
+
+.tables-main-title {
+	display: flex;
+	justify-content: center;
+	margin: 15px;
+	width: fit-content;
+	/* background-color: #2c2c2c; */
+	font-weight: bold;
+	color: orange;
+	font-size: 25px;
+	/* margin-top: 10px; */
+	/* font-style: italic; */
 }
 
 .tables-filter-buttons {
@@ -186,6 +228,11 @@
 	border: 1px solid #333;
 }
 
+.tables-modal-body {
+	max-height: 500px;
+	overflow-y: scroll;
+}
+
 .tables-modal h2 {
 	margin: 0 0 15px 0;
 	color: white;
@@ -275,8 +322,13 @@
 }
 
 .opening-hours {
-	color: yellowgreen;
+	display: flex;
+	justify-content: space-between;
+	color: #4a90e2;
 	font-style: italic;
+	border-bottom: 1px solid #28a745;
+	margin-bottom: 10px;
+	padding-bottom: 10px;
 }
 
 .tables-search-row {
@@ -307,6 +359,7 @@
 	padding: 8px 12px;
 	color: white;
 	font-size: 14px;
+	height: 40px;
 }
 
 .tables-search-field input:focus,
@@ -327,8 +380,8 @@
 	padding: 8px 16px;
 	border-radius: 6px;
 	cursor: pointer;
-	font-size: 14px;
-	height: fit-content;
+	font-size: 15px;
+	height: 40px;
 	transition: background-color 0.2s;
 }
 

@@ -55,8 +55,19 @@ const RestaurantTables = () => {
 	// 	return true;
 	// });
 
+	const timeToMinutes = (time) => {
+		const [hours, minutes] = time.split(':').map(Number);
+		return hours * 60 + minutes;
+	}
+
 	const filteredTables = tables.filter((table) => {
-		const { date, starts, ends, guests } = searchFilters;
+		const date = searchFilters.date
+		const starts = timeToMinutes(searchFilters.starts)
+		const ends = timeToMinutes(searchFilters.ends)
+		const guests = searchFilters.guests
+
+		// console.log('status: ', table);
+
 
 		// CORREÇÃO 1: Verifica conflitos de data e hora
 		const hasTimeConflict = table.reservations?.some(
@@ -69,37 +80,33 @@ const RestaurantTables = () => {
 				}
 
 				// Converte horários para um formato comparável (ex: HH:MM)
-				const existingStarts = res.reservationStarts; // Assumindo que o `time` da reserva é o horário de início
-				const existingEnds = res.reservationEnds; // Assumindo que você tem um `reservationEnds` no seu objeto de reserva
+				const existingStarts = timeToMinutes(res.reservationStarts) // Assumindo que o `time` da reserva é o horário de início
+				const existingEnds = timeToMinutes(res.reservationEnds) // Assumindo que você tem um `reservationEnds` no seu objeto de reserva
 
 				// Lógica de sobreposição de intervalos:
 				// O conflito acontece se o novo horário de início for antes do término do existente E
 				// o novo horário de término for depois do início do existente.
-				
+
 				// const hasOverlap = (starts && ends) ? (
 				// 	(existingStarts >= starts && existingStarts <= ends) || (existingEnds >= starts && existingEnds <= ends) ||
 				// 	(starts >= existingStarts && starts <= existingEnds) || (ends >= existingStarts && ends <= existingEnds)
 				// ) : false;
 
-				
-
 				let hasOverlap = false
 
-				if (starts <= ends) {
+				console.log('res.status: ', res.reservationStatus);
+
+				if (starts <= ends && res.reservationStatus !== 'Cancelled') {
 					hasOverlap = (() => {
 						if (starts && ends) {
 							if (starts < existingStarts) { // não há choque aqui
-								if (ends < existingStarts) { return true } // não há conflito - (Disponível)
-								return false
-							} else if (starts > existingStarts && starts > existingEnds) { return true } // não há choque nem conflito - (Disponível)
+								if (ends < existingStarts) { return false } // não há conflito - (Disponível)
+								return true
+							} else if (starts > existingStarts && starts > existingEnds) { return false } // não há choque nem conflito - (Disponível)
 						}
-						return false;
+						return true;
 					})();
-				} else {
-					const endsHour = ends.split(':')[0]
-					const endsMin = ends.split(':')[1]
 				}
-
 
 				console.log(`HasOverlap: ${hasOverlap} | isSameDay: ${isSameDay} | starts: ${starts} | existingStarts: ${existingStarts} | ends: ${ends} | existingEnds: ${existingEnds}`);
 
@@ -116,7 +123,7 @@ const RestaurantTables = () => {
 
 		// Se for "All", a capacidade e o conflito não importam para o filtro, mas ainda serão mostrados
 		return true;
-	});
+	}, [searchFilters]);
 
 	const handleTableList = (table) => {
 		setSelectedTable(table)
@@ -246,53 +253,81 @@ const RestaurantTables = () => {
 		console.log('MinTime: ', minTime);
 		console.log('MaxTime: ', maxTime);
 
+		const min_t = timeToMinutes(minTime)
+		const max_t = timeToMinutes(maxTime)
 
-		if (key === 'starts' || key === 'ends') {
-			if (maxTime < minTime) {
-				const auxMaxTime = "23:59"
-				const auxMinTime = "00:00"
+		const time_value = timeToMinutes(value)
+		const s = timeToMinutes(searchFilters.starts)
+		const e = timeToMinutes(searchFilters.ends)
 
-				// 1. Verifique se o valor está dentro do intervalo
-				if ((value >= minTime && value <= auxMaxTime) || (value >= auxMinTime && value <= maxTime)) {
-					// Se for válido, atualize o estado
-					setSearchFilters(prevFilters => ({
-						...prevFilters,
-						[key]: value
-					}));
-				} else if (value === '') {
-					// Permite limpar o campo
-					setSearchFilters(prevFilters => ({
-						...prevFilters,
-						[key]: ''
-					}));
-				}
-			} else {
-				// 1. Verifique se o valor está dentro do intervalo
-				if (value >= minTime && value <= maxTime) {
-					// Se for válido, atualize o estado
-					setSearchFilters(prevFilters => ({
-						...prevFilters,
-						[key]: value
-					}));
-				} else if (value === '') {
-					// Permite limpar o campo
-					setSearchFilters(prevFilters => ({
-						...prevFilters,
-						[key]: ''
-					}));
-				}
-				// 2. Se for inválido, não atualize o estado.
-				// O valor do input voltará ao último estado válido.
-			}
-
+		if ((key === 'starts' && e && time_value > e) || (key === 'ends' && s && time_value < s)) {
+			Swal.fire({
+				icon: "error",
+				title: "Horário Inválido!",
+				text: "Horário de término deve ser maior que o de início. Defina o horário de início e término no mesmo dia. Para as reservas que se estendem até depois das 00:00 faça duas reservas, uma para cada dia."
+			});
 		} else {
-			// Lógica para outros campos de pesquisa
-			setSearchFilters(prevFilters => ({
-				...prevFilters,
-				[key]: value
-			}));
+			if (key === 'starts' || key === 'ends') {
+				if (max_t < min_t) {
+					const auxMaxTime = timeToMinutes("23:59")
+					const auxMinTime = timeToMinutes("00:00")
+
+					if ((key === 'ends' && s < min_t && time_value >= min_t) ||
+						(key === 'ends' && s >= min_t && time_value < min_t) ||
+						(key === 'starts' && e && e >= min_t && time_value < min_t) ||
+						(key === 'starts' && e && e < min_t && time_value >= min_t)
+					) {
+						Swal.fire({
+							icon: "error",
+							title: "Horário Inválido!",
+							text: "O estabelecimento não opera nesse horário. Faça a reserva dentro do período de funcionamento do estabelecimento."
+						});
+					} else {
+						// 1. Verifique se o valor está dentro do intervalo
+						if ((time_value >= min_t && time_value <= auxMaxTime) || (time_value >= auxMinTime && time_value <= max_t)) {
+							// Se for válido, atualize o estado
+							setSearchFilters(prevFilters => ({
+								...prevFilters,
+								[key]: value
+							}));
+						} else if (value === '') {
+							// Permite limpar o campo
+							setSearchFilters(prevFilters => ({
+								...prevFilters,
+								[key]: ''
+							}));
+						}
+					}
+
+				} else {
+					// 1. Verifique se o valor está dentro do intervalo
+					if (time_value >= min_t && time_value <= max_t) {
+						// Se for válido, atualize o estado
+						setSearchFilters(prevFilters => ({
+							...prevFilters,
+							[key]: value
+						}));
+					} else if (value === '') {
+						// Permite limpar o campo
+						setSearchFilters(prevFilters => ({
+							...prevFilters,
+							[key]: ''
+						}));
+					}
+					// 2. Se for inválido, não atualize o estado.
+					// O valor do input voltará ao último estado válido.
+				}
+
+			} else {
+				// Lógica para outros campos de pesquisa
+				setSearchFilters(prevFilters => ({
+					...prevFilters,
+					[key]: value
+				}));
+			}
 		}
-	}, [maxTime, minTime])
+
+	}, [maxTime, minTime, searchFilters])
 
 	const clearFilters = () => {
 		setSearchFilters({
@@ -330,39 +365,44 @@ const RestaurantTables = () => {
 	return (
 		<div className="tables-restaurant-container">
 			<div className="tables-header">
-				<h1 className="tables-title">Preencha todos os campos para realizar a reserva!</h1>
-				<div className="tables-filter-buttons">
-					<button
-						className={`tables-filter-btn ${activeFilter === "All" ? "active" : ""}`}
-						onClick={() => setActiveFilter("All")}
-					>
-						Todos
-					</button>
-					{searchFilters.date !== '' && searchFilters.starts !== '' && searchFilters.ends !== '' &&
-						<>
-							<button
-								className={`tables-filter-btn ${activeFilter === "Not-Available" ? "active" : ""}`}
-								onClick={() => setActiveFilter("Not-Available")}
-							>
-								Reservado
-							</button>
-							<button
-								className={`tables-filter-btn ${activeFilter === "Available" ? "active" : ""}`}
-								onClick={() => setActiveFilter("Available")}
-							>
-								Disponível
-							</button>
-						</>
-					}
+				<div>
+					<h1 className="tables-title">Veja a disponibilidade de nossas</h1>
+					<h1 className="tables-title">mesas e faça sua reserva agora! 🛎️🍽️🍻</h1>
+					<h3 className="tables-subtitle">• Preencha todos os campos para realizar a reserva!</h3>
 				</div>
 			</div>
 
+			<h3 className="tables-main-title">• TABELA DE MESAS 🪑</h3>
 			{/* Filtros de Pesquisa */}
 			<div className="tables-search-filters">
 				<div className="opening-hours">
 					Horário de Funcionamento: {minTime} - {maxTime}
+					<div className="tables-filter-buttons">
+						<button
+							className={`tables-filter-btn ${activeFilter === "All" ? "active" : ""}`}
+							onClick={() => setActiveFilter("All")}
+						>
+							Todos
+						</button>
+						{searchFilters.date !== '' && searchFilters.starts !== '' && searchFilters.ends !== '' &&
+							<>
+								<button
+									className={`tables-filter-btn ${activeFilter === "Not-Available" ? "active" : ""}`}
+									onClick={() => setActiveFilter("Not-Available")}
+								>
+									Reservado
+								</button>
+								<button
+									className={`tables-filter-btn ${activeFilter === "Available" ? "active" : ""}`}
+									onClick={() => setActiveFilter("Available")}
+								>
+									Disponível
+								</button>
+							</>
+						}
+					</div>
 				</div>
-				<hr style={{ marginTop: "10px", marginBottom: "10px" }} />
+
 				<div className="tables-search-row">
 					{localStorage.getItem('role') === 'restaurant' &&
 						<div className="tables-search-field">
@@ -410,22 +450,22 @@ const RestaurantTables = () => {
 					<button className="tables-clear-filters-btn" onClick={clearFilters}>
 						Limpar Filtros
 					</button>
-
 				</div>
 			</div>
 
-			{/* <div className="tables-results-info">
+			<div className="tables-results-info">
 				<span>Mostrando {filteredTables.length} mesa(s)</span>
-			</div> */}
+			</div>
 
 			<div className="tables-tables-grid">
 				{filteredTables.map((table) => {
 					const isReserved = table.reservations.some(
 						(res) =>
-							searchFilters.starts === '' || searchFilters.ends === ''
+							(searchFilters.starts === '' || searchFilters.ends === '')
 								?
-								(res.reservationDate?.split("T")[0] === searchFilters.date)
+								(res.reservationDate?.split("T")[0] === searchFilters.date) && res.reservationStatus !== 'Cancelled'
 								:
+								res.reservationStatus !== 'Cancelled' &&
 								(res.reservationDate?.split("T")[0] === searchFilters.date) &&
 								((res.reservationStarts >= searchFilters.starts && res.reservationStarts <= searchFilters.ends) ||
 									(res.reservationEnds >= searchFilters.starts && res.reservationEnds <= searchFilters.ends))
@@ -510,27 +550,33 @@ const RestaurantTables = () => {
 					<div className="tables-modal-overlay">
 						<div className="tables-modal">
 							<h2>Lista de Reservas da Mesa</h2>
-							{selectedTable?.reservations.map(
-								(res) => (
-									<div className="tables-modal-info">
-										{res.customerName === clientInfo.name
-											?
+							<div className="tables-modal-body">
+								{selectedTable?.reservations.map(
+									(res) => (
+										<div className="tables-modal-info">
+											{res.customerName === clientInfo.name
+												?
+												<p>
+													<strong>SUA RESERVA 🗓️</strong>
+												</p>
+												:
+												<></>
+											}
 											<p>
-												<strong>SUA RESERVA 🗓️</strong>
+												<strong>Data:</strong> {new Date(res.reservationDate).toLocaleDateString("pt-BR")}
 											</p>
-											:
-											<></>
-										}
-										<p>
-											<strong>Data:</strong> {new Date(res.reservationDate).toLocaleDateString("pt-BR")}
-										</p>
-										<p>
-											<strong>Dás:</strong> {res.reservationStarts} <strong>Até:</strong> {res.reservationEnds}
-										</p>
-									</div>
+											<p>
+												<strong>Dás:</strong> {res.reservationStarts} <strong>Até:</strong> {res.reservationEnds}
+											</p>
+											<p>
+												<strong>Status da reserva: </strong>
+												{res.reservationStatus === 'Confirmed' ? 'Confirmada' : (res.reservationStatus === 'Pending' ? 'Pendente' : 'Cancelada')}
+											</p>
+										</div>
 
-								)
-							)}
+									)
+								)}
+							</div>
 
 							<div className="tables-modal-buttons">
 								<button className="tables-btn-cancel" onClick={handleCancelReservation}>

@@ -74,7 +74,7 @@ export default function RestaurantList() {
 		<div className="restaurant-container">
 			<div className="search-container">
 				<span className="search-icon">&#128269;</span>
-				<input value={search} onChange={handleSearchChange} type="text" placeholder="Buscar..." className="search-input" />
+				<input value={search} onChange={handleSearchChange} type="text" placeholder="Buscar: Nome, E-mail, Telefone, Endereço, Nota, Tag, Descrição" className="search-input" />
 			</div>
 			<div className="restaurant-header">
 				<h1>Conheça Nossos Restaurantes</h1>

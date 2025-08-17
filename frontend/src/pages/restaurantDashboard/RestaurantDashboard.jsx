@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { Link } from "react-router-dom"
 import "./RestaurantDashboard.css"
 import api from "../../service/api"
@@ -115,7 +115,7 @@ export default function RestaurantDashboard() {
 		? (showAllReservations ? reorderedReservations : reorderedReservations.slice(0, 5))
 		: searchResult();
 
-	const getRestaurantInfo = useCallback(async () => {
+	const getRestaurantInfo = async () => {
 		try {
 			const token = localStorage.getItem('token')
 
@@ -147,7 +147,7 @@ export default function RestaurantDashboard() {
 		} catch (error) {
 			console.error('Erro ao carregar informações do restaurante: ', error);
 		}
-	})
+	}
 
 	// let res = []
 
@@ -159,7 +159,7 @@ export default function RestaurantDashboard() {
 	useEffect(() => {
 		getRestaurantInfo()
 		// fetchReservations()
-	}, [])
+	})
 
 	const handleDeleteAccount = async (e) => {
 		Swal.fire({
@@ -270,6 +270,7 @@ export default function RestaurantDashboard() {
 			if (result.isConfirmed) {
 
 				updateReservation(reservationID, 'Cancelled')
+				getRestaurantInfo()
 
 				Swal.fire({
 					position: "top-end",

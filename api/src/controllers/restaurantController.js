@@ -226,6 +226,7 @@ export const getTables = async (req, res) => {
                     reservationDate: res.date,
                     reservationStarts: res.startsAt,
                     reservationEnds: res.endsAt,
+                    reservationStatus: res.status,
                     customerName: res.client?.name || null
                 }))
             };

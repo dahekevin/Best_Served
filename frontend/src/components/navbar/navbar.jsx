@@ -115,15 +115,15 @@ export default function Navbar() {
                     <div className='navbarLinksContainer'>
                         {isLoggedIn ? (
                             <>
-
+                                <Link to='/restaurants' className='navbarLink'>Restaurantes 🍽️</Link>
                                 {userType === 'client' && (
                                     <>
                                         <Link onClick={() => { getClientInfo() }} to='/client-profile' className='navbarLink'>
                                             <div className='navbarProfileContainer'>
-                                                <span>Perfil</span>
                                                 <div className='navbarLinkProfile'>
                                                     {avatar && <img className='navbarAvatar' src={avatar} />}
                                                 </div>
+                                                <span>Perfil</span>
                                             </div>
                                         </Link>
                                     </>
@@ -133,10 +133,10 @@ export default function Navbar() {
                                     <>
                                         <Link to='/restaurant-dashboard' className='navbarLink'>
                                             <div className='navbarProfileContainer'>
-                                                <span>Painel de Controle</span>
                                                 <div className='navbarLinkProfileRestaurant'>
                                                     {avatar && <img className='navbarAvatar' src={avatar} />}
                                                 </div>
+                                                <span>Painel de Controle</span>
                                             </div>
                                         </Link>
                                     </>
@@ -154,7 +154,6 @@ export default function Navbar() {
                                         </Link>
                                     </>
                                 )}
-                                <Link to='/restaurants' className='navbarLink'>Restaurantes 🍽️</Link>
 
                                 <p onClick={() => {
                                     setIsActiveFalse();
