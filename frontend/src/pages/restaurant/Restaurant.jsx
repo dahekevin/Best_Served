@@ -16,7 +16,7 @@ export default function RestaurantPage() {
 	const [update, setUpdate] = useState(false)
 	const [alreadyAClient, setAlreadyAClient] = useState(false)
 	const [review, setReview] = useState()
-	const [activeReservation, setActiveReservation] = useState(null)
+	const [activeReservation, setActiveReservation] = useState(false)
 
 	const reviewFormRef = useRef(null)
 
@@ -339,15 +339,33 @@ export default function RestaurantPage() {
 
 			const rev = response.data.review.find(r => r.restaurantId === restaurantId);
 
-			const res = response.data.reservations.find(r => r.restaurantId === restaurantId)
+			// const res = response.data.reservations.find(r => r.restaurantId === restaurantId)
 
-			console.log('Res:', res);			
+			// console.log('Res:', res);			
 
-			if (res) {
-				setActiveReservation(res)
+			// if (res) {
+			// 	setActiveReservation(res)
+			// }
+
+			// setReview(rev)
+
+			let hasActiveReservation = false;
+
+			// Percorre todas as reservas
+			for (let i = 0; i < response.data.reservations.length; i++) {
+				const reservation = response.data.reservations[i];
+
+				// Verifica se o restaurantId é igual
+				if (reservation.restaurantId === restaurantId && reservation.status !== 'Cancelled') {
+					hasActiveReservation = true; // Define como 'true' se encontrar
+					break; // Sai do loop para economizar tempo
+				}
 			}
 
-			setReview(rev)
+			// Atualiza o state com o valor booleano
+			setActiveReservation(hasActiveReservation);
+
+			setReview(rev);
 
 		} catch (error) {
 			console.error('É preciso estar logado como cliente para fazer uma reserva.', error);
@@ -722,7 +740,7 @@ export default function RestaurantPage() {
 									</div>
 								</div>
 
-								{alreadyAClient && !review && activeReservation === null &&
+								{alreadyAClient && !review && !activeReservation &&
 									<button className="rate-button-res-page" onClick={
 										() => {
 											setShowReviewForm(true);

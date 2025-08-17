@@ -239,14 +239,16 @@ export default function Profile() {
                                     <div className="client-reservation-card" key={index}>
                                         <div className="client-date-box">
                                             <div className="reservationDay">
-                                                <span>{String(new Date(reservation.date).getDate()).padStart(2, '0')}</span>
+                                                <span>{String(new Date(`${reservation.date.split('T')[0]}T${reservation.startsAt}`).toLocaleDateString('pt-BR',
+                                                    { day: 'numeric' }
+                                                )).padStart(2, '0')}</span>
                                             </div>
                                             <div className="reservationMonth">
                                                 <span>{String(new Intl.DateTimeFormat('pt-BR', { month: 'long' }).format(new Date(reservation.date))).toUpperCase()}</span>
                                             </div>
                                         </div>
                                         <div className="client-reservation-details">
-                                            <p>Horário: {reservation.time} • {reservation.day}</p>
+                                            <p>Horário: {reservation.time} • {reservation.day} • {reservation.startsAt} - {reservation.endsAt}</p>
                                             <p className="client-confirmation">Restaurante: {reservation.restaurant.name}</p>
                                             <p>Status da Reserva:
                                                 {reservation.status === 'Confirmed'

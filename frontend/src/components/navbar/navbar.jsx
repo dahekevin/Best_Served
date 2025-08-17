@@ -146,10 +146,10 @@ export default function Navbar() {
                                     <>
                                         <Link to='/admin' className='navbarLink'>
                                             <div className='navbarProfileContainer'>
-                                                <span>Perfil</span>
                                                 <div className='navbarLinkProfile'>
                                                     {avatar && <img className='navbarAvatar' src={avatar} />}
                                                 </div>
+                                                <span>Perfil</span>
                                             </div>
                                         </Link>
                                     </>

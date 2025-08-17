@@ -151,7 +151,7 @@ export default function AdminDashboard() {
                 position: "top-end"
             })
 
-            getRestaurantsByRating()
+            // getRestaurantsByRating()
 
         } catch (error) {
             console.error('Erro ao atualizar status do restaurante, tente novamente.', error);
@@ -342,7 +342,7 @@ export default function AdminDashboard() {
 
             setSelectedRestaurant(null)
 
-            getRestaurantsByRating()
+            // getRestaurantsByRating()
 
         } catch (error) {
             console.error('Erro ao apagar restaurante, tente novamente.', error);
@@ -696,7 +696,7 @@ export default function AdminDashboard() {
                                                 <div className={`activity-icon`}>📅</div>
                                                 <div className="activity-content">
                                                     <div className="activity-text">{reservation.restaurant.name}</div>
-                                                    <div className="activity-time">{reservation.client.name}</div>
+                                                    <div className="activity-time">Cliente: {reservation.client.name}</div>
                                                 </div>
                                                 <div className="activity-content">
                                                     <div className="activity-text">{reservation.date.split("T")[0]}</div>
@@ -792,7 +792,7 @@ export default function AdminDashboard() {
                                     <div className="activity-list">
                                         {nonActiveRestaurants.map((restaurant, index) => (
                                             <div key={index} className="activity-item">
-                                                <img style={{ height: "50px", width: "50px", objectFit: "cover" }} src={`http://localhost:3000/uploads/restaurant/avatars/${restaurant.avatar}`} alt="" />
+                                                <img style={{ height: "50px", width: "50px", objectFit: "cover" }} src={`http://localhost:3000/${restaurant.avatar.replace('src\\', '')}`} alt="" />
                                                 <div className="activity-content">
                                                     <div className="activity-text">{restaurant.name}</div>
                                                 </div>

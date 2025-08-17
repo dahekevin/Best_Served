@@ -418,7 +418,9 @@ export default function RestaurantDashboard() {
 									<div className="order-item" key={order.id}>
 										<div className="order-initials">
 											<div className="reservationDay">
-												<span>{String(new Date(order.date).getDate()).padStart(2, '0')}</span>
+												<span>{String(new Date(`${order.date.split('T')[0]}T${order.startsAt}`).toLocaleDateString('pt-BR',
+                                                    { day: 'numeric' }
+                                                )).padStart(2, '0')}</span>
 											</div>
 											<div className="reservationMonth">
 												<span>{String(new Intl.DateTimeFormat('pt-BR', { month: 'long' }).format(new Date(order.date))).toUpperCase()}</span>

@@ -3,7 +3,7 @@ import { PrismaClient } from '../../generated/prisma/client.js'
 
 const prisma = new PrismaClient()
 
-cron.schedule('*/10 * * * *' /* Checa a cada 15 min */, async () => {
+cron.schedule('*/15 * * * *' /* Checa a cada 15 min */, async () => {
     console.trace('📌 cronJobs.js carregado')
 
     console.log('⏰ Verificando reservas com horário vencido...')
@@ -14,7 +14,7 @@ cron.schedule('*/10 * * * *' /* Checa a cada 15 min */, async () => {
         const reservations = await prisma.reservations.findMany({
             where: {
                 status: {
-                    in: ['Pending', 'Confirmed'],
+                    in: ['Pending', 'Confirmed', 'Cancelled'],
                 },
             },
         })
@@ -29,11 +29,11 @@ cron.schedule('*/10 * * * *' /* Checa a cada 15 min */, async () => {
             // console.log('Agora:', now.toISOString())
             console.log('Reserva:', fullDateTime.toISOString()) 
 
-            if (fullDateTime < now) {
+            if (fullDateTime < now || res.status === 'Cancelled') {
                 await prisma.reservations.delete({
                     where: { id: res.id },
                 })
-                console.log(`🗑️ Reserva ${res.id} removida (expirada às ${fullDateTime}).`)
+                console.log(`LIXEIRA 🗑️  - Reserva ${res.id} removida (expirada às ${fullDateTime}).`)
             }
         }
     } catch (error) {
