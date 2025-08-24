@@ -257,7 +257,6 @@ const RestaurantProfileUpdate = () => {
 		// --- LÓGICA OTIMIZADA PARA AS MESAS ---
 		// 1. Verifique se o número de mesas foi reduzido a zero
 		if (numberOfTables === 0 && existingTables.length > 0) {
-			console.log('aquiiiiiiiiiiiiiiiiii');
 			
 			// Envie um array vazio para o backend, indicando que todas as mesas devem ser removidas
 			formData.append('tables', JSON.stringify([]));
@@ -522,6 +521,9 @@ const RestaurantProfileUpdate = () => {
 					<p className="tables-description">
 						Configure a quantidade de mesas do seu restaurante e a capacidade de cada uma.
 					</p>
+					<p style={{color: "tomato"}} className="tables-description">
+						OBS: Não é necessário deletar uma mesa, em vez disso zere a capacidade desta caso queira o mesmo efeito. A mesa não será apagada do banco, <br /> mas não aparecerá na tela de reservas.
+					</p>
 
 					<div className="tables-config">
 						<div className="form-group">
@@ -543,7 +545,7 @@ const RestaurantProfileUpdate = () => {
 								<div className="tables-grid">
 									{Array.from({ length: numberOfTables }, (_, index) => (
 										<div key={index} className="table-capacity-item">
-											<label htmlFor={`table-${index + 1}`}>Mesa {index + 1}</label>
+											<label htmlFor={`table-${index + 1}`}>Mesa {existingTables[index] ? existingTables[index].codeID : index + 1}</label>
 											<div className="capacity-input-wrapper">
 												<input
 													type="number"

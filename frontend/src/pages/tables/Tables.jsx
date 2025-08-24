@@ -115,7 +115,7 @@ const RestaurantTables = () => {
 		);
 
 		// CORREÇÃO 2: Verifica a capacidade (se `guests` for um número)
-		const hasCapacity = guests === 0 || table.seats >= parseInt(guests, 10);
+		const hasCapacity = (guests === 0 || table.seats >= parseInt(guests, 10));
 
 		// Lógica de filtro final
 		if (activeFilter === "Available") return !hasTimeConflict && hasCapacity;
