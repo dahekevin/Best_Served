@@ -100,7 +100,7 @@ export default function Navbar() {
         }
 
         localStorage.clear();
-        window.location.href = '/'
+        window.location.href = '/login'
     }
 
     return (

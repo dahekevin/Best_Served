@@ -12,7 +12,7 @@ export default function RestaurantDashboard() {
 	const [showClientNoteModal, setShowClientNoteModal] = useState(false)
 	const [selectedReservation, setSelectedReservation] = useState([])
 	const [note, setNote] = useState([])
-	const [restaurantInfo, setRestaurantInfo] = useState({ name: "", email: "", phone: "", fullAdress: "", avatar: "", reservations: [], review: [] })
+	const [restaurantInfo, setRestaurantInfo] = useState({ name: "", email: "", phone: "", status: "", fullAdress: "", avatar: "", reservations: [], review: [] })
 
 	// Calcular média das avaliações (sempre retorna número)
 	function calculateAverageRating() {
@@ -98,14 +98,15 @@ export default function RestaurantDashboard() {
 			return restaurantInfo.reservations;
 		}
 
-		const searchTerm = searchReservation.toLowerCase().trim(); // Limpa espaços e normaliza
+		const searchTerm = searchReservation.toLowerCase().trim();
 
 		return restaurantInfo.reservations.filter(res => {
-			const statusMatch = res.status && res.status.toLowerCase().includes(searchTerm)
+			const statusMatch = res.status && (res.status === 'Confirmed' ? 'Confirmado'.toLowerCase().includes(searchTerm) : 
+			(res.status === 'Pending' ? 'Pendente'.toLowerCase().includes(searchTerm) : 'Cancelado'.toLowerCase().includes(searchTerm)))
+			const tableIdMatch = res.tables.codeID && res.tables.codeID.toLowerCase().includes(searchTerm)
 			const monthMatch = res.month && res.month.toLowerCase().includes(searchTerm)
 			const dayMatch = res.day && res.day.toLowerCase().includes(searchTerm)
-			const tableIdMatch = res.tableId && res.tableId.toLowerCase().includes(searchTerm);
-			const clientNameMatch = res.customerName && res.customerName.toLowerCase().includes(searchTerm);
+			const clientNameMatch = res.client.name && res.client.name.toLowerCase().includes(searchTerm)
 
 			return statusMatch || monthMatch || dayMatch || tableIdMatch || clientNameMatch;
 		});
@@ -149,17 +150,10 @@ export default function RestaurantDashboard() {
 		}
 	}
 
-	// let res = []
-
-	// async function fetchReservations() {
-	// 	res = await api.get("/restaurant/get-many")
-	// 	setReservations(res.data.restaurants)
-	// }
-
 	useEffect(() => {
 		getRestaurantInfo()
 		// fetchReservations()
-	})
+	}, [])
 
 	const handleDeleteAccount = async (e) => {
 		Swal.fire({
@@ -403,7 +397,7 @@ export default function RestaurantDashboard() {
 					<div className="search-container">
 						<input
 							type="text"
-							placeholder="Pesquise suas reservas"
+							placeholder="Pesquise suas reservas por: Dia, Mês, Cliente, Status, Mesa"
 							value={searchReservation}
 							onChange={(e) => setSearchReservation(e.target.value)}
 						/>

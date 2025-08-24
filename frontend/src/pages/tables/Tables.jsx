@@ -66,7 +66,7 @@ const RestaurantTables = () => {
 		const ends = timeToMinutes(searchFilters.ends)
 		const guests = searchFilters.guests
 
-		// console.log('status: ', table);
+		console.log('status: ', table);
 
 
 		// CORREÇÃO 1: Verifica conflitos de data e hora
@@ -123,7 +123,7 @@ const RestaurantTables = () => {
 
 		// Se for "All", a capacidade e o conflito não importam para o filtro, mas ainda serão mostrados
 		return true;
-	}, [searchFilters]);
+	}, [searchFilters, tables]);
 
 	const handleTableList = (table) => {
 		setSelectedTable(table)
@@ -183,7 +183,7 @@ const RestaurantTables = () => {
 			if (!history) { console.log('Erro ao atualizar o histórico do cliente.'); }
 
 			console.log('Reservas: ', response);
-			Swal.fire("Pedido de reserva feita!")
+			Swal.fire("Pedido de reserva feito!")
 			getTables()
 
 		} catch (error) {
@@ -465,83 +465,86 @@ const RestaurantTables = () => {
 								?
 								(res.reservationDate?.split("T")[0] === searchFilters.date) && res.reservationStatus !== 'Cancelled'
 								:
-								res.reservationStatus !== 'Cancelled' &&
-								(res.reservationDate?.split("T")[0] === searchFilters.date) &&
-								((res.reservationStarts >= searchFilters.starts && res.reservationStarts <= searchFilters.ends) ||
-									(res.reservationEnds >= searchFilters.starts && res.reservationEnds <= searchFilters.ends))
-
+								(res.reservationStatus !== 'Cancelled' && res.reservationDate?.split("T")[0] === searchFilters.date && timeToMinutes(searchFilters.starts) <= timeToMinutes(searchFilters.ends) && timeToMinutes(res.reservationStarts) <= timeToMinutes(res.reservationEnds)
+									? ((timeToMinutes(searchFilters.starts) >= timeToMinutes(res.reservationStarts) && timeToMinutes(searchFilters.starts) <= timeToMinutes(res.reservationEnds)) || 
+									   (timeToMinutes(searchFilters.ends) >= timeToMinutes(res.reservationStarts) && timeToMinutes(searchFilters.ends) <= timeToMinutes(res.reservationEnds)) ||
+									   (timeToMinutes(res.reservationStarts) >= timeToMinutes(searchFilters.starts) && timeToMinutes(res.reservationStarts) <= timeToMinutes(searchFilters.ends)) ||
+									   (timeToMinutes(res.reservationEnds) >= timeToMinutes(searchFilters.starts) && timeToMinutes(res.reservationEnds) <= timeToMinutes(searchFilters.ends))
+									)
+									: false
+								)
 					)
 
-					if (parseInt(maxSeats) < parseInt(table.seats)) { setMaxSeats(parseInt(table.seats)); }
+				if (parseInt(maxSeats) < parseInt(table.seats)) {setMaxSeats(parseInt(table.seats)); }
 
-					return (
+				return (
+				<>
+					{table.restaurantId === restaurantId &&
+						(searchFilters.guests === 0 ? true : (table.seats >= searchFilters.guests)) &&
 						<>
-							{table.restaurantId === restaurantId &&
-								(searchFilters.guests === 0 ? true : (table.seats >= searchFilters.guests)) &&
-								<>
-									{(index += 1) &&
-										< div
-											key={table.id}
-											className="tables-table-card"
-										>
-											<div className="tables-table-body"
-												onClick={() => !isReserved && searchFilters.starts !== '' && searchFilters.ends !== '' && searchFilters.date !== '' && searchFilters.guests <= table.seats ? handleTableClick(table) : Swal.fire("Mesa já reservada ou data e hora não fornecidos")}
-											>
-												<div className="tables-table-header">
-													<span className="tables-table-name">Mesa {table.codeID}</span>
-													<span className={`tables-status-badge ${isReserved ? "Not-Available" : "Available"}`}>
-														{isReserved ? "Reservada" : "Disponível"}
-													</span>
-												</div>
-
-												<div className={`tables-avatar ${isReserved ? "Not-Available" : "Available"}`} >{table.codeID.padStart(3, '0')}</div>
-												{/* <div className={`tables-avatar ${isReserved ? "Not-Available" : "Available"}`} >{isReserved ? "Res" : "Dis"}</div> */}
-
-												<div className="tables-table-info">
-													<div className="tables-seats-info">Lugares: {table.seats}</div>
-													<div className="tables-restaurant-info">{table.restaurant}</div>
-												</div>
-											</div>
-											{isReserved && (
-												<>
-													{
-														table.reservations.length > 1 ?
-															<div className="tables-reservation-info">
-																<div className="tables-reservation-item-info">
-																	<button
-																		onClick={() => handleTableList(table)}
-																	>Vizualizar lista de reservas</button>
-																</div>
-															</div>
-															: <div className="tables-reservation-info">
-																{table.reservations
-																	.filter((res) =>
-																		(res.reservationDate?.split("T")[0] === searchFilters.date)
-																	)
-																	.map((res, i) => (
-																		<div key={i} className="tables-reservation-item">
-																			<div className="tables-reservation-item-info">
-																				<div className="tables-reservation-date">
-																					{new Date(res.reservationDate.split('T')[0] + 'T00:00:00').toLocaleDateString("pt-BR")}
-																					<div className="tables-reservation-time">{res.reservationStarts} - {res.reservationEnds}</div>
-																				</div>
-																				{res.customerName && res.customerName === clientInfo.name && (
-																					<div className="tables-customer-name">{res.customerName}</div>
-																				)}
-																			</div>
-																		</div>
-																	))
-																}
-															</div>
-													}
-												</>
-											)}
+							{(index += 1) &&
+								< div
+									key={table.id}
+									className="tables-table-card"
+								>
+									<div className="tables-table-body"
+										onClick={() => !isReserved && searchFilters.starts !== '' && searchFilters.ends !== '' && searchFilters.date !== '' && searchFilters.guests <= table.seats ? handleTableClick(table) : Swal.fire("Mesa já reservada ou data e hora não fornecidos")}
+									>
+										<div className="tables-table-header">
+											<span className="tables-table-name">Mesa {table.codeID}</span>
+											<span className={`tables-status-badge ${isReserved ? "Not-Available" : "Available"}`}>
+												{isReserved ? "Reservada" : "Disponível"}
+											</span>
 										</div>
-									}
-								</>
+
+										<div className={`tables-avatar ${isReserved ? "Not-Available" : "Available"}`} >{table.codeID.padStart(3, '0')}</div>
+										{/* <div className={`tables-avatar ${isReserved ? "Not-Available" : "Available"}`} >{isReserved ? "Res" : "Dis"}</div> */}
+
+										<div className="tables-table-info">
+											<div className="tables-seats-info">Lugares: {table.seats}</div>
+											<div className="tables-restaurant-info">{table.restaurant}</div>
+										</div>
+									</div>
+									{isReserved && (
+										<>
+											{
+												table.reservations.length > 1 ?
+													<div className="tables-reservation-info">
+														<div className="tables-reservation-item-info">
+															<button
+																onClick={() => handleTableList(table)}
+															>Vizualizar lista de reservas</button>
+														</div>
+													</div>
+													: <div className="tables-reservation-info">
+														{table.reservations
+															.filter((res) =>
+																(res.reservationDate?.split("T")[0] === searchFilters.date)
+															)
+															.map((res, i) => (
+																<div key={i} className="tables-reservation-item">
+																	<div className="tables-reservation-item-info">
+																		<div className="tables-reservation-date">
+																			{new Date(res.reservationDate.split('T')[0] + 'T00:00:00').toLocaleDateString("pt-BR")}
+																			<div className="tables-reservation-time">{res.reservationStarts} - {res.reservationEnds}</div>
+																		</div>
+																		{res.customerName && res.customerName === clientInfo.name && (
+																			<div className="tables-customer-name">{res.customerName}</div>
+																		)}
+																	</div>
+																</div>
+															))
+														}
+													</div>
+											}
+										</>
+									)}
+								</div>
 							}
 						</>
-					)
+					}
+				</>
+				)
 				})}
 			</div>
 
