@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
+import api from "../../service/api"
 
 export default function NotificationSystem() {
 	const [notifications, setNotifications] = useState([])
@@ -9,69 +10,65 @@ export default function NotificationSystem() {
 	const panelRef = useRef(null)
 	const bellRef = useRef(null)
 
-	// Simulação de notificações em tempo real
-	useEffect(() => {
-		const notificationTypes = [
-			{
-				type: "success",
-				title: "Reserva Confirmada",
-				message: "Nova reserva confirmada no Bella Vista para hoje às 19:30",
-				icon: "✓",
-			},
-			{
-				type: "info",
-				title: "Novo Restaurante",
-				message: "Pizzaria Napoli solicitou cadastro na plataforma",
-				icon: "ℹ",
-			},
-			{
-				type: "warning",
-				title: "Reserva Pendente",
-				message: "Reserva aguardando confirmação há mais de 2 horas",
-				icon: "⚠",
-			},
-			{
-				type: "error",
-				title: "Pagamento Falhou",
-				message: "Erro no processamento do pagamento da reserva #1234",
-				icon: "✕",
-			},
-			{
-				type: "success",
-				title: "Meta Atingida",
-				message: "Meta mensal de reservas foi atingida com sucesso!",
-				icon: "🎯",
-			},
-			{
-				type: "info",
-				title: "Novo Usuário",
-				message: "Maria Silva se cadastrou na plataforma",
-				icon: "👤",
-			},
-		]
+	const icons = ['✓', 'ℹ', '⚠', '✕', '🎯', '👤']
 
-		const interval = setInterval(() => {
-			const randomNotification = notificationTypes[Math.floor(Math.random() * notificationTypes.length)]
-			const newNotification = {
-				id: Date.now(),
-				...randomNotification,
-				timestamp: new Date(),
-				read: false,
+	const getNotifications = async () => {
+		const token = localStorage.getItem('token')
+		const role = localStorage.getItem('role')
+
+		try {
+			if (token && role) {
+				const response = await api.get(`/notification/get-by-user?role=${role}`, {
+					headers: { Authorization: `Bearer ${token}` }
+				})
+
+				console.log('response:', response.data);
+
+				let notif_db = []
+				notif_db = response.data
+				console.log('notif_db.length', notif_db.length);
+
+				if (notif_db.length > 0) {
+					let currentIndex = 0
+					const interval = setInterval(() => {
+						if (currentIndex >= notif_db.length) {
+							clearInterval(interval)
+							return
+						}
+
+						const notification = notif_db[currentIndex]
+						const newNotification = {
+							...notification,
+							id: `${notification.id}-${Date.now()}-${Math.random()}-${currentIndex}`,
+							timestamp: new Date(),
+						}
+
+						// Adicionar à lista de notificações ativas (toast)
+						setNotifications((prev) => [...prev, newNotification])
+
+						// Adicionar ao histórico completo
+						setAllNotifications((prev) => [newNotification, ...prev])
+
+						// Remover automaticamente após 5 segundos
+						setTimeout(() => {
+							markAsRead(newNotification.id);
+							removeNotification(newNotification.id)
+						}, 8000)
+
+						currentIndex++
+					}, 300) // Nova notificação a cada 8 segundos
+
+					return () => clearInterval(interval)
+				}
 			}
 
-			// Adicionar à lista de notificações ativas (toast)
-			setNotifications((prev) => [...prev, newNotification])
+		} catch (error) {
+			console.error('Erro ao buscar as notificações do usuário.', error);
+		}
+	}
 
-			// Adicionar ao histórico completo
-			setAllNotifications((prev) => [newNotification, ...prev])
-
-			// Remover automaticamente após 5 segundos
-			setTimeout(() => {
-				removeNotification(newNotification.id)
-			}, 5000)
-		}, 8000) // Nova notificação a cada 8 segundos
-
-		return () => clearInterval(interval)
+	useEffect(() => {
+		getNotifications()
 	}, [])
 
 	// Fechar painel ao clicar fora

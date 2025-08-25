@@ -55,3 +55,35 @@ export const getAllNotifications = async (req, res) => {
         res.status(500).json({ message: 'Falha no servidor, tente novamente', error })
     }
 }
+
+export const getNotificationsByUserID = async (req, res) => {
+    const role = req.query.role
+
+    console.log('ROLE: ', role);
+
+    try {
+        let notifications
+
+        if (role === 'client') {
+            notifications = await prisma.notification.findMany({
+                where: { clientId: req.userId}
+            }) 
+        } else if (role === 'restaurant') {
+            notifications = await prisma.notification.findMany({
+                where: { restaurantId: req.userId }
+            })
+        } else if (role === 'admin') {
+            notifications = await prisma.notification.findMany({
+                where: { adminId: req.userId }
+            })
+        } else {
+            return res.status(400).json({ error: "Tipo de usuário inválido." });
+        }
+
+        return res.status(200).json(notifications);
+
+    } catch (error) {
+        console.error("Erro ao buscar notificações:", error);
+        return res.status(500).json({ error: "Erro interno do servidor." });
+    }
+}

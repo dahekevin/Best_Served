@@ -5,6 +5,7 @@ import restaurantRoutes from './src/routes/restaurantRoutes.js'
 import reservationRoutes from './src/routes/reservationRoutes.js'
 import adminRoutes from './src/routes/adminRoutes.js'
 import reviewRoutes from './src/routes/reviewRoutes.js'
+import notificationRoutes from './src/routes/notificationRoutes.js'
 import path from 'path'
 import './src/utils/cronJobs.js'
 import { fileURLToPath } from 'url';
@@ -31,5 +32,6 @@ app.use('/', restaurantRoutes)
 app.use('/', adminRoutes)
 app.use('/', reservationRoutes)
 app.use('/', reviewRoutes)
+app.use('/', notificationRoutes)
 
 app.listen(process.env.PORT, () => console.log(`Server running on port: ${process.env.PORT}`))
