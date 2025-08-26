@@ -1,75 +1,69 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import api from "../../service/api"
+import api from '../../service/api.js'
 
 export default function NotificationSystem() {
 	const [notifications, setNotifications] = useState([])
+	const [notifDB, setNotifDB] = useState([])
 	const [showPanel, setShowPanel] = useState(false)
 	const [allNotifications, setAllNotifications] = useState([])
 	const panelRef = useRef(null)
 	const bellRef = useRef(null)
 
-	const icons = ['✓', 'ℹ', '⚠', '✕', '🎯', '👤']
-
-	const getNotifications = async () => {
+	const loadNotifications = async () => {
 		const token = localStorage.getItem('token')
 		const role = localStorage.getItem('role')
 
 		try {
-			if (token && role) {
-				const response = await api.get(`/notification/get-by-user?role=${role}`, {
-					headers: { Authorization: `Bearer ${token}` }
-				})
+			const response = await api.get(`/notification/get-by-user?role=${role}`, {
+				headers: { Authorization: `Bearer ${token}` }
+			})
 
-				console.log('response:', response.data);
-
-				let notif_db = []
-				notif_db = response.data
-				console.log('notif_db.length', notif_db.length);
-
-				if (notif_db.length > 0) {
-					let currentIndex = 0
-					const interval = setInterval(() => {
-						if (currentIndex >= notif_db.length) {
-							clearInterval(interval)
-							return
-						}
-
-						const notification = notif_db[currentIndex]
-						const newNotification = {
-							...notification,
-							id: `${notification.id}-${Date.now()}-${Math.random()}-${currentIndex}`,
-							timestamp: new Date(),
-						}
-
-						// Adicionar à lista de notificações ativas (toast)
-						setNotifications((prev) => [...prev, newNotification])
-
-						// Adicionar ao histórico completo
-						setAllNotifications((prev) => [newNotification, ...prev])
-
-						// Remover automaticamente após 5 segundos
-						setTimeout(() => {
-							markAsRead(newNotification.id);
-							removeNotification(newNotification.id)
-						}, 8000)
-
-						currentIndex++
-					}, 300) // Nova notificação a cada 8 segundos
-
-					return () => clearInterval(interval)
-				}
-			}
+			setNotifDB(response.data)
 
 		} catch (error) {
-			console.error('Erro ao buscar as notificações do usuário.', error);
+			console.error('Erro ao carregar notificações.', error);
+			return []
 		}
 	}
 
 	useEffect(() => {
-		getNotifications()
+		loadNotifications()
 	}, [])
+
+	useEffect(() => {
+		if (notifDB.length <= 0) { return }
+
+		let currentIndex = 0
+
+		const interval = setInterval(() => {
+			const notification = notifDB[currentIndex]
+			currentIndex++
+
+			if (!notification) { clearInterval(interval); return; }
+
+			const newNotification = {
+				...notification,
+				timestamp: new Date(),
+			}
+
+			if (!newNotification.read) {
+				// Adicionar à lista de notificações ativas (toast)
+				setNotifications((prev) => [...prev, newNotification])
+			}
+
+			// Adicionar ao histórico completo
+			setAllNotifications((prev) => [newNotification, ...prev])
+
+			// Remover automaticamente após 5 segundos
+			setTimeout(() => {
+				removeNotification(newNotification.id)
+			}, 8000)
+		}, 300) // Nova notificação a cada 3/10 de segundos
+
+		return () => clearInterval(interval)
+	}, [notifDB])
 
 	// Fechar painel ao clicar fora
 	useEffect(() => {
@@ -96,8 +90,18 @@ export default function NotificationSystem() {
 		}, 300)
 	}
 
-	const markAsRead = (id) => {
+	const markAsRead = async (id) => {
 		setAllNotifications((prev) => prev.map((notif) => (notif.id === id ? { ...notif, read: true } : notif)))
+		const token = localStorage.getItem('token')
+
+		try {
+			await api.patch(`/notification/update?id=${id}`, { read: true }, {
+				headers: { Authorization: `Bearer ${token}` },
+			})
+			
+		} catch (error) {
+			console.error('Erro ao atualizar notificação.', error);
+		}
 	}
 
 	const clearAllNotifications = () => {
@@ -153,7 +157,7 @@ export default function NotificationSystem() {
 
 			{/* Notification Bell */}
 			<div style={{ position: "relative" }}>
-				<button ref={bellRef} className="notification-bell" onClick={() => setShowPanel(!showPanel)}>
+				<button style={{fontSize: '1.1em'}} ref={bellRef} className="notification-bell" onClick={() => setShowPanel(!showPanel)}>
 					🔔{unreadCount > 0 && <span className="notification-badge">{unreadCount > 99 ? "99+" : unreadCount}</span>}
 				</button>
 
@@ -172,7 +176,7 @@ export default function NotificationSystem() {
 						<div className="notification-list">
 							{allNotifications.length === 0 ? (
 								<div className="empty-notifications">
-									<div style={{ fontSize: "30px", marginBottom: "8px" }}>🔔</div>
+									<div style={{ fontSize: "24px", marginBottom: "8px" }}>🔔</div>
 									<div>Nenhuma notificação</div>
 								</div>
 							) : (

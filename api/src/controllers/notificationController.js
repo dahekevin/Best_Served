@@ -87,3 +87,18 @@ export const getNotificationsByUserID = async (req, res) => {
         return res.status(500).json({ error: "Erro interno do servidor." });
     }
 }
+
+export const updateNotification = async (req, res) => {
+    console.log('read: ', req.body.read);
+    
+    try {
+        const notification = await prisma.notification.update({
+            where: { id: req.query.id },
+            data: { read: req.body.read }
+        })
+
+        return res.status(200).json({ message: 'Notificação Atualizada!', notification })
+    } catch (error) {
+        return res.status(500).json({ error: 'Erro ao atualizar notificação.' })
+    }
+}

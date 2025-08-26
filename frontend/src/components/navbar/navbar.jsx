@@ -5,6 +5,7 @@ import { useCallback, useState } from "react"
 import { Link } from 'react-router-dom'
 import { useEffect } from 'react'
 import api from '../../service/api'
+import NotificationSystem from "../notification/notification.jsx"
 
 export default function Navbar() {
     const [userType, setUserType] = useState(null)
@@ -116,6 +117,9 @@ export default function Navbar() {
                         {isLoggedIn ? (
                             <>
                                 <Link to='/restaurants' className='navbarLink'>Restaurantes 🍽️</Link>
+                                
+                                <NotificationSystem />
+
                                 {userType === 'client' && (
                                     <>
                                         <Link onClick={() => { getClientInfo() }} to='/client-profile' className='navbarLink'>
@@ -128,6 +132,7 @@ export default function Navbar() {
                                         </Link>
                                     </>
                                 )}
+
 
                                 {userType === 'restaurant' && (
                                     <>
