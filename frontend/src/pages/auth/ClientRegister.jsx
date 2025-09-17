@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { TextField, Button } from '@mui/material'
 import api from "../../service/api";
-import './clientAuth.css';
+import './Auth.css';
 
 export default function ClientRegister() {
 
@@ -12,7 +12,7 @@ export default function ClientRegister() {
     const [password, setPassword] = useState("");
 
     async function registerClient(event) {
-        event.preventDefault(); // Evita o recarregamento da página
+        event.preventDefault();
         console.log("Registrando usuário com os seguintes dados:");
         console.log("Nome:", name);
         console.log("Telefone:", phone);
@@ -27,7 +27,7 @@ export default function ClientRegister() {
             });
 
             alert("Usuário registrado com sucesso!");
-            // Redirecionar para login se quiser:
+            
             window.location.href = "/login";
 
         } catch (error) {

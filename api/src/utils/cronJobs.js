@@ -23,8 +23,8 @@ cron.schedule('*/15 * * * *' /* Checa a cada 15 min */, async () => {
             console.log('Verificando reserva:', res.id, res.date, res.endsAt)         
             
             // Junta a data e a hora da reserva
-            const dateOnly = res.date.toISOString().split('T')[0] // '2025-06-25'
-            const fullDateTime = new Date(`${dateOnly}T${res.endsAt}:00Z`) // Ex: '2025-06-25T13:30:00Z'
+            const dateOnly = res.date.toISOString().split('T')[0] 
+            const fullDateTime = new Date(`${dateOnly}T${res.endsAt}:00Z`)
             
             // console.log('Agora:', now.toISOString())
             console.log('Reserva:', fullDateTime.toISOString()) 

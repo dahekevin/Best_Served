@@ -20,7 +20,6 @@ model Notification {
     type      String?
     title     String?
     message   String?
-    icon      String?
     read      Boolean?  @default(false)
     createdAt DateTime? @default(now())
 

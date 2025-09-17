@@ -14,18 +14,16 @@ export default function RestaurantDashboard() {
 	const [note, setNote] = useState([])
 	const [restaurantInfo, setRestaurantInfo] = useState({ name: "", email: "", phone: "", status: "", fullAdress: "", avatar: "", reservations: [], review: [] })
 
-	// Calcular média das avaliações (sempre retorna número)
 	function calculateAverageRating() {
-		if (restaurantInfo.review.length === 0) return 0 // valor padrão
+		if (restaurantInfo.review.length === 0) return 0
 		const sum = restaurantInfo.review.reduce((acc, review) => acc + review.rating, 0)
 		return sum / restaurantInfo.review.length
 	}
 
 	const averageRating = calculateAverageRating()
 
-	// Calcular distribuição de avaliações
 	const calculateRatingDistribution = () => {
-		const distribution = [0, 0, 0, 0, 0] // 1 a 5 estrelas
+		const distribution = [0, 0, 0, 0, 0]
 
 		restaurantInfo.review.forEach((review) => {
 			if (review.rating >= 1 && review.rating <= 5) {
@@ -63,20 +61,16 @@ export default function RestaurantDashboard() {
 
 		// Definir a ordem de prioridade dos status
 		const statusOrder = {
-			'Pending': 1,    // Primeiro
-			'Confirmed': 2,  // Segundo
-			// Adicione outros status aqui com números maiores
+			'Pending': 1,   
+			'Confirmed': 2,
 			'Completed': 3,
 			'Cancelled': 4,
-			// Qualquer status não listado aqui terá um valor undefined,
-			// que pode ser tratado como a menor prioridade (maior número)
 		};
 
 		const sorted = [...restaurantInfo.reservations].sort((a, b) => {
 			const orderA = statusOrder[a.status] || Infinity; // Se status não existe, vai para o final
 			const orderB = statusOrder[b.status] || Infinity; // Infinity garante que status desconhecidos fiquem por último
 
-			// 1. Comparar por status (prioridade principal)
 			if (orderA < orderB) {
 				return -1; // 'a' vem antes de 'b'
 			}
@@ -84,8 +78,6 @@ export default function RestaurantDashboard() {
 				return 1; // 'b' vem antes de 'a'
 			}
 
-			// 2. Se os status são iguais, desempate pela data de atualização (mais recente primeiro)
-			// Usar `updatedAt` é bom para ver as mudanças mais recentes.
 			return new Date(b.updatedAt || '') - new Date(a.updatedAt || '');
 		});
 
@@ -304,16 +296,6 @@ export default function RestaurantDashboard() {
 			year: "numeric",
 		})
 	}
-
-	// const popularDishes = [
-	// 	{ id: "01", name: "Butter Chicken", orders: 250, image: "/placeholder.svg?height=60&width=60" },
-	// 	{ id: "02", name: "Palak Paneer", orders: 190, image: "/placeholder.svg?height=60&width=60" },
-	// 	{ id: "03", name: "Hyderabadi Biryani", orders: 300, image: "/placeholder.svg?height=60&width=60" },
-	// 	{ id: "04", name: "Masala Dosa", orders: 220, image: "/placeholder.svg?height=60&width=60" },
-	// 	{ id: "05", name: "Chole Bhature", orders: 270, image: "/placeholder.svg?height=60&width=60" },
-	// 	{ id: "06", name: "Rajma Chawal", orders: 180, image: "/placeholder.svg?height=60&width=60" },
-	// 	{ id: "07", name: "Paneer Tikka", orders: 210, image: "/placeholder.svg?height=60&width=60" },
-	// ]
 
 	const renderStars = (
 		rating,

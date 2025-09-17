@@ -3,11 +3,9 @@ import { Link } from "react-router-dom"
 
 export default function RestaurantCard({ id, title, email, phone, address, tags, rating, description, image }) {
 	const renderStars = (rating) => {
-		// Array para armazenar as estrelas
 		const stars = [];
-		const fullStars = Math.floor(rating); // Estrelas inteiras
+		const fullStars = Math.floor(rating); 
 
-		// Caso o rating não seja um número, ou seja 0, retorna vazio
 		if (!rating || typeof rating !== 'number' || rating < 0) {
 			for (let i = 0; i < 5; i++) {
 				stars.push(<span style={{ fontSize: "1.3em" }} key={`full-${i}`}>★</span>);
@@ -16,15 +14,13 @@ export default function RestaurantCard({ id, title, email, phone, address, tags,
 			return stars
 		}
 
-		// Adiciona as estrelas cheias
 		for (let i = 0; i < fullStars; i++) {
 			stars.push(<span style={{ color: "yellowgreen", fontSize: "1.3em" }} key={`full-${i}`}>★</span>);
 		}
 
-		// Preenche o restante com estrelas vazias para completar 5, se desejar
 		const emptyStars = 5 - stars.length;
 		for (let i = 0; i < emptyStars; i++) {
-			stars.push(<span style={{ fontSize: "1.3em" }} key={`empty-${i}`}>★</span>); // Você pode usar um ícone diferente aqui
+			stars.push(<span style={{ fontSize: "1.3em" }} key={`empty-${i}`}>★</span>);
 		}
 
 		return stars;

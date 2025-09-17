@@ -20,9 +20,6 @@ export default function RestaurantPage() {
 
 	const reviewFormRef = useRef(null)
 
-	// Nota média do restaurante (simulada)
-
-	// Estados para reviews
 	const [reviews, setReviews] = useState([])
 	const [showReviewForm, setShowReviewForm] = useState(false)
 	const [newReview, setNewReview] = useState({
@@ -46,7 +43,6 @@ export default function RestaurantPage() {
 		"Música",
 	]
 
-	// Informações do restaurante
 	const [restaurantInfo, setRestaurantInfo] = useState({
 		id: "",
 		name: "",
@@ -63,7 +59,6 @@ export default function RestaurantPage() {
 		tags: [],
 	})
 
-	// Calcular média das avaliações (sempre retorna número)
 	function calculateAverageRating() {
 		if (restaurantInfo.review.length === 0) return 0 // valor padrão
 		const sum = restaurantInfo.review.reduce((acc, review) => acc + review.rating, 0)
@@ -75,7 +70,7 @@ export default function RestaurantPage() {
 	const updateRestaurantRating = async () => {
 		const token = localStorage.getItem('token')
 		try {
-			const response = await api.patch(`/restaurant/update-rating?restaurantId=${restaurantId}`, {
+			await api.patch(`/restaurant/update-rating?restaurantId=${restaurantId}`, {
 				rating: averageRating // O backend espera um campo 'rating'
 			}, {
 				headers: {
@@ -91,9 +86,8 @@ export default function RestaurantPage() {
 		updateRestaurantRating()
 	})
 
-	// Calcular distribuição de avaliações
 	const calculateRatingDistribution = () => {
-		const distribution = [0, 0, 0, 0, 0] // 1 a 5 estrelas
+		const distribution = [0, 0, 0, 0, 0]
 
 		restaurantInfo.review.forEach((review) => {
 			if (review.rating >= 1 && review.rating <= 5) {
@@ -173,11 +167,9 @@ export default function RestaurantPage() {
 
 			if (token) {
 				const review = {
-					// id: Date.now(), // Gerar um ID único baseado no timestamp
 					clientName: client.name || "Anônimo",
 					comment: newReview.comment.trim(),
 					rating: newReview.rating,
-					// date: new Date(),
 					tags: newReview.tags,
 					clientId: client.id,
 					restaurantId: restaurantId
@@ -261,7 +253,6 @@ export default function RestaurantPage() {
 			hour: '2-digit',
 			minute: '2-digit',
 			second: '2-digit',
-			// timeZone: 'America/Sao_Paulo', // Opcional: force um fuso horário específico
 			timeZoneName: 'shortOffset', // Mostra o offset (ex: GMT-3)
 		};
 		return new Intl.DateTimeFormat('pt-BR', options).format(date);
@@ -298,7 +289,7 @@ export default function RestaurantPage() {
 		});
 
 		return sorted;
-	}, [client.id, restaurantInfo.review]); // Dependências: client.id e o array client.review
+	}, [client.id, restaurantInfo.review]); 
 
 	console.log('Reordered Reviews: ', reorderedReviews);
 
@@ -481,63 +472,6 @@ export default function RestaurantPage() {
 				}
 			})
 		}
-
-		// if (token && role !== 'client') {
-		// 	let response
-
-		// 	if (role !== 'restaurant') {
-		// 		Swal.fire({
-		// 			position: 'top-end',
-		// 			icon: 'warning',
-		// 			title: 'Você não está logado como cliente!',
-		// 			text: 'Faça login como cliente acessar a página de mesas.',
-		// 			timer: 1500,
-		// 			showConfirmButton: false,
-		// 			willClose: () => {
-		// 				window.location.href = '/login'
-		// 			}
-		// 		})
-		// 	} else {
-		// 		try {
-		// 			response = await api.get('/restaurant/get-one', {
-		// 				headers: { Authorization: `Bearer ${token}` }
-		// 			})
-		// 		} catch (error) {
-		// 			console.log('Erro ao buscar restaurante no banco.', error);
-		// 		}
-
-		// 		console.log('response.data.id: ', response.data.restaurant.id, 'restaurantInfo.id: ', restaurantInfo.id);
-		// 		if (response.data.restaurant.id !== restaurantInfo.id) {
-		// 			Swal.fire({
-		// 				position: 'top-end',
-		// 				icon: 'warning',
-		// 				title: 'Você não está logado como cliente!',
-		// 				text: 'Faça login como cliente acessar a página de mesas.',
-		// 				timer: 1500,
-		// 				showConfirmButton: false,
-		// 				willClose: () => {
-		// 					window.location.href = '/login'
-		// 				}
-		// 			})
-		// 		} else {
-		// 			window.location.href = `/tables?restaurantId=${restaurantInfo.id}`
-		// 		}
-		// 	}
-		// } else if (role === 'client') {
-		// 	window.location.href = `/tables?restaurantId=${restaurantInfo.id}`
-		// } else {
-		// 	Swal.fire({
-		// 		position: 'top-end',
-		// 		icon: 'warning',
-		// 		title: 'Você não está logado como cliente!',
-		// 		text: 'Faça login como cliente acessar a página de mesas.',
-		// 		timer: 1500,
-		// 		showConfirmButton: false,
-		// 		willClose: () => {
-		// 			window.location.href = '/login'
-		// 		}
-		// 	})
-		// }
 	}
 
 	return (
@@ -580,11 +514,9 @@ export default function RestaurantPage() {
 										<div className="info-content-res-page">
 											<h4>Horário de Funcionamento</h4>
 											<p>
-												{/* <strong>Segunda a Sexta:</strong> {restaurantInfo.opensAt} */}
 												<strong>Abre às:</strong> {restaurantInfo.opensAt}
 											</p>
 											<p>
-												{/* <strong>Sábado e Domingo:</strong> {restaurantInfo.closesAt} */}
 												<strong>Fecha às:</strong> {restaurantInfo.closesAt}
 											</p>
 										</div>

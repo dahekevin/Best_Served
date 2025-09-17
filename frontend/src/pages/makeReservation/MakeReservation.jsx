@@ -45,13 +45,11 @@ export default function ReservationForm() {
         e.preventDefault()
         setIsSubmitting(true)
 
-        // Simulate API call
         setTimeout(() => {
             console.log("Reservation submitted:", formData)
             setIsSubmitting(false)
             setIsSuccess(true)
 
-            // Reset form after 3 seconds
             setTimeout(() => {
                 setIsSuccess(false)
                 setFormData({

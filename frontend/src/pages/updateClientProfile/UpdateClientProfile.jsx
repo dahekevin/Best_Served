@@ -14,28 +14,17 @@ const UpdateClientProfile = () => {
 		})
 	}
 
-	// const handleImageChange = (e) => {
-	// 	const file = e.target.files[0]
-	// 	if (file) {
-	// 		setPreviewImage(URL.createObjectURL(file))
-	// 		setProfile({
-	// 			...profile,
-	// 			avatar: file
-	// 		})
-	// 	}
-	// }
-
 	const handleImageChange = (e) => {
 		const file = e.target.files[0]
 		if (file) {
 			setProfile({
 				...profile,
-				avatar: file, // salve o arquivo, não uma string
+				avatar: file, 
 			})
 
 			const reader = new FileReader()
 			reader.onloadend = () => {
-				setPreviewImage(reader.result) // apenas para visualização
+				setPreviewImage(reader.result) 
 			}
 			reader.readAsDataURL(file)
 		}
@@ -57,9 +46,9 @@ const UpdateClientProfile = () => {
 
 			console.log("Client avatar: ", client.avatar);
 
-			// Se o cliente tiver um avatar salvo, atualiza o previewImage
+			
 			if (client.avatar) {
-				setPreviewImage(`http://localhost:3000/uploads/${client.avatar}`)  // <-- Caminho correto
+				setPreviewImage(`http://localhost:3000/uploads/${client.avatar}`)  
 			}
 		} catch (error) {
 			console.error("Erro ao buscar perfil:", error.response?.data || error.message || error);
@@ -74,7 +63,6 @@ const UpdateClientProfile = () => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault()
-		// Here you would typically send the updated profile to your backend
 
 		const token = localStorage.getItem('token')
 

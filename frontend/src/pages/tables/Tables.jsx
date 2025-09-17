@@ -30,31 +30,6 @@ const RestaurantTables = () => {
 
 	const [tables, setTables] = useState([])
 
-	// const restaurants = ["Todos", "Restaurante Central", "Restaurante Norte", "Restaurante Sul"]
-
-	// const filteredTables = tables.filter((table) => {
-	// 	const { date, starts, ends, guests } = searchFilters;
-
-	// 	console.log('Tablessdfsdf: ', table);
-
-
-	// 	// Verifica se existe conflito com alguma reserva (mesma data e opcionalmente mesmo horário)
-	// 	const hasConflict = table.reservations?.some(
-	// 		(res) =>
-	// 			res.reservationDate?.split("T")[0] === date &&
-	// 			(starts || ends || res.reservationStarts === starts) &&
-	// 			table.restaurantId === restaurantId ||
-	// 			table.seats >= guests
-	// 	);
-
-	// 	// Filtro por status dinâmico
-	// 	if (activeFilter === "Available") return !hasConflict;
-	// 	if (activeFilter === "Not-Available") return hasConflict;
-
-	// 	// Se for "All", todas as mesas são exibidas
-	// 	return true;
-	// });
-
 	const timeToMinutes = (time) => {
 		const [hours, minutes] = time.split(':').map(Number);
 		return hours * 60 + minutes;
@@ -69,10 +44,8 @@ const RestaurantTables = () => {
 		console.log('status: ', table);
 
 
-		// CORREÇÃO 1: Verifica conflitos de data e hora
 		const hasTimeConflict = table.reservations?.some(
 			(res) => {
-				// Checa se a data corresponde
 				const isSameDay = date ? res.reservationDate?.split("T")[0] === date : false;
 
 				if (!isSameDay || !starts || !ends) {
@@ -80,17 +53,8 @@ const RestaurantTables = () => {
 				}
 
 				// Converte horários para um formato comparável (ex: HH:MM)
-				const existingStarts = timeToMinutes(res.reservationStarts) // Assumindo que o `time` da reserva é o horário de início
-				const existingEnds = timeToMinutes(res.reservationEnds) // Assumindo que você tem um `reservationEnds` no seu objeto de reserva
-
-				// Lógica de sobreposição de intervalos:
-				// O conflito acontece se o novo horário de início for antes do término do existente E
-				// o novo horário de término for depois do início do existente.
-
-				// const hasOverlap = (starts && ends) ? (
-				// 	(existingStarts >= starts && existingStarts <= ends) || (existingEnds >= starts && existingEnds <= ends) ||
-				// 	(starts >= existingStarts && starts <= existingEnds) || (ends >= existingStarts && ends <= existingEnds)
-				// ) : false;
+				const existingStarts = timeToMinutes(res.reservationStarts) 
+				const existingEnds = timeToMinutes(res.reservationEnds) 
 
 				let hasOverlap = false
 
@@ -114,7 +78,6 @@ const RestaurantTables = () => {
 			}
 		);
 
-		// CORREÇÃO 2: Verifica a capacidade (se `guests` for um número)
 		const hasCapacity = (guests === 0 || table.seats >= parseInt(guests, 10));
 
 		// Lógica de filtro final
@@ -196,36 +159,8 @@ const RestaurantTables = () => {
 		}
 	}
 
-	// const handleConfirmReservation = () => {
-	// 	// if (selectedTable) {
-	// 	// 	const currentDate = new Date().toISOString().split("T")[0]
-	// 	// 	const currentTime = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
-
-	// 	// 	setTables((prevTables) =>
-	// 	// 		prevTables.map((table) =>
-	// 	// 			table.id === selectedTable.id
-	// 	// 				? {
-	// 	// 					...table,
-	// 	// 					status: "reservada",
-	// 	// 					reservationDate: currentDate,
-	// 	// 					reservationStarts: currentTime,
-	// 	// 					observations: customerObservations,
-	// 	// 				}
-	// 	// 				: table,
-	// 	// 		),
-	// 	// 	)
-	// 	// }
-	// 	registerReservation()
-	// 	setShowModal(false)
-	// 	setSelectedTable(null)
-	// 	setCustomerObservations("")
-	// 	// window.location.reload()
-	// }
-
 	const handleConfirmReservation = () => {
-		// CORREÇÃO 3: Lógica de reserva agora usa os filtros de pesquisa
 		if (selectedTable) {
-			// ... (A lógica de atualização local do estado está obsoleta se você for buscar os dados do backend novamente)
 			registerReservation()
 		}
 		setShowModal(false)
@@ -240,7 +175,6 @@ const RestaurantTables = () => {
 		setCustomerObservations("")
 	}
 
-	// CORREÇÃO 4: Lógica de maxSeats e horário deve ser extraída do `map`
 	useEffect(() => {
 		if (tables.length > 0) {
 			const max = Math.max(...tables.map(table => table.seats));
@@ -283,15 +217,12 @@ const RestaurantTables = () => {
 							text: "O estabelecimento não opera nesse horário. Faça a reserva dentro do período de funcionamento do estabelecimento."
 						});
 					} else {
-						// 1. Verifique se o valor está dentro do intervalo
 						if ((time_value >= min_t && time_value <= auxMaxTime) || (time_value >= auxMinTime && time_value <= max_t)) {
-							// Se for válido, atualize o estado
 							setSearchFilters(prevFilters => ({
 								...prevFilters,
 								[key]: value
 							}));
 						} else if (value === '') {
-							// Permite limpar o campo
 							setSearchFilters(prevFilters => ({
 								...prevFilters,
 								[key]: ''
@@ -300,26 +231,20 @@ const RestaurantTables = () => {
 					}
 
 				} else {
-					// 1. Verifique se o valor está dentro do intervalo
 					if (time_value >= min_t && time_value <= max_t) {
-						// Se for válido, atualize o estado
 						setSearchFilters(prevFilters => ({
 							...prevFilters,
 							[key]: value
 						}));
 					} else if (value === '') {
-						// Permite limpar o campo
 						setSearchFilters(prevFilters => ({
 							...prevFilters,
 							[key]: ''
 						}));
 					}
-					// 2. Se for inválido, não atualize o estado.
-					// O valor do input voltará ao último estado válido.
 				}
 
 			} else {
-				// Lógica para outros campos de pesquisa
 				setSearchFilters(prevFilters => ({
 					...prevFilters,
 					[key]: value

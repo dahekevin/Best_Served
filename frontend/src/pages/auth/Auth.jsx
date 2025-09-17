@@ -1,71 +1,92 @@
-import './Auth.css'
-import { useState } from "react"
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { TextField, Button } from '@mui/material'
-import AuthServices from '../../service/Service.jsx'
+import api from '../../service/api';
+import './Auth.css';
 
-export default function Auth() {
-    const [formType, setFormType] = useState('login')
-    const [formData, setFormData] = useState(null)
-    const { login, signup } = AuthServices()
+export default function ClientLogin() {
 
-    const handleChangeFormType = () => {
-        if (formType === 'login') {
-            setFormType('signup')
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
+    async function loginUser() {
+        try {
+            const response = await api.post('/login', { email, password })
+
+            console.log("Resposta completa do login: ", response.data);
+
+            const user = response.data.user;
+
+            if (user && user.type) {
+                localStorage.setItem('role', user.type)
+                console.log('Tipo de usuárioo: ', user.type);
+            } else {
+                console.warn('Tipo de usuário não definido.');
+            }
+
+            const token = response.data.token
+            const role = response.data.user.type
+
+            localStorage.setItem('token', token)
+            localStorage.setItem('role', role)
+
+            console.log('Token armazenado response.data.token: ', token);
+
+            if (role === 'restaurant') {
+                await api.patch('/restaurant/update-isActive', { isActive: true },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                )                
+            }
+
+            if (user.type === 'client') {
+                window.location.href = '/client-profile'
+            } else if (user.type === 'restaurant') {
+                window.location.href = '/restaurant-dashboard'
+            } else if (user.type === 'admin') {
+                window.location.href = '/admin'
+            }
+
+            alert('Seja bem vindo ao nosso sistema!')
+
+        } catch (error) {
+            console.error("Erro ao fazer login:", error.response ? error.response.data : error.message);
+            alert("Erro ao fazer login. Verifique suas credenciais e tente novamente.");
+        }
+    }
+
+    const handleLogin = (event) => {
+        event.preventDefault();
+
+        console.log("Email a ser enviado (frontend):", email);
+        console.log("Password a ser enviado (frontend):", password);
+
+        if (!localStorage.getItem("token")) {
+            loginUser();
         } else {
-            setFormType('login')
+            alert("Você já está logado!");
         }
     }
 
-    const handleFormDataChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.value]: e.target.value
-        })
-    }
-
-    const handleSubmitForm = (e) => {
-        e.preventDefault()
-        
-        switch (formType) {
-            case 'login':
-                login(formData);
-                break;
-            case 'signup':
-                signup(formData);
-                break;
-            default:
-                break;
-        }
-    }
-
-    if (formType === 'login') {
-        return (
-            <div className="authPageContainer">
-                <h1>Acesse sua conta</h1>
-                <button className='redirectBtn' onClick={handleChangeFormType}>Não tem uma conta? Cadastre-se</button>
-                <form onSubmit={handleSubmitForm}>
-                    <TextField className='textField' required name="Email" label="E-mail" type="email" onChange={handleFormDataChange} />
-                    {/* <TextField className='textField' required name="CNPJ" label="CNPJ" type="text" onChange={handleFormDataChange} /> */}
-                    <TextField className='textField' required name="Password" label="Senha" type="password" onChange={handleFormDataChange} />
-                    <Button className='button' type="submit">Entrar</Button>
-                </form>
+    return (
+        <>
+            <div className='client-auth-container'>
+                <div className="client-auth">
+                    <h1>Best Served</h1>
+                    <h2>Seja bem vindo!</h2>
+                    <p></p>
+                    <p>Faça login e acesse sua conta!</p>
+                    <form className='client-auth-form' onSubmit={handleLogin}>
+                        <TextField className='client-textField' value={email} required name="Email" label="E-mail" type="email" onChange={(e) => { setEmail(e.target.value) }} />
+                        <TextField className='client-textField' value={password} required name="Password" label="Senha" type="password" onChange={(e) => { setPassword(e.target.value) }} />
+                        <Button className='client-button' type="submit">Entrar</Button>
+                    </form>
+                    <Link className='client-auth-link' to="/client-registration">Não tem uma conta? Cadastre-se</Link>
+                </div>
             </div>
-        )
-    }
-
-    if (formType === 'signup') {
-        return (
-            <div className="authPageContainer">
-                <h1>Crie sua conta</h1>
-                <button className='redirectBtn' onClick={handleChangeFormType}>Já tem uma conta? Entrar</button>
-                <form onSubmit={handleSubmitForm}>
-                    <TextField onChange={handleFormDataChange} className='textField' required name="Name" label="Nome" type="text" />
-                    <TextField onChange={handleFormDataChange} className='textField' required name="Phone" label="Telefone" type="tel" />
-                    <TextField onChange={handleFormDataChange} className='textField' required name="Email" label="E-mail" type="email" />
-                    <TextField onChange={handleFormDataChange} className='textField' required name="Password" label="Senha" type="password" />
-                    <Button className='button' type="submit">Cadastrar</Button>
-                </form>
-            </div>
-        )
-    }
+        </>
+    )
 }

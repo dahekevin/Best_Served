@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 
 export default function DatePicker({ onDateChange, selectedDate }) {
   const [dates, setDates] = useState([])
-  const [currentMonth, setCurrentMonth] = useState(new Date())
+  const [currentMonth] = useState(new Date())
 
   useEffect(() => {
     generateDates(currentMonth)
@@ -14,7 +14,6 @@ export default function DatePicker({ onDateChange, selectedDate }) {
     const year = month.getFullYear()
     const monthIndex = month.getMonth()
 
-    // Generate dates for the next 30 days
     for (let i = 0; i < 30; i++) {
       const date = new Date(year, monthIndex, today.getDate() + i)
       daysArray.push(date)

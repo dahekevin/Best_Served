@@ -43,6 +43,7 @@
 .client-profile-header h1 {
     font-size: 24px;
     font-weight: 500;
+    color: orange;
 }
 
 .client-header-buttons {
@@ -200,7 +201,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-width: 80px;
+    width: 120px;
     text-align: center;
 }
 

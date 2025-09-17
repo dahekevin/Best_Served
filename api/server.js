@@ -23,7 +23,6 @@ app.use(express.json())
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Isso expõe a pasta 'src/uploads' como pública
 app.use('/uploads', express.static(path.join(__dirname, 'src', 'uploads')));
 
 // Routes

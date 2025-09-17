@@ -1,7 +1,5 @@
-import './footer.css'
+import './Footer.css'
 import { SlSocialInstagram } from "react-icons/sl";
-import { SlSocialFacebook } from "react-icons/sl";
-import { TiSocialTwitter } from "react-icons/ti";
 import { FaLinkedin } from "react-icons/fa";
 import { FaGithub } from "react-icons/fa";
 import { Link } from 'react-router-dom';
@@ -21,7 +19,6 @@ export default function Footer() {
                     <div className='footerRestaurant'>
                         <div className='footerDescription'>
                             <h2>Já é um dos nossos?</h2>
-                            {/* Mudar link somente para "/login" quando possível */}
                             <Link className='link' to={'/login'}>Acesse sua conta!</Link>
                         </div>
                     </div>

@@ -1,4 +1,4 @@
-import "./registerRestaurant.css"
+import "./RegisterRestaurant.css"
 import api from "../../service/api"
 
 import { useState } from "react"
@@ -86,12 +86,12 @@ const RestaurantRegistration = () => {
 		if (file) {
 			setProfile({
 				...profile,
-				avatar: file, // salve o arquivo, não uma string
+				avatar: file,
 			})
 
 			const reader = new FileReader()
 			reader.onloadend = () => {
-				setPreviewImage(reader.result) // apenas para visualização
+				setPreviewImage(reader.result)
 			}
 			reader.readAsDataURL(file)
 		}
@@ -110,7 +110,6 @@ const RestaurantRegistration = () => {
 	const handleRemoveMenuPdf = () => {
 		setMenuPdf(null)
 		setMenuPdfName("")
-		// Reset the file input
 		const fileInput = document.getElementById("menu-pdf-upload")
 		if (fileInput) {
 			fileInput.value = ""
@@ -121,14 +120,11 @@ const RestaurantRegistration = () => {
 		const newNumber = parseInt(e.target.value) || 0
 		setNumberOfTables(newNumber)
 
-		// Adjust table capacities array
 		const currentCapacities = [...tableCapacities]
 		if (newNumber > currentCapacities.length) {
-			// Add new tables with default capacity of 4
 			const newTables = Array(newNumber - currentCapacities.length).fill(4)
 			setTableCapacities([...currentCapacities, ...newTables])
 		} else if (newNumber < currentCapacities.length) {
-			// Remove excess tables
 			setTableCapacities(currentCapacities.slice(0, newNumber))
 		}
 	}
@@ -139,7 +135,7 @@ const RestaurantRegistration = () => {
 		setTableCapacities(newCapacities)
 	}
 
-	const fetchRestaurantData = async () => {
+	const registerRestaurantData = async () => {
 		try {
 			console.log("Atualizando dados do restaurante:", profile);
 
@@ -206,15 +202,13 @@ const RestaurantRegistration = () => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault()
-		// Here you would typically send the registration data to your backend
 		console.log("Payment method:", paymentMethod)
 		if (paymentMethod === "credit") {
 			console.log("Credit card info:", creditCardInfo)
 		}
-		fetchRestaurantData()
+		registerRestaurantData()
 	}
 
-	// Tradução dos campos de pagamento:
 	const renderPaymentMethodFields = () => {
 		switch (paymentMethod) {
 			case "pix":
@@ -534,33 +528,6 @@ const RestaurantRegistration = () => {
 							/>
 						</div>
 
-						{/* <div className="form-group">
-              <div className="form-section-time">
-                <TextField
-                  type="time"
-                  id="time"
-                  name="time"
-                  value={profile.time}
-                  onChange={handleInputChange}
-                  className="form-input-time"
-                  label="Horário de abertura"
-                  placeholder="Horário de abertura"
-                />
-              </div>
-              <div className="form-section-time">
-                <TextField
-                  type="time"
-                  id="time2"
-                  name="time2"
-                  value={profile.time2}
-                  onChange={handleInputChange}
-                  className="form-input-time"
-                  label="Horário de fechamento"
-                  placeholder="Horário de fechamento"
-                />
-              </div>
-            </div> */}
-
 						<div className="form-group">
 							<TextField
 								type="url"
@@ -809,7 +776,6 @@ const RestaurantRegistration = () => {
 						<h4>Requisitos do arquivo:</h4>
 						<ul>
 							<li>Formato: PDF apenas</li>
-							{/* <li>Tamanho de arquivo recomendado até: 10 MB</li> */}
 							<li>Recomendação: Use imagens de alta qualidade para melhor visualização</li>
 							<li>Certifique-se de que o texto esteja legível</li>
 						</ul>

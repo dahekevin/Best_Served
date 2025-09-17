@@ -1,7 +1,7 @@
 import express from 'express';
 import upload from '../multer/uploadConfig.js';
 import { verifyToken } from '../middelwares/auth.js';
-import { registerRestaurant, getRestaurants, getRestaurantById, getTables, getRestaurantType, updateRestaurant, deleteRestaurant, restaurantLogin, getRestaurantByRating, updateRestaurantStatus, updateRestaurantIsActiveStatus, updateRestaurantRating } from '../controllers/restaurantController.js';
+import { registerRestaurant, getRestaurants, getRestaurantById, getTables, updateRestaurant, deleteRestaurant, restaurantLogin, getRestaurantByRating, updateRestaurantStatus, updateRestaurantIsActiveStatus, updateRestaurantRating } from '../controllers/restaurantController.js';
 import { loginController } from '../controllers/loginController.js'
 
 const router = express.Router();
@@ -21,9 +21,6 @@ router.get('/restaurant/get-one', verifyToken, getRestaurantById)
 // Rota que devolve todos os menus de todos os restaurantes
 router.get('/restaurant/get-tables', getTables)
 
-// Rota que devolve o tipo
-router.get('/restaurant/get-type', getRestaurantType)
-
 // Rota que edita um restaurante
 router.put('/restaurant/update', verifyToken, upload.fields([{ name: 'restaurant-avatar', maxCount: 1 }, { name: 'menu', maxCount: 1 }]), updateRestaurant)
 
@@ -31,7 +28,7 @@ router.put('/restaurant/update', verifyToken, upload.fields([{ name: 'restaurant
 router.patch('/restaurant/update-rating', updateRestaurantRating)
 
 // Rota que edita o status do restaurante
-router.patch('/restaurant/update-status', updateRestaurantStatus)
+router.patch('/restaurant/update-status', verifyToken, updateRestaurantStatus)
 
 // Rota que edita o status de ativo do restaurante
 router.patch('/restaurant/update-isActive', verifyToken, updateRestaurantIsActiveStatus)

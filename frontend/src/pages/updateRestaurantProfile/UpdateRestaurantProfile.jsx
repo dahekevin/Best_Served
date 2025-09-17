@@ -59,43 +59,24 @@ const RestaurantProfileUpdate = () => {
 		})
 	}
 
-	// const handleImageChange = (e) => {
-	// 	const file = e.target.files[0]
-	// 	if (file) {
-	// 		const reader = new FileReader()
-	// 		reader.onloadend = () => {
-	// 			setPreviewImage(reader.result)
-	// 			setProfile({
-	// 				...profile,
-	// 				avatar: reader.result,
-	// 			})
-	// 		}
-	// 		reader.readAsDataURL(file)
-	// 	}
-	// }
-
 	const handleImageChange = (e) => {
 		const file = e.target.files[0];
 		if (file) {
 			setProfile(prevProfile => ({
 				...prevProfile,
-				// Salve o objeto File diretamente no avatar, não a string base64
 				avatar: file,
 			}));
 
 			const reader = new FileReader();
 			reader.onloadend = () => {
-				// Apenas para pré-visualização no frontend
 				setPreviewImage(reader.result);
 			};
 			reader.readAsDataURL(file);
 		} else {
-			// Se o usuário desselecionar a imagem, redefina o avatar e previewImage
 			setProfile(prevProfile => ({
 				...prevProfile,
-				avatar: profile.avatar, // Mantenha o avatar anterior se não houver novo
+				avatar: profile.avatar, 
 			}));
-			// setPreviewImage(profile.avatar); // Ou para um placeholder padrão se o avatar anterior não deve ser mostrado
 		}
 	};
 
@@ -112,29 +93,22 @@ const RestaurantProfileUpdate = () => {
 	const handleRemoveMenuPdf = () => {
 		setMenuPdf(null)
 		setMenuPdfName("")
-		// Reset the file input
 		const fileInput = document.getElementById("menu-pdf-upload")
 		if (fileInput) {
 			fileInput.value = ""
 		}
 	}
 
-	// Função para comparar se as mesas foram alteradas
 	const areTablesChanged = (newCapacities, oldTables) => {
-		// Caso 1: O número de mesas mudou
 		if (newCapacities.length !== oldTables.length) {
 			return true;
 		}
-		// Caso 2: A capacidade de alguma mesa mudou
-		// Mapeie os `seats` dos dados antigos para um array para comparação
 		const oldCapacities = oldTables.map(table => table.seats);
 		for (let i = 0; i < newCapacities.length; i++) {
-			// Lembre-se de converter para o mesmo tipo para comparar
 			if (Number(newCapacities[i] || 0) !== Number(oldCapacities[i] || 0)) {
 				return true;
 			}
 		}
-		// Se nenhum dos casos acima for verdadeiro, as mesas não mudaram
 		return false;
 	};
 
@@ -142,14 +116,11 @@ const RestaurantProfileUpdate = () => {
 		const newNumber = parseInt(e.target.value) || 0
 		setNumberOfTables(newNumber)
 
-		// Adjust table capacities array
 		const currentCapacities = [...tableCapacities]
 		if (newNumber > currentCapacities.length) {
-			// Add new tables with default capacity of 4
 			const newTables = Array(newNumber - currentCapacities.length).fill(4)
 			setTableCapacities([...currentCapacities, ...newTables])
 		} else if (newNumber < currentCapacities.length) {
-			// Remove excess tables
 			setTableCapacities(currentCapacities.slice(0, newNumber))
 		}
 	}
@@ -175,13 +146,11 @@ const RestaurantProfileUpdate = () => {
 			setProfile({ ...restaurant, password: "", mapsUrl: (restaurant.mapsUrl !== 'null' && restaurant.mapsUrl !== null && restaurant.mapsUrl !== undefined && restaurant.mapsUrl !== '') ? restaurant.mapsUrl : "" })
 
 			if (restaurant.tags && Array.isArray(restaurant.tags)) {
-				// CONVERTA O ARRAY DE STRINGS PARA UM ARRAY DE OBJETOS
 				const formattedTags = restaurant.tags.map(tag => ({
 					value: tag,
 					label: tag
 				}));
 
-				// ATUALIZE O ESTADO 'profile' COM AS TAGS FORMATADAS
 				setProfile(prevProfile => ({
 					...prevProfile,
 					tags: formattedTags
@@ -191,22 +160,17 @@ const RestaurantProfileUpdate = () => {
 			console.log("number of tables: ", restaurant.tables.length);
 
 			if (restaurant.tables && restaurant.tables.length > 0) {
-				// Se houver mesas, atualize os estados de mesas com os dados do backend
 				setNumberOfTables(restaurant.tables.length);
 
-				// Crie um array de capacidades a partir dos dados das mesas existentes
-				// Mapeie os dados para um array de capacidades
 				const capacities = restaurant.tables.map(table => table.seats);
 				setTableCapacities(capacities);
 
-				// IMPORTANTE: Preencha o novo estado com as mesas completas do banco
 				setExistingTables(restaurant.tables);
 
 			} else {
-				// Se não houver mesas cadastradas, inicie com 0
 				setNumberOfTables(0);
 				setTableCapacities([]);
-				setExistingTables([]); // Limpa se não houver mesas
+				setExistingTables([]); 
 			}
 
 			if (restaurant.avatar) {
@@ -239,31 +203,10 @@ const RestaurantProfileUpdate = () => {
 		formData.append('closesAt', profile.closesAt);
 		formData.append('capacity', (profile.capacity))
 
-		// if (numberOfTables > 0) {
-		// 	// Supondo que você tem um estado `existingTables`
-		// 	const tables = tableCapacities.map((capacity, index) => {
-		// 		// Use o ID da mesa existente se ela já existe, caso contrário, não passe o ID.
-		// 		// O `existingTables` precisa ter a mesma ordem do `tableCapacities`.
-		// 		const existingTable = profile.tables[index];
-
-		// 		return {
-		// 			id: existingTable ? existingTable.id : undefined, // Envia o ID real ou undefined para novas mesas
-		// 			seats: String(Number(capacity || 0)),
-		// 		};
-		// 	});
-		// 	formData.append('tables', JSON.stringify(tables));
-		// }
-
-		// --- LÓGICA OTIMIZADA PARA AS MESAS ---
-		// 1. Verifique se o número de mesas foi reduzido a zero
 		if (numberOfTables === 0 && existingTables.length > 0) {
-			
-			// Envie um array vazio para o backend, indicando que todas as mesas devem ser removidas
 			formData.append('tables', JSON.stringify([]));
 		}
-		// 2. Se o número de mesas for maior que zero, verifique se houve alguma mudança
 		else if (numberOfTables > 0 && areTablesChanged(tableCapacities, existingTables)) {
-			// Apenas envie os dados das mesas se houver uma mudança real
 			const newTablesData = tableCapacities.map((capacity, index) => ({
 				seats: String(Number(capacity || 0)),
 				id: existingTables[index] ? existingTables[index].id : undefined
@@ -470,33 +413,6 @@ const RestaurantProfileUpdate = () => {
 								placeholder="Ex: (11) 91234-5678"
 							/>
 						</div>
-						{/* 
-						<div className="form-group">
-							<label htmlFor="tables">Quantidade de Mesas</label>
-							<TextField
-								type="number"
-								id="tables"
-								name="tables"
-								value={profile.tables}
-								onChange={handleInputChange}
-								className="form-input"
-								placeholder="Digite a quantidade de mesas"
-							/>
-						</div>
-
-						<div className="form-group">
-							<label htmlFor="tables">Capacidade das Mesas</label>
-							<TextField
-								type="number"
-								id="capacity"
-								name="capacity"
-								value={profile.capacity}
-								onChange={handleInputChange}
-								className="form-input"
-								fullWidth
-								placeholder="Digite a capacidade das mesas"
-							/>
-						</div> */}
 
 						<div className="form-group">
 							<label htmlFor="tables">Tags do estabelecimento</label>

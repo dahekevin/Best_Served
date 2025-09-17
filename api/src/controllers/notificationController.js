@@ -6,27 +6,42 @@ export const registerNotification = async (req, res) => {
     try {
         let notification
         if (req.query.role === 'client') {
-            notification = await prisma.notification.create({
+            notification = await prisma.client.update({
+                where: { id: req.body.id },
                 data: {
-                    type: req.body.type,
-                    activity: req.body.activity,
-                    clientId: req.body.clientId
+                    notification: {
+                        create: {
+                            type: req.body.type,
+                            title: req.body.title,
+                            message: req.body.message,
+                        }
+                    }
                 }
             })
         } else if (req.query.role === 'restaurant') {
-            notification = await prisma.notification.create({
+            notification = await prisma.restaurant.update({
+                where: { id: req.body.id },
                 data: {
-                    type: req.body.type,
-                    activity: req.body.activity,
-                    restaurantId: req.body.restaurantId
+                    notification: {
+                        create: {
+                            type: req.body.type,
+                            title: req.body.title,
+                            message: req.body.message,
+                        }
+                    }
                 }
             })
         } else if (req.query.role === 'admin') {
-            notification = await prisma.notification.create({
+            notification = await prisma.admin.update({
+                where: { type: "admin" },
                 data: {
-                    type: req.body.type,
-                    activity: req.body.activity,
-                    adminId: req.body.adminId
+                    notification: {
+                        create: {
+                            type: req.body.type,
+                            title: req.body.title,
+                            message: req.body.message,
+                        }
+                    }
                 }
             })
         }

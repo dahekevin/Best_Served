@@ -65,7 +65,6 @@ export default function NotificationSystem() {
 		return () => clearInterval(interval)
 	}, [notifDB])
 
-	// Fechar painel ao clicar fora
 	useEffect(() => {
 		function handleClickOutside(event) {
 			if (

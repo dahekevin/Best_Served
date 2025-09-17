@@ -54,7 +54,7 @@ export default function RestaurantList() {
 			return approvedRestaurantsList;
 		}
 
-		const searchTerm = search.toLowerCase().trim(); // Limpa espaços e normaliza
+		const searchTerm = search.toLowerCase().trim();
 
 		return approvedRestaurantsList.filter(res => {
 			const restaurantNameMatch = res.name && res.name.toLowerCase().includes(searchTerm);

@@ -19,12 +19,12 @@ const UpdateAdmProfile = () => {
         if (file) {
             setProfile({
                 ...profile,
-                avatar: file, // salve o arquivo, não uma string
+                avatar: file, 
             })
 
             const reader = new FileReader()
             reader.onloadend = () => {
-                setPreviewImage(reader.result) // apenas para visualização
+                setPreviewImage(reader.result) 
             }
             reader.readAsDataURL(file)
         }
@@ -46,9 +46,8 @@ const UpdateAdmProfile = () => {
 
             console.log("Adm avatar: ", adm.avatar);
 
-            // Se o adm tiver um avatar salvo, atualiza o previewImage
             if (adm.avatar) {
-                setPreviewImage(`http://localhost:3000/uploads/${adm.avatar}`)  // <-- Caminho correto
+                setPreviewImage(`http://localhost:3000/uploads/${adm.avatar}`)  
             }
         } catch (error) {
             console.error("Erro ao buscar perfil:", error.response?.data || error.message || error);
@@ -63,7 +62,6 @@ const UpdateAdmProfile = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        // Here you would typically send the updated profile to your backend
 
         const token = localStorage.getItem('token')
 

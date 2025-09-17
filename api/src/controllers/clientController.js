@@ -35,14 +35,21 @@ export const registerClient = async (req, res) => {
                 phone: req.body.phone,
                 email: req.body.email,
                 password: hashPassword,
-                avatar: avatar ?? undefined
+                avatar: avatar ?? undefined,
+                notification: {
+                    create: {
+                        type: "welcome",
+                        title: "Boas Vindas",
+                        message: "Seja bem vindo a Best Served o melhor sistema de reservas que você verá. Faça sua primeira reserva já.",
+                    }
+                }
             }
         })
 
         res.status(201).json({ message: 'Cadastro Realizado!!!', client })
 
     } catch (error) {
-        res.status(500).json({ message: 'Erro no servidor, tente novamente' })
+        res.status(500).json({ message: 'Erro no servidor, tente novamente', error })
     }
 }
 
@@ -95,7 +102,7 @@ export const getClientById = async (req, res) => {
         if (!client) return res.status(404).json({ message: "Cliente não encontrado" });
 
         console.log("Cliente: ", client);
-        
+
         res.status(200).json(client);
     } catch (err) {
         console.error("Erro no servidor:", err);
@@ -112,29 +119,6 @@ export const getTotalClients = async (req, res) => {
         res.status(500).json({ message: "Erro no servidor, tente novamente" });
     }
 }
-
-export const getClientType = async (req, res) => {
-    try {
-        
-        if (!req.query.email) {
-            return res.status(400).json({ message: "Email é obrigatório" })
-        }
-        
-        const client = await prisma.client.findUnique({
-            where: { email: req.query.email }
-        })
-        
-        console.log('getClientType: ');
-        if (!client) return res.status(404).json({ message: "Cliente não encontrado" });
-        
-        res.status(200).json(client.type);
-
-    } catch (error) {
-        console.error("Erro no servidor:", error);
-        res.status(500).json({ message: "Erro no servidor, tente novamente" });
-    }
-}
-
 
 export const updateClient = async (req, res) => {
     console.log("Dados recebidos para atualização:", req.body);
@@ -185,7 +169,14 @@ export const updateClient = async (req, res) => {
             where: {
                 id: req.userId
             },
-            data: cleanedData
+            data: cleanedData,
+            notification: {
+                create: {
+                    type: "warning",
+                    title: "Atualização de Dados Pessoais",
+                    message: "Atenção! Os dados da sua conta foram atualizados, caso tenha sido você ignore essa mensagem."
+                }
+            }
         })
 
         res.status(202).json({ message: "Clientes atualizado com sucesso!!!", client })
@@ -198,8 +189,8 @@ export const updateClient = async (req, res) => {
 export const updateClientHistory = async (req, res) => {
     try {
         console.log('UpdateClientehistory: ', req.body.restaurantId);
-        const clientId = req.userId; 
-        const newRestaurantId = req.body.restaurantId;         
+        const clientId = req.userId;
+        const newRestaurantId = req.body.restaurantId;
 
         if (!clientId || !newRestaurantId) {
             return res.status(400).json({ message: 'ID do cliente ou ID do restaurante ausente.' });
@@ -237,49 +228,16 @@ export const updateClientHistory = async (req, res) => {
 }
 
 export const deleteClient = async (req, res) => {
-
     try {
-        
         const client = await prisma.client.delete({
             where: {
                 id: req.userId
             }
         })
-        
-        console.log('aaaaaaaaaaaaalo', req.userId);
+
         res.status(203).json({ message: 'Cliente deletado!', client })
 
     } catch (error) {
         res.status(500).json({ message: 'Erro no servidor, tente novamente', error })
-    }
-}
-
-export const clientLogin = async (req, res) => {
-
-    try {
-        const client_db = await prisma.client.findUnique({ where: { email: req.body.email } })
-
-        const isMatch = await bcrypt.compare(req.body.password, client_db.password)
-
-        if (!isMatch) {
-            return res.status(400).json({ message: 'Senha Inválida' })
-        }
-
-        console.log("Cliente encontrado:", client_db.id);
-
-        const token = jwt.sign({ id: client_db.id }, process.env.JWT_SECRET, { expiresIn: '1w' })
-
-        return res.status(201).json({
-            message: 'Login realizado com sucesso!',
-            token,
-            client: {
-                name: client_db.name,
-                email: client_db.email,
-                type: client_db.type  // <-- ESSENCIAL
-            }
-        });
-
-    } catch (error) {
-        res.status(400).json({ message: 'Cliente não existe' })
     }
 }

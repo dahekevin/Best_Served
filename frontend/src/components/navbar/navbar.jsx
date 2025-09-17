@@ -1,11 +1,11 @@
-import './navbar.css'
+import './Navbar.css'
 import { LuMenu } from "react-icons/lu"
 import { Drawer } from "@mui/material"
 import { useCallback, useState } from "react"
 import { Link } from 'react-router-dom'
 import { useEffect } from 'react'
-import api from '../../service/api'
-import NotificationSystem from "../notification/notification.jsx"
+import api from '../../service/api.js'
+import NotificationSystem from "../notification/Notification.jsx"
 
 export default function Navbar() {
     const [userType, setUserType] = useState(null)

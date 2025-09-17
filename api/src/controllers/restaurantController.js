@@ -1,5 +1,6 @@
 import { PrismaClient } from "../../generated/prisma/client.js";
 import bcrypt from "bcrypt";
+import { stat } from "fs";
 import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
@@ -46,7 +47,6 @@ export const registerRestaurant = async (req, res) => {
         const parsedTables = req.body.tables ? JSON.parse(req.body.tables) : [];
 
         const generatedTables = parsedTables.map((table, index) => {
-            // `index` começa em 0, então adicione 1 para começar a contagem em 1
             const tableCode = index + 1;
 
             return {
@@ -65,6 +65,13 @@ export const registerRestaurant = async (req, res) => {
             data: {
                 tables: {
                     create: generatedTables
+                },
+                notification: {
+                    create: {
+                        type: "welcome",
+                        title: "Boas Vindas",
+                        message: "Seja muito bem vindo ao nosso sistema. Agora você é um de nós. Utilize os recurso que a Best Served oferece para gerenciar suas reservas de uma forma mais ágil. Tenha um bom serviço."
+                    }
                 }
             },
             include: {
@@ -240,21 +247,6 @@ export const getTables = async (req, res) => {
     } catch (error) {
         console.error('Erro ao buscar mesas:', error)
         res.status(500).json({ message: 'Erro no servidor, tente novamente.' })
-    }
-}
-
-export const getRestaurantType = async (req, res) => {
-    try {
-        const restaurant = await prisma.restaurant.findUnique({
-            where: { email: req.body.email }
-        })
-
-        if (!restaurant) { res.status(404).json({ message: "Restaurante não encontrado" }) };
-
-        res.status(200).json(restaurant.type)
-
-    } catch (error) {
-        res.status(500).json({ message: "Erro no servidor, tente novamente." })
     }
 }
 
@@ -436,14 +428,28 @@ export const updateRestaurantRating = async (req, res) => {
 
 export const updateRestaurantStatus = async (req, res) => {
     try {
-        if (req.body.status) {
-            const restaurant = await prisma.restaurant.update({
-                where: { id: req.query.id },
-                data: { status: req.body.status }
-            })
+        const { id, status } = req.body;
+        const userId = req.userId;
 
-            res.status(202).json({ message: "Status do restaurante atualizados com sucesso!", restaurant })
-        }
+        if (!status) { return res.status(403).json({ message: 'Status não fornecido.' }) }
+
+        if (userId !== process.env.ADMIN_ID) { return res.status(403).json({ message: 'Você não tem permissão para modificar as informações do restaurante.' }) }
+
+        const restaurant = await prisma.restaurant.update({
+            where: { id: id },
+            data: {
+                status: status,
+                notification: {
+                    create: {
+                        type: 'warning',
+                        title: 'Atualizaçã de Status',
+                        message: `Status de conta atualizado para ${status}.`
+                    }
+                }
+            }
+        })
+
+        res.status(202).json({ message: "Status do restaurante atualizados com sucesso!", restaurant })
 
     } catch (error) {
         res.status(500).json({ message: "Erro no servidor, tente novamente." })

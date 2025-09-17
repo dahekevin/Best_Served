@@ -1,9 +1,9 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import "./admPage.css"
+import "./AdmPage.css"
 import api from '../../service/api.js'
-import NotificationSystem from "../../components/notification/notification.jsx"
+import NotificationSystem from "../../components/notification/Notification.jsx"
 import ThemeToggle from "../../components/themetoggle/ThemeToggle.jsx"
 import AdmChart from "../../components/admChart/AdmChart.jsx"
 import { Link } from "react-router-dom"
@@ -28,41 +28,6 @@ export default function AdminDashboard() {
     const [allClients, setAllClients] = useState([])
     const [showActiveRestaurantsModal, setShowActiveRestaurantsModal] = useState(false)
     const [showNonActiveRestaurantsModal, setShowNonActiveRestaurantsModal] = useState(false)
-
-    const stats = [
-        {
-            title: "Total de Reservas",
-            value: "2,847",
-            change: "+12%",
-            positive: true,
-            icon: "📅",
-            color: "blue",
-        },
-        {
-            title: "Restaurantes Ativos",
-            value: "156",
-            change: "+3%",
-            positive: true,
-            icon: "🏪",
-            color: "green",
-        },
-        {
-            title: "Usuários Registrados",
-            value: "8,924",
-            change: "+18%",
-            positive: true,
-            icon: "👥",
-            color: "purple",
-        },
-        {
-            title: "Receita Mensal",
-            value: "R$ 45.2k",
-            change: "+8%",
-            positive: true,
-            icon: "💰",
-            color: "orange",
-        },
-    ]
 
     const [recentReservations, setRecentReservations] = useState([])
 
@@ -135,7 +100,8 @@ export default function AdminDashboard() {
 
     const handleConfirmRestaurant = async () => {
         try {
-            const response = await api.patch(`/restaurant/update-status?id=${selectedRestaurant.id}`, {
+            const response = await api.patch('/restaurant/update-status', {
+                id: selectedReservation.id,
                 status: "Approved"
             })
 

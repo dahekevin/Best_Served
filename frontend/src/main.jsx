@@ -3,12 +3,10 @@ import './index.css'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import ScrollToTop from './components/ScrollToTop/ScrollToTop.jsx'
 
 import App from './App.jsx'
 import Home from './pages/home/Home.jsx'
 import Profile from './pages/profile/Profile.jsx'
-import Auth from './pages/auth/auth.jsx'
 import ReservationList from './pages/reservation/Reservation.jsx'
 import RestaurantDashboard from './pages/restaurantDashboard/RestaurantDashboard.jsx'
 import Tables from './pages/tables/Tables.jsx'
@@ -18,12 +16,11 @@ import Restaurant from './pages/restaurant/Restaurant.jsx'
 import UpdateClientProfile from './pages/updateClientProfile/UpdateClientProfile.jsx'
 import UpdateRestaurantProfile from './pages/updateRestaurantProfile/UpdateRestaurantProfile.jsx'
 import MakeReservation from './pages/makeReservation/MakeReservation.jsx'
-import RegisterRestaurantPage from './pages/registerRestaurant/registerRestaurant.jsx'
-import ClientLogin from './pages/clientAuth/clientLogin.jsx'
-import ClientRegister from './pages/clientAuth/clientRegister.jsx'
+import RegisterRestaurantPage from './pages/registerRestaurant/RegisterRestaurant.jsx'
+import Login from './pages/auth/Auth.jsx'
+import ClientRegister from './pages/auth/ClientRegister.jsx'
 import ProfileTeste from './pages/profileTeste/ProfileTeste.jsx'
-import ResProfile from './pages/resProfile/ResProfile.jsx'
-import AdminDashboard from './pages/admPage/admPage.jsx'
+import AdminDashboard from './pages/admPage/AdmPage.jsx'
 import UpdateAdmProfile from './pages/updateAdmPage/UpdateAdmPage.jsx'
 
 const pages = createBrowserRouter([
@@ -32,8 +29,7 @@ const pages = createBrowserRouter([
 		element: <App />,
 		children: [
 			{ path: '/', element: <Home /> },
-			{ path: '/login', element: <ClientLogin /> },
-			{ path: '/restaurant-profile', element: <ResProfile /> },
+			{ path: '/login', element: <Login /> },
 			{ path: '/reservation', element: <ReservationList /> },
 			{ path: '/restaurant-page', element: <Restaurant /> },
 			{ path: '/tables', element: <Tables /> },
@@ -45,7 +41,6 @@ const pages = createBrowserRouter([
 			{ path: '/restaurant-registration', element: <RegisterRestaurantPage /> },
 			{ path: '/client-profile', element: <Profile /> },
 			{ path: '/client-registration', element: <ClientRegister /> },
-			{ path: '/auth', element: <Auth /> },
 			{ path: '/restaurant-dashboard', element: <RestaurantDashboard /> },
 			{ path: '/client-profile/me', element: <ProfileTeste /> },
 			{ path: '/admin', element: <AdminDashboard /> },

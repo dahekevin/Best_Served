@@ -58,14 +58,10 @@ export const getReservations = async (req, res) => {
         console.log('Reservas Backend', req.query);
 
         if (req.query.date) {
-            // CORREÇÃO: Tratar a data como local para o dia, e então converter para UTC.
-            const selectedDateString = req.query.date; // Ex: '2025-08-12'
+            const selectedDateString = req.query.date;
 
-            // --- CORREÇÃO AQUI ---
-            // Cria um objeto Date que representa o início do dia no fuso horário UTC
             const startOfDayUTC = new Date(`${selectedDateString}T00:00:00.000Z`);
 
-            // Cria o objeto Date para o início do dia seguinte (lt)
             const endOfDayUTC = new Date(startOfDayUTC);
             endOfDayUTC.setDate(endOfDayUTC.getDate() + 1);
 
@@ -84,13 +80,12 @@ export const getReservations = async (req, res) => {
                 include: {
                     client: { select: { name: true } },
                     restaurant: { select: { name: true } },
-                    tables: { select: { codeID: true } } // Inclua tableID para consistência
+                    tables: { select: { codeID: true } }
                 }
             });
 
             console.log('Reservations encontradas:', reservations);
 
-            // Verificação adicional, caso a lista de reservas seja vazia
             if (!reservations || reservations.length === 0) {
                 return res.status(200).json({ message: 'Nenhuma reserva encontrada para a data.', reservations: [] });
             }
@@ -192,16 +187,58 @@ export const updateReservation = async (req, res) => {
 
 export const updateReservationStatus = async (req, res) => {
     try {
-        console.log('UpdateReservationStatus: ', req.body.status);
+        const { id, status } = req.body;
+        const userId = req.userId;
 
-        if (!req.body.status) { return res.status(400).json({ message: 'Status não fornecido.' }) }
+        if (!status) { return res.status(400).json({ message: 'Status não fornecido.' }) }
+        
+        console.log('UpdateReservationStatus: ', status);
 
-        const status = await prisma.reservations.update({
-            where: { id: req.body.id },
-            data: { status: req.body.status }
+        const reservation = await prisma.reservations.findUnique({
+            where: { id: id },
+            include: {
+                restaurant: {
+                    select: { name: true }
+                }
+            }
+        })
+        
+        if (!reservation) { return res.status(404).json({ message: 'Reserva não encontrada!' }) }
+
+        if (reservation.restaurantId !== userId) { return res.status(403).json({ message: 'Você não tem permissão para modificar essa reserva.' }) }
+
+        const reservationStatus = await prisma.reservations.update({
+            where: { id: id },
+            data: { status: status }
         })
 
-        res.status(201).json({ message: 'Status de reserva atualizado com sucesso!', status })
+        await prisma.client.update({
+            where: { id: reservation.clientId },
+            data: {
+                notification: {
+                    create: {
+                        type: 'warning',
+                        title: 'Status de Reserva Atualizado',
+                        message: `Sua reserva no restaurante ${reservation.restaurant.name}, foi atualizada para ${status}`
+                    }
+                }
+            }
+        })
+        
+        await prisma.admin.update({
+            where: { id: process.env.ADMIN_ID },
+            data: {
+                notification: {
+                    create: {
+                        type: 'info',
+                        title: 'Status de Reserva Atualizado',
+                        message: `A reserva no restaurante ${reservation.restaurant.name}, foi atualizada para ${status}`
+                    }
+                }
+            }
+        })
+
+        res.status(201).json({ message: 'Status de reserva atualizado com sucesso!', reservationStatus })
     } catch (error) {
         res.status(500).json({ message: 'Erro ao atualizar status, tente novamente.', error })
     }
