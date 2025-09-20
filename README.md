@@ -2,6 +2,8 @@
 
 **Best Servd** é uma aplicação web que conecta restaurantes e clientes, facilitando o agendamento de reservas de mesas de forma simples e rápida.
 
+## 📋 Funcionalidades Principais
+
 - **Gerenciar disponibilidade de mesas (Restaurante)**  
 - **Reservar mesa**  
 - **Buscar restaurantes**  
