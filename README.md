@@ -4,7 +4,7 @@
 
 ## 📋 Funcionalidades Principais
 
-- **Gerenciar disponibilidade de mesas (Restaurante)**  
+- **Gerenciar disponibilidade de mesas**  
 - **Reservar mesa**  
 - **Buscar restaurantes**  
 - **Cancelar reserva**   
@@ -14,7 +14,6 @@
 - **Cadastrar restaurante**  
 - **Visualizar disponibilidade de mesas**  
 - **Visualizar cardápio do restaurante**  
-- **Visualizar cardápio do restaurante**
 
 ## **🛠️ Tecnologias Utilizadas**
 
