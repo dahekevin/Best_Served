@@ -1,28 +1,32 @@
 # Best Servd - Sistema de Agendamento de Reservas de Mesas em Restaurantes
 
-**Best Servd** é uma aplicação web que conecta restaurantes e clientes, facilitando o agendamento de reservas de mesas de forma simples e rápida.
+**Best Servd** é uma aplicação web que conecta restaurantes e clientes, permitindo o agendamento de mesas de forma prática e eficiente. O sistema possui três tipos de usuários com permissões específicas:  
+- **Cliente**: cadastra-se, busca restaurantes, faz reservas, além de avaliar estabelecimentos.  
+- **Restaurante**: cadastra seu estabelecimento, gerencia mesas, cardápio, horários e confirma ou cancela reservas.  
+- **Administrador**: gerencia toda a plataforma, aprova os cadastros dos restaurantes, visualiza os usuários cadastrados no sistema e garante a segurança geral da aplicação.
 
 ## 📋 Funcionalidades Principais
 
-- **Gerenciar disponibilidade de mesas**  
-- **Reservar mesa**  
-- **Buscar restaurantes**  
-- **Cancelar reserva**   
-- **Atualizar perfil**  
-- **Avaliar restaurante**  
+- **Gerenciar disponibilidade de mesas**
 - **Cadastrar cliente**  
-- **Cadastrar restaurante**  
+- **Cadastrar restaurante**
+- **Atualizar/Excluir perfil**  
+- **Reservar mesa**
+- **Cancelar reserva**  
+- **Buscar restaurantes**   
+- **Avaliar restaurante**   
 - **Visualizar disponibilidade de mesas**  
 - **Visualizar cardápio do restaurante**  
 
 ## **🛠️ Tecnologias Utilizadas**
 
-- **Node.js** – Plataforma de execução JavaScript no servidor  
-- **Express.js** – Framework para criação de rotas e middleware  
-- **Prisma** – ORM configurado para trabalhar com **MongoDB**  
-- **MongoDB** – Banco de dados NoSQL para armazenamento de usuários, reservas, restaurantes, etc.  
-- **JWT (JSON Web Token)** – Autenticação baseada em token  
-- **bcrypt / bcryptjs** – Hash seguro de senhas antes de salvar no banco
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
+![bcrypt](https://img.shields.io/badge/bcrypt-3383FF?style=for-the-badge&logo=keycdn&logoColor=white)
+![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white)
+![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)
 
 ## **🚀 Como Rodar o Projeto**
 
@@ -85,13 +89,13 @@ O frontend é a interface visual da aplicação. **Abra um novo terminal** para 
     ```bash
     npm run dev
     ```
-    Acesse a URL fornecida no terminal (geralmente `http://localhost:5173`) no seu navegador para ver a aplicação.
+    Acesse a URL fornecida no terminal no seu navegador para ver a aplicação.
 
 ---
 
-### 3. (Opcional) Visualizar o Banco de Dados
+### 3. Visualizar o Banco de Dados (Opcional) 
 
-O Prisma Studio fornece uma interface gráfica para visualizar e editar os dados.
+O Prisma Studio fornece uma interface gráfica para visualizar e editar os dados em tempo real.
 
 1.  **Abra um terceiro terminal** e navegue novamente até o diretório da `api`:
     ```bash
