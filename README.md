@@ -42,14 +42,14 @@ O backend gerencia a lógica da aplicação e a conexão com o banco de dados.
     ```
 
 2.  **Crie o arquivo de ambiente**:
-    Na pasta `api`, crie um arquivo chamado `.env` e cole o conteúdo abaixo. Este arquivo armazena as chaves e configurações sensíveis.
+    Na pasta `api`, crie um arquivo chamado `.env`. Este arquivo armazena as chaves e configurações sensíveis. Uma vez criada a sua conta no MongoDB cole a URL do seu database no arquivo env, depois gere um hash aleatório que servirá como chave de autenticação JWT. Defina a porta em que o seu sistema irá rodar, por padrão escolha a porta 3000.
 
     ```env
     # URL de conexão com o banco de dados MongoDB
-    DATABASE_URL="mongodb+srv://dahekevinrf:P3bJaUTgun0qmQnL@users.ybsabac.mongodb.net/Users?retryWrites=true&w=majority&appName=Users"
+    DATABASE_URL="mongodb+srv://seu_usuario_mongodb:P3bJaUTgun0qmQnL@users.ybsabac.mongodb.net/Users?retryWrites=true&w=majority&appName=Users"
 
     # Chave secreta para autenticação JWT
-    JWT_SECRET="8027f31a452b15a2f69c976d351dcd54bdc050758c01acaaa5104999c9a455f7"
+    JWT_SECRET="8027*******************************************************55f7"
     
     # Porta em que o servidor irá rodar
     PORT=3000
