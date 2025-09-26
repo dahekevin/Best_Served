@@ -107,4 +107,4 @@ O Prisma Studio fornece uma interface gráfica para visualizar e editar os dados
     npx prisma studio
     ```
     Isso abrirá uma nova aba no seu navegador, permitindo que você gerencie o banco de dados facilmente.
-## 🌆 Imagens
+
