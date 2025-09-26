@@ -38,7 +38,7 @@ O backend gerencia a lógica da aplicação e a conexão com o banco de dados.
 
 1.  **Abra um terminal** e navegue até o diretório da API:
     ```bash
-    cd "C:\caminho\para\seu\projeto\Best-Served-master\api"
+    cd "C:\caminho\para\seu\projeto\Best_Served-main\api"
     ```
 
 2.  **Crie o arquivo de ambiente**:
@@ -76,7 +76,7 @@ O frontend é a interface visual da aplicação. **Abra um novo terminal** para 
 
 1.  Navegue até o diretório do `frontend`:
     ```bash
-    cd "C:\caminho\para\seu\projeto\Best-Served-master\frontend"
+    cd "C:\caminho\para\seu\projeto\Best_Served-main\frontend"
     ```
 
 2.  **Instale as dependências**:
@@ -99,7 +99,7 @@ O Prisma Studio fornece uma interface gráfica para visualizar e editar os dados
 
 1.  **Abra um terceiro terminal** e navegue novamente até o diretório da `api`:
     ```bash
-    cd "C:\caminho\para\seu\projeto\Best-Served-master\api"
+    cd "C:\caminho\para\seu\projeto\Best_Served-main\api"
     ```
 
 2.  **Inicie o Prisma Studio**:
