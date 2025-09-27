@@ -1,4 +1,4 @@
-# Best Servd - Sistema de Agendamento de Reservas de Mesas em Restaurantes
+# Best Served - Sistema de Agendamento de Reservas de Mesas em Restaurantes
 
 **Best Servd** é uma aplicação web que conecta restaurantes e clientes, permitindo o agendamento de mesas de forma prática e eficiente. O sistema possui três tipos de usuários com permissões específicas:  
 - **Cliente**: cadastra-se, busca restaurantes, faz reservas, além de avaliar estabelecimentos.  
